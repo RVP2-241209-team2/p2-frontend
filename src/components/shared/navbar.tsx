@@ -3,8 +3,6 @@ import { Link } from "react-router-dom";
 import { CATEGORIES, NAV_LINKS } from "../../lib/constants";
 import { useState } from "react";
 
-// TODO: make responsive
-
 export default function Navbar() {
   const [isMobile, setIsMobile] = useState(false);
 
