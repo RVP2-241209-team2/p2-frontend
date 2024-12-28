@@ -1,3 +1,7 @@
 export default function AccountPage() {
-  return <div>Account Page</div>;
+  return (
+    <div>
+      <div className="flex-1 h-screen" />
+    </div>
+  );
 }

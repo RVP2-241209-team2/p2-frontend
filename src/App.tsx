@@ -21,6 +21,7 @@ import CartPage from "./pages/main/cart-page";
 import CheckoutPage from "./pages/main/checkout-page";
 import FAQPage from "./pages/main/faq-page";
 import AccountPage from "./pages/main/account-page";
+import CategoryPage from "./pages/main/category-page";
 
 function App() {
   return (
@@ -42,6 +43,7 @@ function App() {
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/products" element={<ProductsPage />} />
+          <Route path="/products/category/:slug" element={<CategoryPage />} />
           <Route path="/products/:id" element={<ProductDetailPage />} />
           <Route path="/cart" element={<CartPage />} />
           <Route path="/checkout" element={<CheckoutPage />} />
