@@ -1,11 +1,19 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+
+// Layout components
 import AuthLayout from "./components/auth/layout";
-import LoginPage from "./pages/auth/login-page";
-import RegisterPage from "./pages/auth/register-page";
 import AdminLayout from "./components/admin/layout";
 import MainLayout from "./components/main/layout";
+
+// Auth pages
+import LoginPage from "./pages/auth/login-page";
+import RegisterPage from "./pages/auth/register-page";
+
+// Admin pages
 import DashboardPage from "./pages/admin/dashboard-page";
 import EditProductPage from "./pages/admin/edit-product-page";
+
+// Main pages
 import HomePage from "./pages/main/home-page";
 import ProductsPage from "./pages/main/products-page";
 import ProductDetailPage from "./pages/main/product-details-page";
@@ -30,7 +38,7 @@ function App() {
           <Route path="products/:id" element={<EditProductPage />} />
         </Route>
 
-        {/* User/Public routes */}
+        {/* User routes */}
         <Route element={<MainLayout />}>
           <Route path="/" element={<HomePage />} />
           <Route path="/products" element={<ProductsPage />} />
