@@ -77,7 +77,14 @@ export default function CartPage() {
               <div className="item-Details">
                 <h3>{item.title}</h3>
                 <p>{item.description}</p>
-                <button>delete</button>
+                <div className="flex">
+                  <div className="item-Quantity-Controller">
+                    <i className="fa-solid fa-trash"></i>
+                    <span>qty</span>
+                    <i className="fa-solid fa-plus"></i>
+                  </div>
+                  <button className="px-2.5">delete</button>
+                </div>
               </div>
               <div style={{fontWeight: "700"}}>${item.price}</div>
             </div>);
