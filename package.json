@@ -10,9 +10,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "axios": "^1.7.9",
+    "bootstrap": "^5.3.3",
     "lucide-react": "^0.469.0",
     "p2-frontend": "file:",
     "react": "^18.3.1",
+    "react-bootstrap": "^2.10.7",
     "react-dom": "^18.3.1",
     "react-router-dom": "^7.1.1"
   },

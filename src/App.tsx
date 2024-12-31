@@ -1,5 +1,6 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-
+// Bootsrtrap CSS
+import 'bootstrap/dist/css/bootstrap.min.css';
 // Layout components
 import AuthLayout from "./components/auth/layout";
 import AdminLayout from "./components/admin/layout";
