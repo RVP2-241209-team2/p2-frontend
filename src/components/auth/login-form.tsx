@@ -1,5 +1,5 @@
 import { useForm } from "react-hook-form";
-import { loginSchema, LoginSchema } from "../../lib/auth";
+import { loginSchema, LoginSchema } from "../../lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 //import { useAuth } from "../../context/AuthContext";
 
@@ -28,15 +28,17 @@ export default function LoginForm() {
                 <p className="text-sm font-medium tracking-wide text-center">
                     username
                 </p>
-                <input type="text" {...form.register("username")} className="w-full rounded-md border border-gray-300 p-2" />
+                <input type="text" {...form.register("username")} className="w-80 rounded-md border border-gray-300 p-2 mx-auto"/>
             </div>
             <div className="flex flex-col gap-2">
                 <p className="text-sm font-medium tracking-wide text-center">
                     password
                 </p>
-                <input type="password" {...form.register("password")} className="w-full rounded-md border border-gray-300 p-2"/>
+                <input type="password" {...form.register("password")} className="w-80 rounded-md border border-gray-300 p-2 mx-auto"/>
             </div>
-            <button type="submit" className="w-full rounded-md bg-blue-600 p-2 text-white hover:bg-blue-700"> Login </button>
+            <div className="flex justify-center">
+            <button type="submit" className="w-60 rounded-md bg-blue-600 p-2 text-white hover:bg-blue-700"> Login </button>
+            </div>
         </form>
     )
 }
