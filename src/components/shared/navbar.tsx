@@ -16,6 +16,11 @@ export default function Navbar() {
             <h1 className="ml-3 text-2xl font-bold text-gray-900">Shoplify</h1>
           </Link>
 
+          {/* Search Bar */}
+          <div className="flex-1">
+            <input type="text" placeholder="Search" className="w-full hidden md:block" />
+          </div>
+
           {/* Categories */}
           <div className="hidden md:flex md:justify-center">
             <div className="flex items-center gap-x-4">
