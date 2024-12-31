@@ -1,4 +1,4 @@
-import { LoginSchema } from "./zod";
+import { LoginSchema, RegisterSchema } from "./zod";
 
 export interface User {
     id: string;
@@ -13,7 +13,7 @@ export interface AuthState {
 
 export interface AuthContextType extends AuthState {
     login: (values: LoginSchema) => Promise<void>;
-    //register: (values: RegisterSchema) => Promise<void>
+    register: (values: RegisterSchema) => Promise<void>
     logout: () => void;
     isAuthenticated: boolean;
 }
