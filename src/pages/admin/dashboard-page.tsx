@@ -49,9 +49,6 @@ export default function DashboardPage() {
           <div className="space-y-3">
             {/* New Product Form and action */}
             <NewProductForm />
-            <button className="block w-full text-center bg-amber-600 text-white py-2 rounded-lg hover:bg-amber-700 transition-colors">
-              Add New Product
-            </button>
           </div>
           {/* Other actions */}
           <Link

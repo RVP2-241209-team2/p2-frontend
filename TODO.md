@@ -1,1 +1,1 @@
-[ ] - 
+[ ] - move types to lib/types.d.ts
