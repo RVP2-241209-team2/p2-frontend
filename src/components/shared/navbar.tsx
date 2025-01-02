@@ -24,19 +24,7 @@ export default function Navbar() {
 
           {/* Desktop Nav Links */}
           {/* <div className="hidden lg:flex items-center gap-x-4">
-            {NAV_LINKS.map((link) => {
-              const Icon = link.icon;
-              return (
-                <Link
-                  to={link.href}
-                  key={link.label}
-                  className="flex items-center gap-x-1 text-sm text-gray-900 hover:text-sky-600"
-                >
-                  <Icon className="size-4" />
-                  <span>{link.label}</span>
-                </Link>
-              );
-            })}
+            <h1>Desktop Nav Links</h1>
           </div> */}
 
           {/* Dropdown Menu Button */}
