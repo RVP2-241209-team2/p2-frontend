@@ -14,6 +14,7 @@ const SearchBar = () => {
 
   const handleSearch = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // TODO: Api Call and Redirect to Products Page
     console.log(
       "Searching in category:",
       selectedCategory,
@@ -23,12 +24,12 @@ const SearchBar = () => {
   };
 
   return (
-    <form onSubmit={handleSearch} className="flex w-full max-w-4xl">
+    <form onSubmit={handleSearch} className="flex w-full max-w-6xl gap-x-2">
       {/* Category Dropdown */}
       <select
         value={selectedCategory}
         onChange={(e) => setSelectedCategory(e.target.value)}
-        className="px-2 py-2 bg-gray-100 border-r border-gray-300 rounded-l text-sm focus:outline-none"
+        className="px-2 py-2 bg-gray-100 border-r border-gray-300 rounded-lg text-sm focus:outline-none"
       >
         {categories.map((category) => (
           <option key={category.id} value={category.id}>
@@ -43,13 +44,13 @@ const SearchBar = () => {
         value={searchQuery}
         onChange={(e) => setSearchQuery(e.target.value)}
         placeholder="Search..."
-        className="flex-1 px-4 py-2 focus:outline-none border-y border-gray-300"
+        className="flex-1 px-4 py-2 focus:border-sky-600 focus:border-2 border-2 border-gray-300"
       />
 
       {/* Search Button */}
       <button
         type="submit"
-        className="px-6 py-2 bg-yellow-400 hover:bg-yellow-500 text-gray-800 rounded-r border border-yellow-500 focus:outline-none"
+        className="px-6 py-2 bg-yellow-400 hover:bg-yellow-500 text-gray-800 rounded-lg border border-yellow-500 focus:outline-none"
       >
         Search
       </button>

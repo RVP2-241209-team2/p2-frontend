@@ -1,10 +1,11 @@
 import { Menu, ShoppingCart, X } from "lucide-react";
 import { Link } from "react-router-dom";
-import { CATEGORIES, NAV_LINKS } from "../../lib/constants";
+import { NAV_LINKS } from "../../lib/constants";
 import { useState } from "react";
+import SearchBar from "./search-input";
 
 export default function Navbar() {
-  const [isMobile, setIsMobile] = useState(false);
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   return (
     <header className="bg-zinc-50 shadow-xl h-16 sticky top-0 z-50">
@@ -18,21 +19,11 @@ export default function Navbar() {
 
           {/* Categories */}
           <div className="hidden md:flex md:justify-center">
-            <div className="flex items-center gap-x-4">
-              {CATEGORIES.map((category) => (
-                <Link
-                  to={category.href}
-                  key={category.label}
-                  className="text-sm text-gray-900 hover:text-sky-600"
-                >
-                  {category.label}
-                </Link>
-              ))}
-            </div>
+            <SearchBar />
           </div>
 
           {/* Desktop Nav Links */}
-          <div className="hidden lg:flex items-center gap-x-4">
+          {/* <div className="hidden lg:flex items-center gap-x-4">
             {NAV_LINKS.map((link) => {
               const Icon = link.icon;
               return (
@@ -46,21 +37,33 @@ export default function Navbar() {
                 </Link>
               );
             })}
-          </div>
+          </div> */}
 
-          {/* Mobile Menu Button */}
-          <button className="lg:hidden" onClick={() => setIsMobile(!isMobile)}>
-            {isMobile ? (
+          {/* Dropdown Menu Button */}
+          <button
+            className="p-2 hover:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-600"
+            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+          >
+            {isDropdownOpen ? (
               <X className="size-6 text-gray-900" />
             ) : (
               <Menu className="size-6 text-gray-900" />
             )}
           </button>
         </div>
-        {/* Mobile Nav Links */}
-        {isMobile && (
-          <div className="lg:hidden absolute top-16 left-0 right-0 bg-zinc-50 border-t border-gray-200 shadow-lg">
-            <div className="px-4 py-2">
+        {/* Dropdown Menu */}
+        {isDropdownOpen && (
+          <div
+            className={`absolute top-16 left-0 right-0 bg-zinc-50 border-t border-gray-200 shadow-lg transition-all duration-200 ${
+              isDropdownOpen
+                ? "opacity-100 translate-y-0"
+                : "opacity-0 -translate-y-2 pointer-events-none"
+            }`}
+          >
+            <div className="md:hidden px-4 py-2">
+              <SearchBar />
+            </div>
+            <div className="px-4 py-2 flex justify-around mx-auto">
               {NAV_LINKS.map((link) => {
                 const Icon = link.icon;
                 return (
@@ -68,7 +71,7 @@ export default function Navbar() {
                     to={link.href}
                     key={link.label}
                     className="flex items-center gap-x-2 py-3 text-sm text-gray-900 hover:text-sky-600"
-                    onClick={() => setIsMobile(false)}
+                    onClick={() => setIsDropdownOpen(false)}
                   >
                     <Icon className="size-4" />
                     <span>{link.label}</span>
