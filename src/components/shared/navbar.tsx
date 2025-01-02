@@ -1,11 +1,13 @@
 import { Menu, ShoppingCart, X } from "lucide-react";
 import { Link } from "react-router-dom";
-import { NAV_LINKS } from "../../lib/constants";
+import { ADMIN_NAV_LINKS, NAV_LINKS } from "../../lib/constants";
 import { useState } from "react";
 import SearchBar from "./search-input";
 
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+
+  const isAdmin = true; // TODO: check auth context for user role
 
   return (
     <header className="bg-zinc-50 shadow-xl h-16 sticky top-0 z-50">
@@ -66,6 +68,23 @@ export default function Navbar() {
                   </Link>
                 );
               })}
+              {isAdmin && (
+                <div className="flex items-center gap-x-2 py-3 text-sm text-gray-900 hover:text-sky-600">
+                  {ADMIN_NAV_LINKS.map((link) => {
+                    const Icon = link.icon;
+                    return (
+                      <Link
+                        to={link.href}
+                        key={link.label}
+                        className="flex items-center gap-x-2 py-3 text-sm text-gray-900 hover:text-sky-600"
+                      >
+                        <Icon className="size-4" />
+                        <span>{link.label}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           </div>
         )}

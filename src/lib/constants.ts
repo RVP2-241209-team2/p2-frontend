@@ -23,6 +23,29 @@ export const NAV_LINKS = [
   },
 ];
 
+export const ADMIN_NAV_LINKS = [
+  {
+    label: "Dashboard",
+    href: "/admin",
+    icon: Home,
+  },
+  {
+    label: "Manage Users",
+    href: "/admin/users",
+    icon: User,
+  },
+  {
+    label: "Orders",
+    href: "/admin/orders",
+    icon: Package,
+  },
+  {
+    label: "Products",
+    href: "/admin/products",
+    icon: Package,
+  },
+];
+
 export const CATEGORIES = [
   {
     label: "category-1",
