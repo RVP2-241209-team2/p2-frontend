@@ -12,7 +12,8 @@ import RegisterPage from "./pages/auth/register-page";
 
 // Admin pages
 import DashboardPage from "./pages/admin/dashboard-page";
-import EditProductPage from "./pages/admin/edit-product-page";
+import ManageUsersPage from "./pages/admin/manage-users-page";
+import OrdersPage from "./pages/admin/orders-page";
 
 // Main pages
 import HomePage from "./pages/main/home-page";
@@ -23,6 +24,7 @@ import CheckoutPage from "./pages/main/checkout-page";
 import FAQPage from "./pages/main/faq-page";
 import AccountPage from "./pages/main/account-page";
 import CategoryPage from "./pages/main/category-page";
+import ProductDetailsPage from "./pages/admin/product-details-page";
 
 function App() {
   return (
@@ -37,7 +39,10 @@ function App() {
         {/* Shop owner routes */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<DashboardPage />} />
-          <Route path="products/:id" element={<EditProductPage />} />
+          <Route path="products/:id" element={<ProductDetailsPage />} />
+          <Route path="products" element={<ProductsPage />} />
+          <Route path="users" element={<ManageUsersPage />} />
+          <Route path="orders" element={<OrdersPage />} />
         </Route>
 
         {/* User routes */}
