@@ -20,35 +20,14 @@ export default function HomePage() {
   const [forYou, setForYou] = useState<Item[]>([])
 
   useEffect(() => {
-    /*
+
     axios.get("https://fakestoreapi.com/products?limit=10")
     .then((response)=>{
       setFeatured(response.data)
       setPopular(response.data)
       setForYou(response.data)
     })
-    */
-
-    let dummyList:Item[] = []
-
-    for(let i = 0; i < 9; i++){
-      dummyList.push(
-        {
-          id: 1,
-          title: "example",
-          price: 10.50,
-          category: "cat",
-          description: "desc",
-          rating: {
-            rate: 5,
-            count: 21
-          },
-          image: ""
-        }
-      )
-    }
-
-    setFeatured(dummyList)
+    
   }, [])
 
   const listItems = (itemList:Item[]) => {
@@ -80,11 +59,11 @@ export default function HomePage() {
       </div>
       <div className="flex flex-col w-full mx-auto">
         <p className="text-2xl font-bold py-4">Popular</p>
-        {listItems(featured)}
+        {listItems(popular)}
       </div>
       <div className="flex flex-col w-full mx-auto">
         <p className="text-2xl font-bold py-4">For You</p>
-        {listItems(featured)}
+        {listItems(forYou)}
       </div>
     </div>
   );
