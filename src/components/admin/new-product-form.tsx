@@ -69,7 +69,7 @@ const NewProductForm = () => {
             Image Upload {/** TODO: Image Upload */}
           </p>
           <input
-            type="text"
+            type="file"
             {...form.register("image")}
             className="w-full rounded-md border border-gray-300 p-2"
           />
