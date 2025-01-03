@@ -1,10 +1,11 @@
 import { Link } from "react-router-dom";
 
+
 const RecentProducts = () => (
   <div className="bg-white rounded-xl p-6 shadow-sm">
     <h2 className="text-lg font-semibold mb-4">Recent Products</h2>
     <div className="space-y-4">
-      {[1, 2, 3].map((i) => ( // todo: replace with actual recent products
+      {[1, 2, 3].map((i) => ( // todo: replace with actual products
         <div
           key={i}
           className="flex items-center justify-between py-2 border-b last:border-0"

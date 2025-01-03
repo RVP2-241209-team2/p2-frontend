@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { BarChart3, Package, DollarSign, Users } from "lucide-react";
 import NewProductForm from "../../components/admin/new-product-form";
-import StatCard from "../../components/admin/stat-card"
-import RecentProducts from "../../components/admin/record-products";
+import StatCard from "../../components/admin/stat-card";
+import PaginatedProducts from "../../components/admin/paginated-products";
 
 export default function DashboardPage() {
   return (
@@ -43,7 +43,7 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <RecentProducts />
+        <PaginatedProducts />
         <div className="bg-white rounded-xl p-6 shadow-sm space-y-6">
           <h2 className="text-lg font-semibold mb-4">Quick Actions</h2>
           <div className="space-y-3">
