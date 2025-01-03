@@ -48,28 +48,28 @@ export const ADMIN_NAV_LINKS = [
 
 export const CATEGORIES = [
   {
-    label: "category-1",
-    href: "/products/category/category-1",
-    slug: "category-1",
+    label: "Electronics",
+    href: "/products/category/electronics",
+    slug: "electronics",
   },
   {
-    label: "category-2",
-    href: "/products/category/category-2",
-    slug: "category-2",
+    label: "Clothing",
+    href: "/products/category/clothing",
+    slug: "clothing",
   },
   {
-    label: "category-3",
-    href: "/products/category/category-3",
-    slug: "category-3",
+    label: "Home & Office",
+    href: "/products/category/home-office",
+    slug: "home-office",
   },
   {
-    label: "category-4",
-    href: "/products/category/category-4",
-    slug: "category-4",
+    label: "Sports & Outdoors",
+    href: "/products/category/sports-outdoors",
+    slug: "sports-outdoors",
   },
   {
-    label: "category-5",
-    href: "/products/category/category-5",
-    slug: "category-5",
+    label: "Toys & Games",
+    href: "/products/category/toys-games",
+    slug: "toys-games",
   },
 ];
