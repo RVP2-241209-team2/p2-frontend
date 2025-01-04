@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import "./cart-page.css";
+import { useNavigate } from "react-router-dom";
 
 interface FakeItem{
   id: number;
@@ -23,6 +24,7 @@ interface FakeItem{
 //   total: number;
 // }
 export default function CartPage() {
+  const nagivate = useNavigate();;
   const [items, setItems] = useState<FakeItem[]>([]);
   const [total, setTotal] = useState<number>(()=>{
     return items.reduce((acc, item) => acc + item.price, 0);
@@ -102,7 +104,7 @@ export default function CartPage() {
       </div>
       <div className="cart-Checkout">
         <div>Subtotal ({items.length} items): <span>${total}</span></div>
-        <button>Proceed to checkout</button>
+        <button onClick={()=>nagivate("/checkout")}>Proceed to checkout</button>
       </div>
     </div>
   </div>;
