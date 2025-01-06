@@ -51,6 +51,7 @@ export default function DashboardPage() {
             <NewProductForm />
           </div>
           {/* Other actions */}
+
           <Link
             to="/admin/orders"
             className="block w-full text-center bg-amber-600 text-white py-2 rounded-lg hover:bg-amber-700 transition-colors"
