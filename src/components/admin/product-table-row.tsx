@@ -15,7 +15,11 @@ const ProductTableRow = ({ product }: ProductTableRowProps) => {
             alt={product.title}
             className="w-10 h-10 rounded-lg object-cover"
           />
-          <span className="font-medium">{product.title}</span>
+          <span className="font-sm">
+            {product.title.length > 12
+              ? product.title.slice(0, 12) + "..."
+              : product.title}
+          </span>
         </div>
       </td>
       <td className="px-6 py-4 text-gray-600">{product.category}</td>
