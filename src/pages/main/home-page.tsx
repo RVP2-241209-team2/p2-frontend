@@ -34,12 +34,8 @@ export default function HomePage() {
 
   return (
     <div className="bg-white p-4">
-      {/* hero section */}
       <HeroSection />
-
-      {/* Collections Section */}
       <CollectionsSection products={products} />
-      {/* Suggested Products */}
       <ProductList products={products} />
     </div>
   );
