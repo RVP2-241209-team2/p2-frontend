@@ -14,6 +14,7 @@ export default function HomePage() {
     const loadProducts = async () => {
       const response = await fetchProducts();
       if (response) {
+        console.log(response.products);
         setProducts(response.products);
       }
     };
