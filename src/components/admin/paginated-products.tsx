@@ -1,7 +1,8 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useProducts } from "../../hooks/useProducts";
 import ProductTableRow from "./product-table-row";
 import { AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
+import { ProductsResponse } from "../../types/product";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -11,12 +12,20 @@ const PaginatedProducts = ({
   itemsPerPage?: number;
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const { products, totalItems, loading, error } = useProducts(
-    currentPage,
-    itemsPerPage
-  );
+  const [products, setProducts] = useState<ProductsResponse | null>(null);
+  const { loading, error, fetchProducts } = useProducts();
 
-  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  useEffect(() => {
+    const loadProducts = async () => {
+      const skip = (currentPage - 1) * itemsPerPage;
+      const data = await fetchProducts(skip, itemsPerPage);
+      setProducts(data);
+    };
+
+    loadProducts();
+  }, [currentPage, itemsPerPage, fetchProducts]);
+
+  const totalPages = products ? Math.ceil(products.total / itemsPerPage) : 0;
 
   const handlePrevPage = () => {
     if (currentPage > 1) {
@@ -33,13 +42,14 @@ const PaginatedProducts = ({
   if (loading) {
     return <ProductsSkeleton />;
   }
-  if (error)
+  if (error) {
     return (
       <div className="flex justify-center items-center">
         <AlertCircle className="w-5 h-5" />
-        {error}
+        {error.message}
       </div>
     );
+  }
 
   return (
     <div className="bg-white rounded-xl p-6 shadow-sm">
@@ -55,7 +65,7 @@ const PaginatedProducts = ({
             </tr>
           </thead>
           <tbody>
-            {products.map((product) => (
+            {products?.products.map((product) => (
               <ProductTableRow key={product.id} product={product} />
             ))}
           </tbody>
@@ -66,8 +76,8 @@ const PaginatedProducts = ({
       <div className="flex items-center justify-between mt-4 pt-4 border-t">
         <p className="text-sm text-gray-600">
           Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
-          {Math.min(currentPage * itemsPerPage, totalItems)} of {totalItems}{" "}
-          products
+          {Math.min(currentPage * itemsPerPage, products?.total ?? 0)} of{" "}
+          {products?.total ?? 0} products
         </p>
         <div className="flex gap-2">
           <button

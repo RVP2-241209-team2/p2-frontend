@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Product } from "../../lib/types";
+import { Product } from "../../types/product";
 
 interface ProductTableRowProps {
   product: Product;
@@ -11,11 +11,11 @@ const ProductTableRow = ({ product }: ProductTableRowProps) => {
       <td className="px-6 py-4">
         <div className="flex items-center gap-3">
           <img
-            src={product.image}
-            alt={product.name}
+            src={product.thumbnail}
+            alt={product.title}
             className="w-10 h-10 rounded-lg object-cover"
           />
-          <span className="font-medium">{product.name}</span>
+          <span className="font-medium">{product.title}</span>
         </div>
       </td>
       <td className="px-6 py-4 text-gray-600">{product.category}</td>
