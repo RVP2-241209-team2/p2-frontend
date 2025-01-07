@@ -7,9 +7,9 @@ export default function LoginPage() {
     <h1 className="text-center text-3xl font-bold">Login to Shoply</h1>
     <div className="space-y-5">
       <div className="flex items-center gap-3 mt-5">
-        <div className="h-px flex-1 bg-gray-200"/>
-        <span className="text-gray-500"> Login </span>
-        <div className="h-px flex-1 bg-gray-200"/>
+        <div className="h-px flex-1 bg-gray-500"/>
+        <span className="text-gray-400"> Login </span>
+        <div className="h-px flex-1 bg-gray-500"/>
       </div>
       <LoginForm/>
       <div className="flex justify-center gap-2">

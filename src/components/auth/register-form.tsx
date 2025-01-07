@@ -1,6 +1,8 @@
 import { useForm } from "react-hook-form";
 import { registerSchema, RegisterSchema } from "../../lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
+//import { useAuth } from "../../context/AuthContext";
+import { toast } from "sonner";
 
 export default function RegisterForm() {
     //const { register } = useAuth()
@@ -15,17 +17,23 @@ export default function RegisterForm() {
         }
     })
 
-    /*async function onSubmit(data: RegisterSchema) {
+    async function onSubmit(data: RegisterSchema) {
         try{
             console.log("register submitted ...", data)
-            await register(data)
+            await new Promise<void>((resolve) =>
+                setTimeout(() => {
+                    console.log(data)
+                    resolve()
+                }, 1000))
+            toast.success("Registration successful!")
         } catch(error){
-            console.error("Register failed", error)
+            toast.error("Failed to register!")
+            console.error(error)
         }
-    }*/
+    }
 
     return(
-        <form /*onSubmit={form.handleSubmit(onSubmit)}*/ className="space-y-6"> 
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6"> 
             <div className="flex flex-col gap-2">
                 <p className="text-sm font-medium tracking-wide text-center">
                     username
