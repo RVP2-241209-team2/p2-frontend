@@ -18,7 +18,7 @@ export const registerSchema = z.object({
 })
 
 export type RegisterSchema = z.infer<typeof registerSchema>
-=======
+
 import { CATEGORIES } from "./constants";
 
 export const newProductSchema = z.object({
