@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { CATEGORIES } from "./constants";
 
 export const loginSchema = z.object({
     username: z.string().min(1, { message: "Username is required" }),
@@ -18,8 +19,6 @@ export const registerSchema = z.object({
 })
 
 export type RegisterSchema = z.infer<typeof registerSchema>
-
-import { CATEGORIES } from "./constants";
 
 export const newProductSchema = z.object({
   name: z
