@@ -38,3 +38,31 @@ export const newProductSchema = z.object({
 });
 
 export type NewProduct = z.infer<typeof newProductSchema>;
+
+// account-page schemas/types
+export const addressSchema = z.object({
+  label: z.string().min(1, "Address label is required"),
+  street: z.string().min(1, "Street address is required"),
+  city: z.string().min(1, "City is required"),
+  state: z.string().length(2, "State must be 2 characters"),
+  zipCode: z.string()
+    .length(5, "ZIP code must be 5 digits")
+    .regex(/^\d+$/, "ZIP code must contain only digits"),
+});
+
+export type AddressFormData = z.infer<typeof addressSchema>;
+
+export const paymentSchema = z.object({
+  cardNumber: z.string()
+    .min(16, "Card number must be 16 digits")
+    .max(16, "Card number must be 16 digits")
+    .regex(/^\d+$/, "Card number must contain only digits"),
+  expiryDate: z.string()
+    .regex(/^(0[1-9]|1[0-2])\/([0-9]{2})$/, "Expiry date must be in MM/YY format"),
+  cvc: z.string()
+    .min(3, "CVC must be 3 digits")
+    .max(4, "CVC must be 3-4 digits")
+    .regex(/^\d+$/, "CVC must contain only digits"),
+});
+
+export type PaymentFormData = z.infer<typeof paymentSchema>;
