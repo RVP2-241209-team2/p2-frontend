@@ -16,7 +16,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link to="/" className="flex items-center hover:cursor-pointer">
             <ShoppingCart className="size-8 text-sky-600" />
-            <h1 className="ml-3 text-2xl font-bold text-gray-900">Shoplify</h1>
+            <h1 className="ml-3 text-2xl font-bold text-gray-900">Shoply</h1>
           </Link>
 
           {/* Categories */}
