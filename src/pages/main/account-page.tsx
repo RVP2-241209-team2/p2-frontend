@@ -31,7 +31,7 @@ export default function AccountPage() {
     { id: "payment", label: "Payment Methods", icon: CreditCard },
     { id: "address", label: "Addresses", icon: MapPin },
   ] as const;
-  
+
   const handlePaymentSubmit = (data: PaymentFormData) => {
     console.log("Payment form submitted:", data);
     // Handle payment method addition
@@ -62,7 +62,7 @@ export default function AccountPage() {
                   }`}
                 >
                   <Icon className="w-5 h-5" />
-                  <span className="font-medium">{label}</span> 
+                  <span className="font-medium">{label}</span>
                 </button>
               ))}
             </nav>
@@ -87,7 +87,9 @@ export default function AccountPage() {
                           </p>
                         </div>
                         <div className="text-right">
-                          <p className="font-medium">${order.total.toFixed(2)}</p>
+                          <p className="font-medium">
+                            ${order.total.toFixed(2)}
+                          </p>
                           <p
                             className={`text-sm ${
                               order.status === "delivered"
