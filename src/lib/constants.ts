@@ -73,3 +73,10 @@ export const CATEGORIES = [
     slug: "toys-games",
   },
 ];
+
+export const BACKGROUND_IMAGES = [
+  // TODO: Actual Images
+  "https://images.unsplash.com/photo-1441986300917-64674bd600d8",
+  "https://images.unsplash.com/photo-1472851294608-062f824d29cc",
+  "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04",
+];

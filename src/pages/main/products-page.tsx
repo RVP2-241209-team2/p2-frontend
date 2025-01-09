@@ -4,6 +4,7 @@ import { useProducts } from "../../hooks/useProducts";
 import { Product } from "../../types/product";
 import { ShoppingCart } from "lucide-react";
 import { Link } from "react-router-dom";
+import { BACKGROUND_IMAGES } from "../../lib/constants";
 
 export default function ProductsPage() {
   const { loading, error, fetchProducts } = useProducts();
@@ -20,6 +21,19 @@ export default function ProductsPage() {
     loadProducts();
   }, [fetchProducts]);
 
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+
+  //useEffect for the image rotation
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentImageIndex(
+        (prevIndex) => (prevIndex + 1) % BACKGROUND_IMAGES.length
+      );
+    }, 5000);
+
+    return () => clearInterval(interval);
+  }, []);
+
   if (loading) {
     return (
       <div className="flex justify-center items-center h-full">Loading...</div>
@@ -32,8 +46,23 @@ export default function ProductsPage() {
 
   return (
     <>
-      <div className="text-center p-10">
-        <h1 className="font-bold text-6xl mb-4">Products</h1>
+      <div className="relative">
+        <div
+          className="absolute inset-0 bg-cover bg-center transition-all duration-1000"
+          style={{
+            backgroundImage: `url(${BACKGROUND_IMAGES[currentImageIndex]})`,
+          }}
+        />
+        <div className="absolute inset-0 bg-black/60" />{" "}
+        {/* adjust opacity as needed with /60 */}
+        <div className="relative z-10 text-center p-20">
+          {" "}
+          {/* increased padding for better appearance */}
+          <h1 className="font-bold text-6xl mb-4 text-white">Products</h1>
+          <p className="text-gray-200 text-xl">
+            Browse our wide range of products, from electronics to home decor.
+          </p>
+        </div>
       </div>
 
       <section

@@ -16,6 +16,7 @@ const productCache: ProductCache = {
   categories: null,
 };
 
+// TODO: Load More functionality
 export const useProducts = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<ApiError | null>(null);
@@ -54,9 +55,12 @@ export const useProducts = () => {
       setError(null);
 
       try {
-        const response = await fetch(
-          `https://dummyjson.com/products?skip=${skip}&limit=${limit}`
-        );
+        const url =
+          limit === 0
+            ? `https://dummyjson.com/products?skip=${skip}`
+            : `https://dummyjson.com/products?skip=${skip}&limit=${limit}`;
+
+        const response = await fetch(url);
 
         const { data, error } = await handleApiResponse<ProductsResponse>(
           response
