@@ -87,7 +87,9 @@ export default function CartPage() {
 
     }
   }
-
+  const deleteItem = ()=>{}
+  const reduceItem = ()=>{setQuantity(quantity-1)}
+  const addItem = ()=>{setQuantity(quantity+1)}
   return <div>
     <div className="cart-Container">
       <div className="cart-Items">
@@ -104,10 +106,10 @@ export default function CartPage() {
                 <p>{item.description}</p>
                 <div className="flex items-center">
                   <div className="item-Quantity-Controller">
-                    {quantity===1 && <i className="fa-solid fa-trash cursor-pointer"></i>}
-                    {quantity>=2 &&<i className="fa-solid fa-minus cursor-pointer"></i>}
-                    <span>qty</span>
-                    <i className="fa-solid fa-plus cursor-pointer"></i>
+                    {quantity===1 && <i onClick={deleteItem} className="fa-solid fa-trash cursor-pointer"></i>}
+                    {quantity>=2 &&<i onClick={reduceItem} className="fa-solid fa-minus cursor-pointer"></i>}
+                    <span>{quantity}</span>
+                    <i onClick={addItem} className="fa-solid fa-plus cursor-pointer"></i>
                   </div>
                   <button className="px-2.5 ml-2.5 border-l-2 border-white h-fit hover:underline">delete</button>
                 </div>
