@@ -14,12 +14,6 @@ export default function CheckoutPage() {
     setOrderSection(false)
   }
 
-  const closeAddress = ()=>{
-    setPayment(true)
-    setaddressSecion(false);
-    setOrderSection(false)
-  }
-
   const onPayment = ()=>{
     setPayment(true)
     setaddressSecion(false);
@@ -46,7 +40,7 @@ export default function CheckoutPage() {
         {addressSecion && <div>
           <div className="flex justify-between">
             <div className="text-lg font-medium"><span className="mr-3">1</span> Choose a shipping address</div>
-            <div onClick={closeAddress} >
+            <div onClick={onPayment} >
               <span className="cursor-pointer mr-2 hover:underline text-[dodgerblue]">Close</span>
               <i className="fa-solid fa-x cursor-pointer"></i>
             </div>
