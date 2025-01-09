@@ -51,18 +51,20 @@ export default function DashboardPage() {
             <NewProductForm />
           </div>
           {/* Other actions */}
-          <Link
-            to="/admin/orders"
-            className="block w-full text-center bg-amber-600 text-white py-2 rounded-lg hover:bg-amber-700 transition-colors"
-          >
-            View All Orders
-          </Link>
-          <Link
-            to="/admin/users"
-            className="block w-full text-center bg-amber-600 text-white py-2 rounded-lg hover:bg-amber-700 transition-colors"
-          >
-            Manage Users
-          </Link>
+          <div className="flex flex-col gap-2">
+            <Link
+              to="/admin/orders"
+              className="block w-full text-center bg-amber-600 text-white py-2 rounded-lg hover:bg-amber-700 transition-colors"
+            >
+              View All Orders
+            </Link>
+            <Link
+              to="/admin/users"
+              className="block w-full text-center bg-amber-600 text-white py-2 rounded-lg hover:bg-amber-700 transition-colors"
+            >
+              Manage Users
+            </Link>
+          </div>
         </div>
       </div>
     </div>
