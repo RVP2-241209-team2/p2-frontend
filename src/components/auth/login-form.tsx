@@ -1,11 +1,13 @@
 import { useForm } from "react-hook-form";
 import { loginSchema, LoginSchema } from "../../lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-//import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 export default function LoginForm() {
-    //const { login } = useAuth()
+    const { login } = useAuth()
+    const navigate = useNavigate()
     
     const form = useForm<LoginSchema>({
         resolver: zodResolver(loginSchema),
@@ -17,12 +19,9 @@ export default function LoginForm() {
     
     async function onSubmit(data: LoginSchema){
         try{
-            await new Promise<void>((resolve) =>
-                setTimeout(() => {
-                    console.log(data)
-                    resolve()
-                }, 1000))
-            toast.success("Login successful!")
+            await login(data)
+            
+            navigate("/")
         } catch (error){
             toast.error("Failed to login!")
             console.error(error)
