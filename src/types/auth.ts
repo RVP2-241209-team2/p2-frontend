@@ -1,4 +1,4 @@
-import { LoginSchema, RegisterSchema } from "./zod";
+import { LoginSchema, RegisterSchema } from "../lib/zod";
 
 export interface User {
     id: string;

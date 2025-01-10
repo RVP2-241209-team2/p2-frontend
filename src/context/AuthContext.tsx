@@ -1,8 +1,8 @@
 import { createContext, ReactNode, useContext, useState } from "react";
-import { AuthContextType, AuthState } from "../lib/types";
 import { LoginSchema, RegisterSchema } from "../lib/zod";
 import axios from "axios";
 import { toast } from "sonner";
+import { AuthContextType, AuthState } from "../types/auth";
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
