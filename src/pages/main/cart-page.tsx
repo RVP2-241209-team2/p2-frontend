@@ -1,6 +1,7 @@
 import axios from "axios";
 import { useEffect, useState } from "react";
 import "./cart-page.css";
+import { useNavigate } from "react-router-dom";
 
 interface FakeItem{
   id: number;
@@ -23,6 +24,9 @@ interface FakeItem{
 //   total: number;
 // }
 export default function CartPage() {
+  const nagivate = useNavigate();;
+  const [quantity, setQuantity] = useState<number>(2);
+  const [checkedItems, setCheckedItems] = useState<{ [key: string]: boolean }>({});
   const [items, setItems] = useState<FakeItem[]>([]);
   const [total, setTotal] = useState<number>(()=>{
     return items.reduce((acc, item) => acc + item.price, 0);
@@ -38,6 +42,9 @@ export default function CartPage() {
         console.log(res.data);
         setItems(res.data);
         setTotal(res.data.reduce((acc:number, item:FakeItem) => acc + item.price, 0));
+        const checkedItems:{ [key: string]: boolean } = {}
+        res.data.forEach((item:FakeItem) =>{checkedItems[`${item.id}`]=true})
+        setCheckedItems(checkedItems);
         setPages(Array.from({length: Math.ceil(res.data.length/4)}, (_, i) => i+1));
         console.log(pages)
     })
@@ -63,7 +70,26 @@ export default function CartPage() {
       setCurrentPage(currentPage-1);
     }
   }
+  const onCheck = (e:React.ChangeEvent<HTMLInputElement>)=>{
+    console.log(e.target.checked);
+    const [price, id] = e.target.id.split("-");
+    const isChecked = e.target.checked;
+    console.log(checkedItems, checkedItems[id])
+    if(!isChecked){
+      checkedItems[id] = false;
+      setCheckedItems({...checkedItems});
+      setTotal(total-Number(price))
+    }else{
+      checkedItems[id] = true
+      console.log(checkedItems)
+      setCheckedItems({...checkedItems});
+      setTotal(total+Number(price))
 
+    }
+  }
+  const deleteItem = ()=>{}
+  const reduceItem = ()=>{setQuantity(quantity-1)}
+  const addItem = ()=>{setQuantity(quantity+1)}
   return <div>
     <div className="cart-Container">
       <div className="cart-Items">
@@ -73,17 +99,19 @@ export default function CartPage() {
             if(index<4*(currentPage-1) || index>=4*currentPage) return null;
             return (
             <div className="item-Container" key={index}>
+              <input className="mx-2" id={`${item.price}-${item.id}`} name="cart" onChange={onCheck} type="checkbox" checked={checkedItems[`${item.id}`]}></input>
               <img className="img" src={item.image} alt={item.title} />
               <div className="item-Details">
                 <h3>{item.title}</h3>
                 <p>{item.description}</p>
-                <div className="flex">
+                <div className="flex items-center">
                   <div className="item-Quantity-Controller">
-                    <i className="fa-solid fa-trash"></i>
-                    <span>qty</span>
-                    <i className="fa-solid fa-plus"></i>
+                    {quantity===1 && <i onClick={deleteItem} className="fa-solid fa-trash cursor-pointer"></i>}
+                    {quantity>=2 &&<i onClick={reduceItem} className="fa-solid fa-minus cursor-pointer"></i>}
+                    <span>{quantity}</span>
+                    <i onClick={addItem} className="fa-solid fa-plus cursor-pointer"></i>
                   </div>
-                  <button className="px-2.5">delete</button>
+                  <button className="px-2.5 ml-2.5 border-l-2 border-white h-fit hover:underline">delete</button>
                 </div>
               </div>
               <div style={{fontWeight: "700"}}>${item.price}</div>
@@ -102,7 +130,7 @@ export default function CartPage() {
       </div>
       <div className="cart-Checkout">
         <div>Subtotal ({items.length} items): <span>${total}</span></div>
-        <button>Proceed to checkout</button>
+        <button className="hover:bg-[#ffc505]" onClick={()=>nagivate("/checkout")}>Proceed to checkout</button>
       </div>
     </div>
   </div>;
