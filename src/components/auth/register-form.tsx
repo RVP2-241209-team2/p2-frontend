@@ -1,11 +1,13 @@
 import { useForm } from "react-hook-form";
 import { registerSchema, RegisterSchema } from "../../lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-//import { useAuth } from "../../context/AuthContext";
+import { useAuth } from "../../context/AuthContext";
 import { toast } from "sonner";
+import { useNavigate } from "react-router-dom";
 
 export default function RegisterForm() {
-    //const { register } = useAuth()
+    const { register } = useAuth()
+    const navigate = useNavigate()
 
     const form = useForm<RegisterSchema>({
         resolver: zodResolver(registerSchema),
@@ -20,14 +22,11 @@ export default function RegisterForm() {
     async function onSubmit(data: RegisterSchema) {
         try{
             console.log("register submitted ...", data)
-            await new Promise<void>((resolve) =>
-                setTimeout(() => {
-                    console.log(data)
-                    resolve()
-                }, 1000))
+            await register(data)
             toast.success("Registration successful!")
+            navigate("/login")
         } catch(error){
-            toast.error("Failed to register!")
+            toast.error("Registration failed!")
             console.error(error)
         }
     }
