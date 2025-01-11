@@ -3,71 +3,55 @@ import { UserTable } from "../../components/admin/user-table";
 import { User } from "../../types/users";
 import { AlertCircle } from "lucide-react";
 import { UserRole } from "../../types/users";
+import { usersApi } from "../../service/users";
+import { toast } from "sonner";
 
-// Temporary mock data
-const mockUsers: User[] = [
-  {
-    id: "123e4567-e89b-12d3-a456-426614174000",
-    username: "john.doe",
-    email: "john@example.com",
-    firstname: "John",
-    lastname: "Doe",
-    phoneNumber: "123-456-7890",
-    role: UserRole.CUSTOMER,
-  },
-  {
-    id: "987fcdeb-51d3-12d3-a456-426614174000",
-    username: "admin.user",
-    email: "admin@example.com",
-    firstname: "Admin",
-    lastname: "User",
-    phoneNumber: "098-765-4321",
-    role: UserRole.ADMIN,
-  },
-  {
-    id: "456bcdef-89a1-12d3-a456-426614174000",
-    username: "store.owner",
-    email: "store@example.com",
-    firstname: "Store",
-    lastname: "Owner",
-    phoneNumber: "555-123-4567",
-    role: UserRole.STORE_OWNER,
-  },
-];
 
 export default function ManageUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  const handleDeleteUser = (userId: string) => {
-    // Remove user from state
-    setUsers(users.filter(user => user.id !== userId));
-    // TODO: API call to delete user
-    console.log("deleting user", userId);
+  const handleDeleteUser = async (userId: string) => {
+    try {
+      await usersApi.deleteUser(userId);
+      setUsers(users.filter((user) => user.id !== userId));
+      toast.success("User deleted successfully");
+    } catch (err) {
+      console.error("Failed to delete user:", err);
+      toast.error("Failed to delete user");
+    }
   };
 
-  const handlePromoteUser = (userId: string) => {
-    // Update user role in state
-    setUsers(users.map(user => {
-      if (user.id === userId) {
-        return {
-          ...user,
-          role: UserRole.STORE_OWNER
-        };
-      }
-      return user;
-    }));
-    // TODO: API call to promote user
-    console.log("promoting user", userId);
+  const handlePromoteUser = async (userId: string) => {
+    try {
+      const updatedUser = await usersApi.updateUserRole(
+        userId,
+        UserRole.STORE_OWNER
+      );
+      setUsers(users.map((user) => (user.id === userId ? updatedUser : user)));
+      toast.success("User promoted successfully");
+    } catch (err) {
+      console.error("Failed to promote user:", err);
+      toast.error("Failed to promote user");
+    }
   };
 
   useEffect(() => {
-    // Simulate API call with mock data
-    setTimeout(() => {
-      setUsers(mockUsers);
-      setLoading(false);
-    }, 500);
+    const loadUsers = async () => {
+      try {
+        setLoading(true);
+        const data = await usersApi.getUsers();
+        setUsers(data);
+      } catch (err) {
+        console.error("Failed to load users:", err);
+        setError("Failed to load users");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadUsers();
   }, []);
 
   if (loading) return <div>Loading users...</div>;
@@ -89,9 +73,7 @@ export default function ManageUsersPage() {
     <div className="max-w-7xl mx-auto px-4 py-8">
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900">Manage Users</h1>
-        <p className="text-gray-600 text-lg">
-          View and manage user accounts
-        </p>
+        <p className="text-gray-600 text-lg">View and manage user accounts</p>
       </div>
       <UserTable
         users={users}
