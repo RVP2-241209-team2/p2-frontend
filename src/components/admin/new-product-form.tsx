@@ -95,7 +95,7 @@ const NewProductForm = () => {
         imageUrl: form.getValues("image"),
       };
 
-      const response = await api.post("/api/products", productData);
+      const response = await api.post("/public/v1/products", productData);
 
       if (response.status === 201) {
         toast.success("Product created successfully!");
