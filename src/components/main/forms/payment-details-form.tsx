@@ -41,18 +41,18 @@ export default function PaymentMethodForm({
             Expiry Date
           </label>
           <input
-            {...register("expiryDate")}
+            {...register("expireDate")}
             type="text"
             className="w-full border border-gray-300 rounded-lg px-4 py-2"
             placeholder="MM/YY"
           />
-          {errors.expiryDate && (
+          {errors.expireDate && (
             <p className="mt-1 text-sm text-red-600">
-              {errors.expiryDate.message}
+              {errors.expireDate.message}
             </p>
           )}
         </div>
-        <div>
+        {/* <div>
           <label className="block text-sm font-medium text-gray-700 mb-1">
             CVC
           </label>
@@ -65,7 +65,7 @@ export default function PaymentMethodForm({
           {errors.cvc && (
             <p className="mt-1 text-sm text-red-600">{errors.cvc.message}</p>
           )}
-        </div>
+        </div> */}
       </div>
       <button
         type="submit"

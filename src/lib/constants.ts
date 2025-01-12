@@ -1,5 +1,7 @@
 import { Home, Package, ShoppingCart, User } from "lucide-react";
 
+export const API_URL = "http://localhost:1234/api";
+
 export const NAV_LINKS = [
   {
     label: "Home",
@@ -23,12 +25,20 @@ export const NAV_LINKS = [
   },
 ];
 
-export const ADMIN_NAV_LINKS = [
+export const STORE_OWNER_NAV_LINKS = [
   {
     label: "Dashboard",
     href: "/admin",
     icon: Home,
   },
+  {
+    label: "Products",
+    href: "/admin/products",
+    icon: Package,
+  },
+];
+
+export const ADMIN_NAV_LINKS = [
   {
     label: "Manage Users",
     href: "/admin/users",
@@ -37,11 +47,6 @@ export const ADMIN_NAV_LINKS = [
   {
     label: "Orders",
     href: "/admin/orders",
-    icon: Package,
-  },
-  {
-    label: "Products",
-    href: "/admin/products",
     icon: Package,
   },
 ];
