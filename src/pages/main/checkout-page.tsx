@@ -1,12 +1,53 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { CreateAddressModal } from "./address-form-modal";
+import { set } from "react-hook-form";
+import { useAuth } from "../../context/AuthContext";
+
+export interface Address{
+  id: string;
+  userId: string;
+  name: string;
+  addressLine1: string;
+  addressLine2: string;
+  city: string;
+  state: string;
+  zipCode: string;
+  country: string;
+  phone: string;
+}
+
+export interface User{
+  id: string;
+  username: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  phoneNumber: string;
+}
+
+export interface Payment{
+  id: string;
+  user: User;
+  cardNumber: string;
+  cardHolderName: string;
+  expireDate: string;
+  address: Address;
+  isDefault: boolean;
+}
 
 export default function CheckoutPage() {
 // check if user is signed in.
   const navigate = useNavigate();
+  const auth = useAuth();
+  const [addressModal, setAddressModal] = useState<boolean>(false);
   const [addressSecion, setaddressSecion] = useState(true);
   const [payment, setPayment] = useState(false);
   const [orderSection, setOrderSection] = useState(false)
+
+  const addAddress = ()=>{
+    setAddressModal(true);
+  }
 
   const onAddress = ()=>{
     setaddressSecion(true);
@@ -49,14 +90,14 @@ export default function CheckoutPage() {
             <div className="text-lg font-medium py-2 border-b border-white mx-3">Your addresses</div>
             <div className="my-2 mx-3">
               <span className="text-[lightgrey] cursor-pointer "><i className="fa-solid fa-plus"></i></span>
-              <span className="text-[dodgerblue] cursor-pointer hover:underline pl-2"> Add a new address</span>
+              <span onClick={addAddress} className="text-[dodgerblue] cursor-pointer hover:underline pl-2"> Add a new address</span>
             </div>
             <div className="cursor-pointer py-2 bg-[lightgrey] pl-3">
               <div onClick={onPayment} className="w-fit py-1 px-3 rounded-3xl font-medium bg-[#ffd105] hover:bg-[#ffc505]">Use this address</div>
             </div>
           </div>
         </div>}
-        
+        {addressModal && <CreateAddressModal onClose={()=>setAddressModal(false)} />}
       </div>  
       <div className="p-2 m-2">
         {payment && <div>

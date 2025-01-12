@@ -5,13 +5,26 @@ import {
   NAV_LINKS,
   STORE_OWNER_NAV_LINKS,
 } from "../../lib/constants";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import SearchBar from "./search-input";
 import { useAuth } from "../../context/AuthContext";
 
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { user, logout } = useAuth();
+  const onOpen = (e:React.MouseEvent<HTMLButtonElement>)=>{
+    if(isDropdownOpen) return;
+    e.stopPropagation();
+    setIsDropdownOpen(true);
+  }
+  useEffect(()=>{
+    if(!isDropdownOpen) return;
+    const closeDropDown = ()=>{
+      setIsDropdownOpen(false);
+    }
+    document.addEventListener('click', closeDropDown)
+    return ()=> document.removeEventListener("click", closeDropDown)
+  },[isDropdownOpen])
 
   const isStoreOwner = user?.role === "STORE_OWNER";
   const isAdmin = user?.role === "ADMIN";
@@ -39,7 +52,7 @@ export default function Navbar() {
           {/* Dropdown Menu Button */}
           <button
             className="p-2 hover:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-600"
-            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+            onClick={onOpen}
           >
             {isDropdownOpen ? (
               <X className="size-6 text-gray-900" />
