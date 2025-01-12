@@ -1,76 +1,134 @@
-import { createContext, ReactNode, useContext, useState } from "react";
-import { LoginSchema, RegisterSchema } from "../lib/zod";
-import axios from "axios";
-import { toast } from "sonner";
-import { AuthContextType, AuthState } from "../types/auth";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  ReactNode,
+} from "react";
+import api from "../lib/axios-temp";
+import {
+  LoginSchema,
+  RegisterSchema,
+  loginSchema,
+  registerSchema,
+} from "../lib/zod";
+import { useNavigate } from "react-router-dom";
 
-const AuthContext = createContext<AuthContextType | undefined>(undefined)
-
-export function AuthProvider({children}: {children: ReactNode}) {
-
-    const[auth, setAuth] = useState<AuthState>(() => {
-        const token = localStorage.getItem("token");
-        const userStr = localStorage.getItem("user");
-        return{
-            token,
-            user: userStr ? JSON.parse(userStr) : null
-        }
-    })
-
-    const login = async (values: LoginSchema) => {
-        await axios.post("http://localhost:1234/auth/login", {
-            withCredentials:true,
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({
-                username: values.username,
-                password: values.password,
-            })
-        })
-        .then((response) => {
-            setAuth({
-                token: response.data.token,
-                user: response.data.user,
-            })
-    
-            localStorage.setItem("token", response.data.token);
-            localStorage.setItem("user", JSON.stringify(response.data.user));
-    
-        })
-        .catch((error) => {
-            toast.error("Failed to login!")
-            console.error(error)
-        })
-    }
-
-    const register = async (values: RegisterSchema) => {
-        await axios.post("http://localhost:1234/auth/register", {
-            withCredentials:true,
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify(values)
-        })
-        .then(() => {
-        })
-        .catch((error) => {
-            toast.error("Failed to register!")
-            console.error(error)
-        })
-    }
-
-    const logout = () => {
-        setAuth({token: null, user: null})
-        localStorage.removeItem("token")
-        localStorage.removeItem("user")
-    }
-
-    return(
-        <AuthContext.Provider value={{...auth, login, register, logout, isAuthenticated: !!auth.token}}> {children} </AuthContext.Provider>
-    )
+interface User {
+  id: string;
+  username: string;
+  firstname: string;
+  lastname: string;
+  role: "ADMIN" | "STORE_OWNER" | "CUSTOMER";
 }
 
-export const useAuth = () : AuthContextType => {
-    const context = useContext(AuthContext)
-    if (!context) {
-        throw new Error("useAuth must be used within an AuthProvider")
-    }
-    return context
+interface AuthContextType {
+  user: User | null;
+  token: string | null;
+  login: (credentials: LoginSchema) => Promise<void>;
+  register: (userData: RegisterSchema) => Promise<void>;
+  logout: () => void;
+  isAuthenticated: boolean;
 }
+
+const AuthContext = createContext<AuthContextType | null>(null);
+
+export const AuthProvider = ({ children }: { children: ReactNode }) => {
+  const navigate = useNavigate();
+
+  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
+
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
+    if (storedToken && storedUser) {
+      setToken(storedToken);
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  const login = async (credentials: LoginSchema) => {
+    try {
+      loginSchema.parse(credentials);
+
+      const { data } = await api.post("/auth/login", credentials);
+
+      setUser(data);
+      setToken(data.token);
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data));
+      navigate("/");
+    } catch (error) {
+      console.error("Login error:", error);
+      throw error;
+    }
+  };
+
+  const register = async (userData: RegisterSchema) => {
+    try {
+      // Remove confirmPassword before sending to API
+      const { confirmPassword, ...registerData } = userData;
+      if (!confirmPassword || confirmPassword !== userData.password) {
+        throw new Error("Passwords do not match");
+      }
+
+      // Validate the complete form data first
+      registerSchema.parse(userData);
+
+      const { data } = await api.post("/users/v1/register", registerData);
+
+      // After successful registration, automatically log in
+      await login({
+        username: userData.username,
+        password: userData.password,
+      });
+
+      return data;
+    } catch (error: any) {
+      console.error("Registration error:", {
+        message: error.message,
+        status: error.response?.status,
+        statusText: error.response?.statusText,
+        data: error.response?.data,
+        headers: error.response?.headers,
+        config: {
+          url: error.config?.url,
+          method: error.config?.method,
+          headers: error.config?.headers,
+          data: error.config?.data,
+        },
+      });
+    }
+  };
+
+  const logout = () => {
+    setUser(null);
+    setToken(null);
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+  };
+
+  return (
+    <AuthContext.Provider
+      value={{
+        user,
+        token,
+        login,
+        register,
+        logout,
+        isAuthenticated: !!token,
+      }}
+    >
+      {children}
+    </AuthContext.Provider>
+  );
+};
+
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+  if (!context) {
+    throw new Error("useAuth must be used within an AuthProvider");
+  }
+  return context;
+};

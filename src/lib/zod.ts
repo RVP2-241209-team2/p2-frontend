@@ -2,24 +2,46 @@ import * as z from "zod";
 import { CATEGORIES } from "./constants";
 
 export const loginSchema = z.object({
-    username: z.string().min(1, { message: "Username is required" }),
-    password: z.string().min(1, { message: "Password is required" })
-})
+  username: z.string().min(1, { message: "Username is required" }),
+  password: z.string().min(1, { message: "Password is required" }),
+});
 
-export type LoginSchema = z.infer<typeof loginSchema>
+export type LoginSchema = z.infer<typeof loginSchema>;
 
-export const registerSchema = z.object({
-    username: z.string().min(1, { message: "Username is required" }).max(50, { message: "Username must be less than 50 characters" }),
-    password: z.string().min(6, { message: "Password must be at least 6 characters" }),
+// Updated register schema to match backend
+export const registerSchema = z
+  .object({
+    username: z
+      .string()
+      .min(1, { message: "Username is required" })
+      .max(50, { message: "Username must be less than 50 characters" }),
+    firstName: z
+      .string()
+      .min(1, { message: "First name is required" })
+      .max(50, { message: "First name must be less than 50 characters" }),
+    lastName: z
+      .string()
+      .min(1, { message: "Last name is required" })
+      .max(50, { message: "Last name must be less than 50 characters" }),
+    email: z.string().email({ message: "Invalid email address" }),
+    password: z
+      .string()
+      .min(6, { message: "Password must be at least 6 characters" }),
     confirmPassword: z.string(),
-    role: z.enum(["SHOPPER", "MANAGER"])
-}).refine((data) => data.password === data.confirmPassword, {
+    phoneNumber: z
+      .string()
+      .min(10, { message: "Phone number must be at least 10 digits" })
+      .regex(/^\d+$/, { message: "Phone number must contain only digits" }),
+    role: z.enum(["ADMIN", "STORE_OWNER", "CUSTOMER"]),
+  })
+  .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
-    path: ["confirmPassword"]
-})
+    path: ["confirmPassword"],
+  });
 
-export type RegisterSchema = z.infer<typeof registerSchema>
+export type RegisterSchema = z.infer<typeof registerSchema>;
 
+// Existing product schema
 export const newProductSchema = z.object({
   name: z
     .string()
@@ -39,30 +61,38 @@ export const newProductSchema = z.object({
 
 export type NewProduct = z.infer<typeof newProductSchema>;
 
-// account-page schemas/types
+// Updated address schema to match backend
 export const addressSchema = z.object({
-  label: z.string().min(1, "Address label is required"),
-  street: z.string().min(1, "Street address is required"),
-  city: z.string().min(1, "City is required"),
-  state: z.string().length(2, "State must be 2 characters"),
-  zipCode: z.string()
-    .length(5, "ZIP code must be 5 digits")
-    .regex(/^\d+$/, "ZIP code must contain only digits"),
+  addressLine1: z.string().min(1, { message: "Address line 1 is required" }),
+  addressLine2: z.string().optional(),
+  city: z.string().min(1, { message: "City is required" }),
+  state: z.string().length(2, { message: "State must be 2 characters" }),
+  zipCode: z
+    .string()
+    .length(5, { message: "ZIP code must be 5 digits" })
+    .regex(/^\d+$/, { message: "ZIP code must contain only digits" }),
+  country: z.string().min(1, { message: "Country is required" }),
+  type: z.enum(["BILLING", "SHIPPING"]),
 });
 
 export type AddressFormData = z.infer<typeof addressSchema>;
 
+// Updated payment schema to match backend
 export const paymentSchema = z.object({
-  cardNumber: z.string()
-    .min(16, "Card number must be 16 digits")
-    .max(16, "Card number must be 16 digits")
-    .regex(/^\d+$/, "Card number must contain only digits"),
-  expiryDate: z.string()
-    .regex(/^(0[1-9]|1[0-2])\/([0-9]{2})$/, "Expiry date must be in MM/YY format"),
-  cvc: z.string()
-    .min(3, "CVC must be 3 digits")
-    .max(4, "CVC must be 3-4 digits")
-    .regex(/^\d+$/, "CVC must contain only digits"),
+  cardNumber: z
+    .string()
+    .length(16, { message: "Card number must be 16 digits" })
+    .regex(/^\d+$/, { message: "Card number must contain only digits" }),
+  cardHolderName: z
+    .string()
+    .min(1, { message: "Card holder name is required" }),
+  expireDate: z
+    .string()
+    .regex(/^(0[1-9]|1[0-2])\/([0-9]{2})$/, {
+      message: "Expiry date must be in MM/YY format",
+    }),
+  addressId: z.string().uuid({ message: "Invalid address ID" }),
+  isDefault: z.boolean().default(false),
 });
 
 export type PaymentFormData = z.infer<typeof paymentSchema>;

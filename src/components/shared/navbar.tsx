@@ -1,13 +1,20 @@
 import { Menu, ShoppingCart, X } from "lucide-react";
 import { Link } from "react-router-dom";
-import { ADMIN_NAV_LINKS, NAV_LINKS } from "../../lib/constants";
+import {
+  ADMIN_NAV_LINKS,
+  NAV_LINKS,
+  STORE_OWNER_NAV_LINKS,
+} from "../../lib/constants";
 import { useState } from "react";
 import SearchBar from "./search-input";
+import { useAuth } from "../../context/AuthContext";
 
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
+  const { user, logout } = useAuth();
 
-  const isAdmin = true; // TODO: check auth context for user role
+  const isStoreOwner = user?.role === "STORE_OWNER";
+  const isAdmin = user?.role === "ADMIN";
 
   return (
     <header className="bg-zinc-50 shadow-xl h-16 sticky top-0 z-50">
@@ -24,11 +31,11 @@ export default function Navbar() {
             <SearchBar />
           </div>
 
-          {/* Desktop Nav Links */}
-          {/* <div className="hidden lg:flex items-center gap-x-4">
-            <h1>Desktop Nav Links</h1>
-          </div> */}
-
+          {user ? (
+            <button onClick={logout}>Logout</button>
+          ) : (
+            <Link to="/login">Login</Link>
+          )}
           {/* Dropdown Menu Button */}
           <button
             className="p-2 hover:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-600"
@@ -68,6 +75,23 @@ export default function Navbar() {
                   </Link>
                 );
               })}
+              {isStoreOwner && (
+                <div className="flex items-center gap-x-2 py-3 text-sm text-gray-900 hover:text-sky-600">
+                  {STORE_OWNER_NAV_LINKS.map((link) => {
+                    const Icon = link.icon;
+                    return (
+                      <Link
+                        to={link.href}
+                        key={link.label}
+                        className="flex items-center gap-x-2 py-3 text-sm text-gray-900 hover:text-sky-600"
+                      >
+                        <Icon className="size-4" />
+                        <span>{link.label}</span>
+                      </Link>
+                    );
+                  })}
+                </div>
+              )}
               {isAdmin && (
                 <div className="flex items-center gap-x-2 py-3 text-sm text-gray-900 hover:text-sky-600">
                   {ADMIN_NAV_LINKS.map((link) => {

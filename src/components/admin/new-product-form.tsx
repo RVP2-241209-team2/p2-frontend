@@ -1,5 +1,4 @@
 import { useForm } from "react-hook-form";
-import { NewProduct, newProductSchema } from "../../lib/zod";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CATEGORIES } from "../../lib/constants";
 import { useEffect, useState } from "react";
@@ -7,6 +6,7 @@ import { useRef } from "react";
 import { mockGetPresignedUrl, mockUploadToS3 } from "../../lib/mock-s3";
 import { Loader2, X } from "lucide-react";
 import { toast } from "sonner";
+import { NewProduct, newProductSchema } from "../../lib/zod";
 
 const NewProductForm = () => {
   const [uploadedFile, setUploadedFile] = useState<{
