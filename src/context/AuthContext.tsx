@@ -5,7 +5,7 @@ import {
   useEffect,
   ReactNode,
 } from "react";
-import api from "../lib/axios-temp";
+import api from "../lib/axios";
 import {
   LoginSchema,
   RegisterSchema,

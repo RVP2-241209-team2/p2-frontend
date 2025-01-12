@@ -3,10 +3,13 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { CATEGORIES } from "../../lib/constants";
 import { useEffect, useState } from "react";
 import { useRef } from "react";
-import { mockGetPresignedUrl, mockUploadToS3 } from "../../lib/mock-s3";
 import { Loader2, X } from "lucide-react";
 import { toast } from "sonner";
 import { NewProduct, newProductSchema } from "../../lib/zod";
+import { getPresignedUrl } from "../../utils/s3";
+import { uploadToS3 } from "../../utils/s3";
+import axios from "axios";
+import api from "../../lib/axios";
 
 const NewProductForm = () => {
   const [uploadedFile, setUploadedFile] = useState<{
@@ -25,7 +28,7 @@ const NewProductForm = () => {
           price: 0,
           description: "",
           category: "",
-          image: "",
+          image: "" as string,
         })
     ),
   });
@@ -44,51 +47,78 @@ const NewProductForm = () => {
     try {
       setIsUploading(true);
 
-      const { presignedUrl, finalImageUrl, key } = await mockGetPresignedUrl(
-        file.name,
-        file.type
+      const presignedData = await getPresignedUrl(file.name, file.type);
+      console.log(
+        "Presigned data received:",
+        JSON.stringify(presignedData, null, 2)
       );
 
-      await mockUploadToS3(presignedUrl, file);
+      if (!presignedData.finalImageUrl) {
+        throw new Error("No final image URL received");
+      }
 
-      setUploadedFile({ url: finalImageUrl, key });
+      await uploadToS3(presignedData.presignedUrl, file);
 
-      form.setValue("image", key);
+      // Only set the form value if we have a valid URL
+      form.setValue("image", presignedData.finalImageUrl, {
+        shouldValidate: true,
+        shouldDirty: true,
+        shouldTouch: true,
+      });
+
+      setUploadedFile({
+        url: presignedData.finalImageUrl,
+        key: presignedData.key,
+      });
+
+      toast.success("Image uploaded successfully!");
     } catch (e) {
       console.error("Upload failed:", e);
+      toast.error("Failed to upload image");
     } finally {
       setIsUploading(false);
     }
   };
 
   async function onSubmit(data: NewProduct) {
-    // TODO: submit new product to api
+    console.log("Submit attempted with data:", data); // Debug log
+    console.log("Current form values:", form.getValues()); // Debug log
+    console.log("Current uploadedFile:", uploadedFile); // Debug log
     try {
-      // mock api request
-      await new Promise<void>((resolve) =>
-        setTimeout(() => {
-          console.log(data);
-          resolve();
-        }, 1000)
-      );
-      // clear mock persistence
-      localStorage.removeItem("newProductForm");
-      // reset form
-      setUploadedFile(null);
-      if (fileInputRef.current) {
-        fileInputRef.current.value = "";
+      if (!form.getValues("image")) {
+        toast.error("Please upload an image first!");
+        return;
       }
-      form.reset({
-        name: "",
-        price: 0,
-        description: "",
-        category: "",
-        image: "",
-      });
-      toast.success("Product created successfully");
+
+      const productData = {
+        ...data,
+        imageUrl: form.getValues("image"),
+      };
+
+      const response = await api.post("/public/v1/products", productData);
+
+      if (response.status === 201) {
+        toast.success("Product created successfully!");
+        form.reset();
+        setUploadedFile(null);
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+      }
     } catch (error) {
-      toast.error("Failed to create product");
-      console.error(error);
+      console.error("Product creation failed:", error); // Detailed error logging
+
+      if (axios.isAxiosError(error)) {
+        const errorMessage =
+          error.response?.data?.message ||
+          error.response?.data?.error ||
+          error.message ||
+          "Failed to create product";
+        toast.error(errorMessage);
+        console.error("Server error details:", error.response?.data); // Add logging
+      } else {
+        toast.error("An unexpected error occurred");
+      }
     }
   }
 
@@ -155,11 +185,25 @@ const NewProductForm = () => {
             </p>
           )}
           {uploadedFile && (
-            <div
-              onClick={() => setUploadedFile(null)}
-              className="absolute top-0 right-0 cursor-pointer"
-            >
-              <X className="w-5 h-5 text-red-500" />
+            <div className="relative">
+              <img
+                src={uploadedFile.url}
+                alt="Preview"
+                className="w-32 h-32 object-cover rounded-md"
+              />
+              <div
+                onClick={() => {
+                  setUploadedFile(null);
+                  form.setValue("image", "", {
+                    shouldValidate: true,
+                    shouldDirty: true,
+                    shouldTouch: true,
+                  });
+                }}
+                className="absolute top-0 right-0 cursor-pointer"
+              >
+                <X className="w-5 h-5 text-red-500" />
+              </div>
             </div>
           )}
         </div>
@@ -173,7 +217,20 @@ const NewProductForm = () => {
           className="w-full rounded-md border border-gray-300 p-2"
         />
       </div>
-
+      {Object.keys(form.formState.errors).length > 0 && (
+        <div className="p-3 rounded bg-red-50 border border-red-200">
+          <p className="font-medium text-red-800 mb-1">
+            Please fix the following errors:
+          </p>
+          <ul className="list-disc list-inside text-sm text-red-600">
+            {Object.entries(form.formState.errors).map(([field, error]) => (
+              <li key={field} className="capitalize">
+                {error?.message}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
       <button
         type="submit"
         disabled={isUploading}
