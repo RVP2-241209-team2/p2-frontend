@@ -34,19 +34,8 @@ const NewProductForm = () => {
   });
 
   useEffect(() => {
-    console.log("Form errors:", form.formState.errors);
-  }, [form.formState]);
-
-  useEffect(() => {
     const subscription = form.watch((value) => {
       localStorage.setItem("newProductForm", JSON.stringify(value));
-    });
-    return () => subscription.unsubscribe();
-  }, [form]);
-
-  useEffect(() => {
-    const subscription = form.watch((value) => {
-      console.log("Form values changed:", value);
     });
     return () => subscription.unsubscribe();
   }, [form]);
