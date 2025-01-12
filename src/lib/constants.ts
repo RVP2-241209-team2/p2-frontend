@@ -1,6 +1,6 @@
 import { Home, Package, ShoppingCart, User } from "lucide-react";
 
-export const API_URL = "http://localhost:1234/api";
+export const API_URL = "http://localhost:8081/api";
 
 export const NAV_LINKS = [
   {
