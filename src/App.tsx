@@ -26,6 +26,7 @@ import AccountPage from "./pages/main/account-page";
 import CategoryPage from "./pages/main/category-page";
 import ProductDetailsPage from "./pages/admin/product-details-page";
 import { ModalProvider } from "./Modal/Modal";
+import { AuthProvider } from "./context/AuthContext";
 
 function App() {
   return (
