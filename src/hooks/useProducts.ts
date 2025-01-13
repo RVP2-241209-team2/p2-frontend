@@ -71,7 +71,7 @@ export const useProducts = () => {
   );
 
   const searchProducts = useCallback(
-    async (name: string): Promise<Product[] | null> => {
+    async (name: string|null): Promise<Product[] | null> => {
       setLoading(true);
       setError(null);
 
