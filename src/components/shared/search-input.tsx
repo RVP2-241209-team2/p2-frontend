@@ -1,8 +1,10 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 const SearchInput = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const navigate = useNavigate();
 
   const categories = [
     { id: "all", name: "All" },
@@ -21,6 +23,10 @@ const SearchInput = () => {
       "for:",
       searchQuery
     );
+    let navString = "/products"
+    if(selectedCategory != "all") navString += `/category/${selectedCategory}`
+    if(searchQuery != "") navString += `?name=${searchQuery}`
+    navigate(navString)
   };
 
   return (

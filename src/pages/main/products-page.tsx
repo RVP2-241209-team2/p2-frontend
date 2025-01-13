@@ -3,23 +3,25 @@ import { useEffect } from "react";
 import { useProducts } from "../../hooks/useProducts";
 import { Product } from "../../types/product";
 import { ShoppingCart } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import { BACKGROUND_IMAGES } from "../../lib/constants";
 
 export default function ProductsPage() {
-  const { loading, error, fetchProducts } = useProducts();
+  const { loading, error, searchProducts } = useProducts();
   const [products, setProducts] = useState<Product[]>([]);
+  const [searchParams] = useSearchParams();
+
 
   useEffect(() => {
     const loadProducts = async () => {
-      const response = await fetchProducts();
+      const response = await searchProducts(searchParams.get("name"));
       if (response) {
         console.log(response);
         setProducts(response);
       }
     };
     loadProducts();
-  }, [fetchProducts]);
+  }, [searchProducts, searchParams]);
 
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
