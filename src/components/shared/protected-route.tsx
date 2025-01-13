@@ -9,13 +9,13 @@ interface ProtectedRouteProps {
 export default function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
   const { user, isAuthenticated } = useAuth();
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
-  }
+  // if (!isAuthenticated) {
+  //   return <Navigate to="/login" />;
+  // }
 
-  if (!user || !allowedRoles.includes(user.role)) {
-    return <Navigate to="/" />;
-  }
+  // if (!user || !allowedRoles.includes(user.role)) {
+  //   return <Navigate to="/" />;
+  // }
 
   return <Outlet />;
 }

@@ -9,8 +9,10 @@ import { getPresignedUrl } from "../../utils/s3";
 import { uploadToS3 } from "../../utils/s3";
 import axios from "axios";
 import api from "../../lib/axios";
+import { useNavigate } from "react-router-dom";
 
 const NewProductForm = () => {
+  const navigate = useNavigate();
   const [uploadedFile, setUploadedFile] = useState<{
     url: string;
     key: string;
@@ -97,7 +99,6 @@ const NewProductForm = () => {
         images: form.getValues("images"),
       };
 
-
       const response = await api.post("/public/v1/products", productData);
 
       console.log("Response:", {
@@ -113,6 +114,7 @@ const NewProductForm = () => {
         if (fileInputRef.current) {
           fileInputRef.current.value = "";
         }
+        navigate(`/store-owner/products/${response.data.id}`);
       }
     } catch (error) {
       console.error("Product creation failed:", error); // Detailed error logging

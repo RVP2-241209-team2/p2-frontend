@@ -7,8 +7,8 @@ import { useParams } from "react-router-dom";
 
 export default function ProductDetailPage() {
   const { loading, error, fetchProductById } = useProducts();
-  const [product, setProduct] = useState<Product | null>(null);
 
+  const [product, setProduct] = useState<Product | null>(null);
   const { id } = useParams();
 
   useEffect(() => {
@@ -54,7 +54,6 @@ export default function ProductDetailPage() {
           </div>
           <div className="grid grid-cols-4 gap-4">
             {product.images?.slice(0, 4).map((image, index) => (
-              // todo: image modal
               <button
                 key={index}
                 className="aspect-square rounded-md overflow-hidden bg-gray-100"
@@ -72,9 +71,7 @@ export default function ProductDetailPage() {
         {/* Right Column - Product Info */}
         <div className="space-y-8">
           <div>
-            <h1 className="text-3xl font-bold text-gray-900">
-              {product.name}
-            </h1>
+            <h1 className="text-3xl font-bold text-gray-900">{product.name}</h1>
             <div className="mt-4 flex items-center gap-4">
               <div className="flex items-center">
                 <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
@@ -157,19 +154,22 @@ export default function ProductDetailPage() {
       </div>
 
       {/* Reviews Section */}
+
+      {/**review form */}
+
+      {/**review list */}
       <div className="border-t pt-12">
         <h2 className="text-2xl font-bold mb-8">Customer Reviews</h2>
         <div className="space-y-8">
-          {/** TODO: products from api */}
-          {[1, 2, 3].map((_, index) => (
-            <div key={index} className="border-b pb-8">
+          {[1, 2, 3].map((review) => (
+            <div key={review} className="border-b pb-8">
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
                   <div className="w-12 h-12 rounded-full bg-gray-200" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <h4 className="font-medium">John Doe</h4>
+                    <h4 className="font-medium">reviewer</h4>
                     <span className="text-sm text-gray-500">•</span>
                     <span className="text-sm text-gray-500">2 days ago</span>
                   </div>
