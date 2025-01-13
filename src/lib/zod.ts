@@ -32,7 +32,11 @@ export const registerSchema = z
       .string()
       .min(10, { message: "Phone number must be at least 10 digits" })
       .regex(/^\d+$/, { message: "Phone number must contain only digits" }),
-    role: z.enum(["ADMIN", "STORE_OWNER", "CUSTOMER"]),
+    role: z.union([
+      z.literal("ADMIN"),
+      z.literal("STORE_OWNER"),
+      z.literal("CUSTOMER"),
+    ]),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
@@ -86,11 +90,9 @@ export const paymentSchema = z.object({
   cardHolderName: z
     .string()
     .min(1, { message: "Card holder name is required" }),
-  expireDate: z
-    .string()
-    .regex(/^(0[1-9]|1[0-2])\/([0-9]{2})$/, {
-      message: "Expiry date must be in MM/YY format",
-    }),
+  expireDate: z.string().regex(/^(0[1-9]|1[0-2])\/([0-9]{2})$/, {
+    message: "Expiry date must be in MM/YY format",
+  }),
   addressId: z.string().uuid({ message: "Invalid address ID" }),
   isDefault: z.boolean().default(false),
 });

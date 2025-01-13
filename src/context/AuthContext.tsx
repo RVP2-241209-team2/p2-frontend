@@ -13,14 +13,7 @@ import {
   registerSchema,
 } from "../lib/zod";
 import { useNavigate } from "react-router-dom";
-
-interface User {
-  id: string;
-  username: string;
-  firstname: string;
-  lastname: string;
-  role: "ADMIN" | "STORE_OWNER" | "CUSTOMER";
-}
+import { User } from "../types/users";
 
 interface AuthContextType {
   user: User | null;
@@ -85,6 +78,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
       });
 
       return data;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Registration error:", {
         message: error.message,
