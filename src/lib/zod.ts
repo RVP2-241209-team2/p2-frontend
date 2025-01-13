@@ -55,6 +55,7 @@ export const newProductSchema = z.object({
     .string()
     .min(1, { message: "Description is required" })
     .max(250, { message: "Description must be less than 250 characters" }),
+  // todo: put tags in backend api and use those
   // category: z.enum(CATEGORIES.map((c) => c.slug) as [string, ...string[]], {
   //   required_error: "Category is required",
   //   invalid_type_error: "Please select a valid category",

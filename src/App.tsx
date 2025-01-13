@@ -18,7 +18,7 @@ import ManageUsersPage from "./pages/admin/manage-users-page";
 import DashboardPage from "./pages/store-owner/dashboard-page";
 import OrdersPage from "./pages/admin/orders-page";
 import StoreOwnerProductsPage from "./pages/store-owner/products";
-import EditProductsPage from "./pages/store-owner/edit-products-page";
+import EditProductsPage from "./pages/store-owner/edit-product-page";
 
 // Main pages
 import HomePage from "./pages/main/home-page";

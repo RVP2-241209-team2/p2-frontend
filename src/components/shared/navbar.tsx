@@ -6,25 +6,25 @@ import {
   STORE_OWNER_NAV_LINKS,
 } from "../../lib/constants";
 import { useState, useEffect } from "react";
-import SearchBar from "./search-input";
 import { useAuth } from "../../context/AuthContext";
+import SearchInput from "./search-input";
 
 export default function Navbar() {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const { user, logout } = useAuth();
-  const onOpen = (e:React.MouseEvent<HTMLButtonElement>)=>{
-    if(isDropdownOpen) return;
+  const onOpen = (e: React.MouseEvent<HTMLButtonElement>) => {
+    if (isDropdownOpen) return;
     e.stopPropagation();
     setIsDropdownOpen(true);
-  }
-  useEffect(()=>{
-    if(!isDropdownOpen) return;
-    const closeDropDown = ()=>{
+  };
+  useEffect(() => {
+    if (!isDropdownOpen) return;
+    const closeDropDown = () => {
       setIsDropdownOpen(false);
-    }
-    document.addEventListener('click', closeDropDown)
-    return ()=> document.removeEventListener("click", closeDropDown)
-  },[isDropdownOpen])
+    };
+    document.addEventListener("click", closeDropDown);
+    return () => document.removeEventListener("click", closeDropDown);
+  }, [isDropdownOpen]);
 
   const isStoreOwner = user?.role === "STORE_OWNER";
   const isAdmin = user?.role === "ADMIN";
@@ -41,7 +41,7 @@ export default function Navbar() {
 
           {/* Categories */}
           <div className="hidden md:flex md:justify-center">
-            <SearchBar />
+            <SearchInput />
           </div>
 
           {user ? (
@@ -71,7 +71,7 @@ export default function Navbar() {
             }`}
           >
             <div className="md:hidden px-4 py-2">
-              <SearchBar />
+              <SearchInput />
             </div>
             <div className="px-4 py-2 flex justify-around mx-auto">
               {NAV_LINKS.map((link) => {

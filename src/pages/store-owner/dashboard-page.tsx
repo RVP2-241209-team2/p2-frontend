@@ -1,8 +1,8 @@
 import { Link } from "react-router-dom";
 import { BarChart3, Package, DollarSign, Users } from "lucide-react";
-import NewProductForm from "../../components/admin/new-product-form";
-import StatCard from "../../components/admin/stat-card";
-import PaginatedProducts from "../../components/admin/paginated-products";
+import NewProductForm from "../../components/store-owner/new-product-form";
+import StatCard from "../../components/store-owner/stat-card";
+import PaginatedProducts from "../../components/store-owner/paginated-products";
 
 export default function DashboardPage() {
   return (
