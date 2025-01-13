@@ -2,6 +2,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 import "./cart-page.css";
 import { useNavigate } from "react-router-dom";
+import api from "../../lib/axios";
 
 interface FakeItem{
   id: number;
@@ -102,7 +103,18 @@ export default function CartPage() {
 
     }
   }
-  const deleteItem = ()=>{}
+  const deleteItem = async(id:number)=>{
+    const response = await api.delete(`/customers/cart/RemoveItem/${id}`)
+    if(response.status === 200){
+      const newItems = items.filter((item)=>item.id!==id);
+      setItems(newItems);
+      setTotal(newItems.reduce((acc:number, item:FakeItem) => acc + item.price, 0));
+      const checkedItems:{ [key: string]: boolean } = {}
+      newItems.forEach((item:FakeItem) =>{checkedItems[`${item.id}`]=true})
+      setCheckedItems(checkedItems);
+      setPages(Array.from({length: Math.ceil(newItems.length/4)}, (_, i) => i+1));
+    }
+  }
   const reduceItem = ()=>{setQuantity(quantity-1)}
   const addItem = ()=>{setQuantity(quantity+1)}
   
@@ -123,7 +135,7 @@ export default function CartPage() {
                 <p>{item.description}</p>
                 <div className="flex items-center">
                   <div className="item-Quantity-Controller">
-                    {quantity===1 && <i onClick={deleteItem} className="fa-solid fa-trash cursor-pointer"></i>}
+                    {quantity===1 && <i onClick={()=>deleteItem(item.id)} className="fa-solid fa-trash cursor-pointer"></i>}
                     {quantity>=2 &&<i onClick={reduceItem} className="fa-solid fa-minus cursor-pointer"></i>}
                     <span>{quantity}</span>
                     <i onClick={addItem} className="fa-solid fa-plus cursor-pointer"></i>
