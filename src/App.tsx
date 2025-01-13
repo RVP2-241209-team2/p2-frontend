@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 // Bootsrtrap CSS
 import "bootstrap/dist/css/bootstrap.min.css";
+
 // Layout components
 import AuthLayout from "./components/auth/layout";
 import AdminLayout from "./components/admin/layout";
@@ -11,9 +12,13 @@ import LoginPage from "./pages/auth/login-page";
 import RegisterPage from "./pages/auth/register-page";
 
 // Admin pages
-import DashboardPage from "./pages/admin/dashboard-page";
 import ManageUsersPage from "./pages/admin/manage-users-page";
-import OrdersPage from "./pages/admin/orders-page";
+
+// Store owner pages
+import DashboardPage from "./pages/store-owner/dashboard-page";
+import OrdersPage from "./pages/store-owner/orders-page";
+import StoreOwnerProductsPage from "./pages/store-owner/products";
+import EditProductsPage from "./pages/store-owner/edit-products-page";
 
 // Main pages
 import HomePage from "./pages/main/home-page";
@@ -24,12 +29,10 @@ import CheckoutPage from "./pages/main/checkout-page";
 import FAQPage from "./pages/main/faq-page";
 import AccountPage from "./pages/main/account-page";
 import CategoryPage from "./pages/main/category-page";
-import ProductDetailsPage from "./pages/admin/product-details-page";
 import ProtectedRoute from "./components/shared/protected-route";
 
 function App() {
   return (
-    
     <Routes>
       {/* Auth routes */}
       <Route element={<AuthLayout />}>
@@ -48,10 +51,10 @@ function App() {
       <Route
         element={<ProtectedRoute allowedRoles={["STORE_OWNER", "ADMIN"]} />}
       >
-        <Route path="/admin" element={<AdminLayout />}>
+        <Route path="/store-owner" element={<MainLayout />}>
           <Route index element={<DashboardPage />} />
-          <Route path="products/:id" element={<ProductDetailsPage />} />
-          <Route path="products" element={<ProductsPage />} />
+          <Route path="products/:id" element={<EditProductsPage />} />
+          <Route path="products" element={<StoreOwnerProductsPage />} />
           <Route path="orders" element={<OrdersPage />} />
         </Route>
       </Route>

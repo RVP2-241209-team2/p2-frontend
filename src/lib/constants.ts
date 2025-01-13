@@ -28,12 +28,12 @@ export const NAV_LINKS = [
 export const STORE_OWNER_NAV_LINKS = [
   {
     label: "Dashboard",
-    href: "/admin",
+    href: "/store-owner",
     icon: Home,
   },
   {
     label: "Products",
-    href: "/admin/products",
+    href: "/store-owner/products",
     icon: Package,
   },
 ];
