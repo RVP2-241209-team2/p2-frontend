@@ -57,8 +57,10 @@ export default function CheckoutPage() {
   const navigate = useNavigate();
   const {user, token} = useAuth();
 
+  // selected address and payment
   const [selectAddress, setSelectAddress] = useState<Address>();
   const [selectPayment, setSelectPayment] = useState<Payment>();
+
   const [addressModal, setAddressModal] = useState<boolean>(false);
   const [paymentModal, setPaymentModal] = useState<boolean>(false);
   const [addressSecion, setaddressSecion] = useState(true);
@@ -80,10 +82,10 @@ export default function CheckoutPage() {
     const fetchAddresses = async ()=>{
     const addresses = await axios.get(`http://3.144.215.146:8081/api/v1/users/${user?.id}/addresses`, {headers: {Authorization: `Bearer ${token}`}});
     setAddresses(addresses.data);
-    setAddress(addresses.data[0])
+    setSelectAddress(addresses.data[0])
     const payments = await axios.get(`http://3.144.215.146:8081/api/v1/users/${user?.id}/payment-methods`, {headers: {Authorization: `Bearer ${token}`}});
     setPaymentDetails(payments.data);
-    setPaymentDetail(payments.data.find((payment:Payment)=>payment.isDefault));
+    setSelectPayment(payments.data.find((payment:Payment)=>payment.isDefault));
   }
     // fetchAddresses();
   },[]);
@@ -114,6 +116,9 @@ export default function CheckoutPage() {
     // setPaymentDetail(undefined);
   }
 
+  // if(!user){
+  //   return null;
+  // }
 
   return <div className="flex w-[95vw] justify-between">
     <div className="w-[75%] mr-[15px]">
@@ -155,7 +160,7 @@ export default function CheckoutPage() {
             </div>
           </div>
         </div>}
-        {addressModal && <CreateAddressModal onClose={()=>setAddressModal(false)} />}
+        {addressModal && <CreateAddressModal setAddresses={(address: Address)=>setAddresses(()=>[...addresses, address])} setSelectAddress={(address:Address)=>setSelectAddress(address)} onClose={()=>setAddressModal(false)} />}
       </div>  
       <div className="p-2 m-2">
         {paymentSection && <div>

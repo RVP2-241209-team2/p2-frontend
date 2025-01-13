@@ -1,11 +1,18 @@
 import axios from "axios";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { Address, checkoutContext } from "./checkout-page";
 
-
-export const AddressForm:React.FC<{onClose: () =>void}> = ({onClose}) => {
+interface ToggletProps {
+    onClose: () => void;
+    setSelectAddress: (address:Address) => void;
+    setAddresses: (address:Address) => void;
+}
+export const AddressForm:React.FC<ToggletProps> = ({setAddresses, setSelectAddress, onClose}) => {
 
     const auth = useAuth();
+    const paymentContext = useContext(checkoutContext);
+
     const [addressLine1, setAddressLine1] = useState<string>('');
     const [addressLine2, setAddressLine2] = useState<string>('');
     const [city, setCity] = useState<string>('');
@@ -30,6 +37,8 @@ export const AddressForm:React.FC<{onClose: () =>void}> = ({onClose}) => {
                                             {headers: {Authorization: `Bearer ${auth.token}`}});
         if(response.status === 200){
             onClose();
+            setSelectAddress(response.data);
+            setAddresses(response.data);
         }
     }
 
