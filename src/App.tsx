@@ -25,12 +25,10 @@ import FAQPage from "./pages/main/faq-page";
 import AccountPage from "./pages/main/account-page";
 import CategoryPage from "./pages/main/category-page";
 import ProductDetailsPage from "./pages/admin/product-details-page";
-import { ModalProvider } from "./Modal/Modal";
-import { AuthProvider } from "./context/AuthContext";
 
 function App() {
   return (
-    <ModalProvider>
+    
     <Routes>
       {/* Auth routes */}
       <Route element={<AuthLayout />}>
@@ -59,7 +57,6 @@ function App() {
         <Route path="/faq" element={<FAQPage />} />
       </Route>
     </Routes>
-    </ModalProvider>
   );
 }
 
