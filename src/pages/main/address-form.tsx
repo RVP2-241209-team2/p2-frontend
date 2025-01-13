@@ -2,6 +2,7 @@ import axios from "axios";
 import { useContext, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { Address, checkoutContext } from "./checkout-page";
+import api from "../../lib/axios";
 
 interface ToggletProps {
     onClose: () => void;
@@ -32,9 +33,10 @@ export const AddressForm:React.FC<ToggletProps> = ({setAddresses, setSelectAddre
             zipCode,
             country
         }
-        const response = await axios.post(`http://3.144.215.146:8081/api/v1/users/${auth.user?.id}/addresses`, 
-                                            address,
-                                            {headers: {Authorization: `Bearer ${auth.token}`}});
+        // const response = await axios.post(`http://3.144.215.146:8081/api/v1/users/${auth.user?.id}/addresses`, 
+        //                                     address,
+        //                                     {headers: {Authorization: `Bearer ${auth.token}`}});
+        const response = await api.post<Address>(`/v1/users/${auth.user?.id}/addresses`, address);
         if(response.status === 200){
             onClose();
             setSelectAddress(response.data);

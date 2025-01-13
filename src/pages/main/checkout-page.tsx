@@ -115,6 +115,12 @@ export default function CheckoutPage() {
     setPaymentModal(false);
     // setPaymentDetail(undefined);
   }
+  const placeOrder = async ()=>{
+
+    
+    const resposne = await axios.post(`http://3.144.215.146:8081/api/public/orders/customer/order/create`, {headers  : {Authorization: `Bearer ${token}`}});
+    
+  }
 
   // if(!user){
   //   return null;
@@ -223,7 +229,7 @@ export default function CheckoutPage() {
         {addressSecion && <div onClick={onPayment} className="text-center cursor-pointer mx-auto py-1 px-4 mb-2 rounded-3xl bg-[#ffd105] hover:bg-[#ffc505]">Use this address</div>}
         {paymentSection && <div onClick={onOrder} className="text-center cursor-pointer mx-auto py-1 px-4 mb-2 rounded-3xl bg-[#ffd105] hover:bg-[#ffc505]">Use this payment method</div>}
         {orderSection && <div>
-        <div className="text-center cursor-pointer mx-auto py-1 px-4 mb-2 rounded-3xl bg-[#ffd105] hover:bg-[#ffc505]">Place your order</div>
+        <div onClick={placeOrder} className="text-center cursor-pointer mx-auto py-1 px-4 mb-2 rounded-3xl bg-[#ffd105] hover:bg-[#ffc505]">Place your order</div>
         <p className="pb-3 border-b border-[lightgrey]">By placing your order, you agree to Amazon's <span className="text-[dodgerblue] cursor-pointer underline hover:text-[dimgrey]">privacy notice</span> and <span className="text-[dodgerblue] cursor-pointer underline hover:text-[dimgrey]">conditions of use</span>.</p>
         </div>}
 
@@ -246,7 +252,7 @@ export default function CheckoutPage() {
     </div>
     
     <checkoutContext.Provider value={{setAddressModal, setPaymentModal, paymentDetail, setPaymentDetail, address, billingAddress, setBillingAddress, billingAddressModal, setBillingAddressModal}}>
-      {paymentModal && <CreatePaymentModal onClose={()=>setPaymentModal(false)} setBillingAddress={()=>setBillingAddress(undefined)} setPaymentDetail={()=>setPaymentDetail(undefined)} />}
+      {paymentModal && <CreatePaymentModal onClose={()=>setPaymentModal(false)} setSelectPayment={(payment:Payment)=>setSelectPayment(payment)}  setBillingAddress={()=>setBillingAddress(undefined)} setPaymentDetail={()=>setPaymentDetail(undefined)} />}
       {billingAddressModal && <AddressesListModal addresses={addresses} onClose={()=>setBillingAddressModal(false)} setBillingAddress={()=>setBillingAddress(undefined)} setPaymentDetail={()=>setPaymentDetail(undefined)} />}
     </checkoutContext.Provider>
    
