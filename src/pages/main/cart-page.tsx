@@ -15,14 +15,25 @@ interface FakeItem{
   }
   image: string;
 }
+export interface Cart{
+  id: string;
+  cartItems: CartItem[];
+  total: number;
+}
+export interface CartItem{
+  id:string;
+  product: Product;
+  quantity: number;
+  total: number;
+}
 
-// interface CartItem {
-//   id: number;
-//   cart_id: number;
-//   product_id: number;
-//   quantity: number;
-//   total: number;
-// }
+export interface Product {
+  id: string;
+  name: number;
+  price: number;
+  quantity: number;
+  tags: number;
+}
 export default function CartPage() {
   const nagivate = useNavigate();;
   const [quantity, setQuantity] = useState<number>(2);
@@ -90,8 +101,10 @@ export default function CartPage() {
   const deleteItem = ()=>{}
   const reduceItem = ()=>{setQuantity(quantity-1)}
   const addItem = ()=>{setQuantity(quantity+1)}
-  return <div>
-    <div className="cart-Container">
+  
+
+  return <>
+    <div className="cart-Container ">
       <div className="cart-Items">
         <h2 className="cart-Header">Shopping Cart</h2>
         <div>
@@ -133,5 +146,5 @@ export default function CartPage() {
         <button className="hover:bg-[#ffc505]" onClick={()=>nagivate("/checkout")}>Proceed to checkout</button>
       </div>
     </div>
-  </div>;
+  </>;
 }

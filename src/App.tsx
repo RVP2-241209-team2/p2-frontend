@@ -28,6 +28,7 @@ import ProductDetailsPage from "./pages/admin/product-details-page";
 
 function App() {
   return (
+    
     <Routes>
       {/* Auth routes */}
       <Route element={<AuthLayout />}>
