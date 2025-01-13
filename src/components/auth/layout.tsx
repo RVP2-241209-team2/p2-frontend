@@ -4,7 +4,7 @@ import Footer from "../shared/footer";
 
 export default function AuthLayout() {
   return (
-    <div className="bg-purple-100 min-h-screen flex flex-col gap-16">
+    <div className="bg-purple-200 min-h-screen flex flex-col gap-16">
       <Navbar />
       <main className="flex-1">
         <Outlet />

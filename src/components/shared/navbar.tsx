@@ -1,4 +1,4 @@
-import { Menu, ShoppingCart, X } from "lucide-react";
+import { Menu, X } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   ADMIN_NAV_LINKS,
@@ -31,14 +31,15 @@ export default function Navbar() {
 
   return (
     <header className="bg-zinc-50 shadow-xl h-16 sticky top-0 z-50">
-      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-3">
+      <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-2.5">
         <div className="flex justify-between items-center gap-x-8">
           {/* Logo */}
-          <Link to="/" className="flex items-center hover:cursor-pointer">
-            <ShoppingCart className="size-8 text-sky-600" />
-            <h1 className="ml-3 text-2xl font-bold text-gray-900">Shoply</h1>
-          </Link>
-
+          <div className="w-32">
+            <Link to="/" className="flex items-center hover:cursor-pointer">
+              <img src="/shoply-banner.png" alt="Shoply Logo" />
+            </Link>
+          </div>
+          
           {/* Categories */}
           <div className="hidden md:flex md:justify-center">
             <SearchBar />
