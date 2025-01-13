@@ -1,5 +1,4 @@
 import * as z from "zod";
-import { CATEGORIES } from "./constants";
 
 export const loginSchema = z.object({
   username: z.string().min(1, { message: "Username is required" }),
@@ -51,16 +50,19 @@ export const newProductSchema = z.object({
     .string()
     .min(4, { message: "Name must be at least 4 characters" })
     .max(20, { message: "Name must be less than 20 characters" }),
-  price: z.number().min(0, { message: "Price must be greater than 0" }),
+  price: z.number().min(1, { message: "Price must be greater than 0" }),
   description: z
     .string()
     .min(1, { message: "Description is required" })
     .max(250, { message: "Description must be less than 250 characters" }),
-  category: z.enum(CATEGORIES.map((c) => c.slug) as [string, ...string[]], {
-    required_error: "Category is required",
-    invalid_type_error: "Please select a valid category",
-  }),
-  image: z.string().min(1, { message: "Image is required" }),
+  // category: z.enum(CATEGORIES.map((c) => c.slug) as [string, ...string[]], {
+  //   required_error: "Category is required",
+  //   invalid_type_error: "Please select a valid category",
+  // }),
+  images: z
+    .array(z.string())
+    .min(1, { message: "At least one image is required" }),
+  quantity: z.number().min(1, { message: "Quantity must be greater than 0" }),
 });
 
 export type NewProduct = z.infer<typeof newProductSchema>;

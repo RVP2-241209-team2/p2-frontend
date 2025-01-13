@@ -38,4 +38,14 @@ api.interceptors.response.use(
   }
 );
 
+api.interceptors.request.use((request) => {
+  console.log("Starting Request:", {
+    url: request.url,
+    method: request.method,
+    data: request.data,
+    headers: request.headers,
+  });
+  return request;
+});
+
 export default api;
