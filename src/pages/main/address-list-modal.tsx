@@ -3,9 +3,9 @@ import { Modal } from '../../Modal/Modal';
 import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { checkoutContext } from './checkout-page';
-import { set } from 'react-hook-form';
+import { Address } from './checkout-page';
 
-interface Address {
+interface DummyAddress {
     id: number;
     name: string;
     address: string;
@@ -20,9 +20,10 @@ interface AddressesFormProps {
     onClose: () => void;
     setPaymentDetail: () => void;
     setBillingAddress: () => void;
+    addresses: Address[];
 }
 
-const dummyAddresses: Address[] = [
+const dummyAddresses: DummyAddress[] = [
     {
         id: 1,
         name: 'John Doe',
@@ -41,13 +42,12 @@ const dummyAddresses: Address[] = [
     },
 ];
 
-export const AddressesListModal: React.FC<AddressesFormProps> = ({setPaymentDetail, setBillingAddress, onClose}) => {
+export const AddressesListModal: React.FC<AddressesFormProps> = ({addresses, setPaymentDetail, setBillingAddress, onClose}) => {
     
     const {user, token} = useAuth();
     const paymentContext = useContext(checkoutContext);
 
     const [selectedAddress, setSelectedAddress] = React.useState<number | null>(1);
-    const [addresses, setAddresses] = React.useState<Address[]>([]);
 
     const [addressLine1, setAddressLine1] = React.useState<string>('');
     const [addressLine2, setAddressLine2] = React.useState<string>('');
@@ -59,10 +59,6 @@ export const AddressesListModal: React.FC<AddressesFormProps> = ({setPaymentDeta
 
 
     useEffect(() => {
-        const fetchAddresses = async ()=>{
-            const addresses = await axios.get(`http://3.144.215.146:8081/api/v1/users/${user?.id}/addresses`, {headers: {Authorization: `Bearer ${token}`}});
-            setAddresses(addresses.data);
-        }   
         // fetchAddresses();
     }, []);
 
