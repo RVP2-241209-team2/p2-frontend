@@ -25,7 +25,7 @@ export const AddressForm:React.FC<{onClose: () =>void}> = ({onClose}) => {
             zipCode,
             country
         }
-        const response = await axios.post(`http://3.144.215.146:8081/api/v1/address/${auth.user?.id}/addresses`, 
+        const response = await axios.post(`http://3.144.215.146:8081/api/v1/users/${auth.user?.id}/addresses`, 
                                             address,
                                             {headers: {Authorization: `Bearer ${auth.token}`}});
         if(response.status === 200){
@@ -36,7 +36,7 @@ export const AddressForm:React.FC<{onClose: () =>void}> = ({onClose}) => {
     return <div className="bg-white rounded-xl">
         <div className="flex justify-between p-3 bg-[#e5e5e9] rounded-t-xl">
             <div className="font-bold text-[17px]">Add an address</div>
-            <i className="fa-solid fa-x"></i>
+            <i onClick={onClose} className="fa-solid fa-x cursor-pointer"></i>
         </div>
         <h3 className="py-4 px-5 font-[650]">Enter a new shipping address</h3>
         <form className="ml-2 px-5 pb-5 font-medium" onSubmit={onSubmit}>
@@ -46,7 +46,7 @@ export const AddressForm:React.FC<{onClose: () =>void}> = ({onClose}) => {
             <input className="block border-1 border-[grey] w-full font-normal pl-1 py-0.5" type="text" id="phoneNumber" placeholder="" name="phoneNumber" required/>
             <label className="mt-2" htmlFor="addressLine1">Address</label>
             <input className="block border-1 border-[grey] w-full font-normal pl-1 py-0.5" type="text" id="addressLine1" placeholder="Street address or P.O.Box" value={addressLine1} onChange={(e)=>setAddressLine1(e.target.value)} name="addressLine1" required/>
-            <input className="block border-1 border-[grey] w-full font-normal pl-1 py-0.5" type="text" id="addressLine1" placeholder="Apt, Suite, unit, building, floor, etc" value={addressLine2} onChange={(e)=>setAddressLine2(e.target.value)} name="addressLine2"/>
+            <input className="block border-1 border-[grey] w-full font-normal pl-1 py-0.5" type="text" id="addressLine2" placeholder="Apt, Suite, unit, building, floor, etc" value={addressLine2} onChange={(e)=>setAddressLine2(e.target.value)} name="addressLine2"/>
             <label className="mt-2" htmlFor="city">City</label>
             <input className="block border-1 border-[grey] w-full" type="text" id="city" value={city} onChange={(e)=>setCity(e.target.value)} name="city" required/>
             <label className="mt-2" htmlFor="state">State</label>

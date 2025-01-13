@@ -15,19 +15,19 @@ interface FakeItem{
   }
   image: string;
 }
-interface Cart{
+export interface Cart{
   id: string;
   cartItems: CartItem[];
   total: number;
 }
-interface CartItem{
+export interface CartItem{
   id:string;
   product: Product;
   quantity: number;
   total: number;
 }
 
-interface Product {
+export interface Product {
   id: string;
   name: number;
   price: number;
