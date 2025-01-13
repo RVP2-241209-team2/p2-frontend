@@ -13,14 +13,7 @@ import {
   registerSchema,
 } from "../lib/zod";
 import { useNavigate } from "react-router-dom";
-
-interface User {
-  id: string;
-  username: string;
-  firstname: string;
-  lastname: string;
-  role: "ADMIN" | "STORE_OWNER" | "CUSTOMER";
-}
+import { User } from "../types/users";
 
 interface AuthContextType {
   user: User | null;
@@ -67,24 +60,22 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   const register = async (userData: RegisterSchema) => {
     try {
-      // Remove confirmPassword before sending to API
       const { confirmPassword, ...registerData } = userData;
       if (!confirmPassword || confirmPassword !== userData.password) {
         throw new Error("Passwords do not match");
       }
 
-      // Validate the complete form data first
       registerSchema.parse(userData);
 
       const { data } = await api.post("/users/v1/register", registerData);
 
-      // After successful registration, automatically log in
       await login({
         username: userData.username,
         password: userData.password,
       });
 
       return data;
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (error: any) {
       console.error("Registration error:", {
         message: error.message,

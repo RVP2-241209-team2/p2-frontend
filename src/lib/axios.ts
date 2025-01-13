@@ -10,9 +10,14 @@ const api = axios.create({
 
 api.interceptors.request.use((config) => {
   const token = localStorage.getItem("token");
+  console.log("Token being sent:", token);
   if (token) {
     config.headers.Authorization = `Bearer ${token}`;
   }
+  console.log("Complete request headers:", {
+    ...config.headers,
+    Authorization: config.headers.Authorization,
+  });
   return config;
 });
 
@@ -32,5 +37,15 @@ api.interceptors.response.use(
     return Promise.reject(error);
   }
 );
+
+api.interceptors.request.use((request) => {
+  console.log("Starting Request:", {
+    url: request.url,
+    method: request.method,
+    data: request.data,
+    headers: request.headers,
+  });
+  return request;
+});
 
 export default api;

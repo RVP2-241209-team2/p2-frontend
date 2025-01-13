@@ -1,48 +1,46 @@
-import React, {useRef, useContext, useEffect, useState, ReactNode} from 'react';
-import ReactDOM from 'react-dom';
-import './Modal.css';
+import React, {
+  useRef,
+  useContext,
+  useEffect,
+  useState,
+  ReactNode,
+} from "react";
+import ReactDOM from "react-dom";
+import "./Modal.css";
 
 const ModalContext = React.createContext<HTMLDivElement | null>(null);
 
-export function ModalProvider({ children }:{children:ReactNode}){
-    const [value, setValue] = useState<HTMLDivElement | null>(null);
-    const modalRef = useRef<HTMLDivElement | null>(null);
+export function ModalProvider({ children }: { children: ReactNode }) {
+  const [value, setValue] = useState<HTMLDivElement | null>(null);
+  const modalRef = useRef<HTMLDivElement | null>(null);
 
-    useEffect(()=>{
-        setValue(modalRef.current)
-    },[])
+  useEffect(() => {
+    setValue(modalRef.current);
+  }, []);
 
-    return(
+  return (
     <>
-       <ModalContext.Provider value={value}>
-        {children}
-       </ModalContext.Provider>
-       <div ref={modalRef}>
-       </div>
+      <ModalContext.Provider value={value}>{children}</ModalContext.Provider>
+      <div ref={modalRef}></div>
     </>
-    )
+  );
 }
 
 interface ModalProps {
-    onClose: () => void;
-    children: ReactNode;
+  onClose: () => void;
+  children: ReactNode;
 }
 
-export function Modal ({onClose, children}: ModalProps){
-    const modalNode =useContext(ModalContext)
+export function Modal({ onClose, children }: ModalProps) {
+  const modalNode = useContext(ModalContext);
 
-    if(!modalNode) return null;
+  if (!modalNode) return null;
 
-    return ReactDOM.createPortal(
-        <div id="modal">
-            <div id="modal-background" onClick={onClose}>
-
-            </div>
-            <div id="modal-content">
-                {children}
-            </div>
-
-        </div>,
-        modalNode
-    )
+  return ReactDOM.createPortal(
+    <div id="modal">
+      <div id="modal-background" onClick={onClose}></div>
+      <div id="modal-content">{children}</div>
+    </div>,
+    modalNode
+  );
 }

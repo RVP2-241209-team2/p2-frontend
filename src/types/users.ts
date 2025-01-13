@@ -1,8 +1,4 @@
-export enum UserRole {
-  CUSTOMER = "CUSTOMER",
-  ADMIN = "ADMIN",
-  STORE_OWNER = "STORE_OWNER",
-}
+export type UserRole = "ADMIN" | "STORE_OWNER" | "CUSTOMER";
 
 export interface User {
   id: string; // UUID comes as string from backend

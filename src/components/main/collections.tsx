@@ -1,21 +1,32 @@
-import { Product } from "../../types/product";
+import { Collection } from "../../types/product";
 import { ArrowRight } from "lucide-react";
+import { useState } from "react";
+import { useEffect } from "react";
 import { Link } from "react-router-dom";
+import { useProducts } from "../../hooks/useProducts";
 
-export default function CollectionsSection({
-  products,
-}: {
-  products: Product[];
-}) {
-  // Get unique categories and their first product
-  const collections = Array.from(new Set(products.map((p) => p.category))).map(
-    (category) => ({
-      name: category,
-      thumbnail: products.find((p) => p.category === category)?.thumbnail || "",
-      slug: category.toLowerCase().replace(/\s+/g, "-"),
-      count: products.filter((p) => p.category === category).length,
-    })
-  );
+export default function CollectionsSection() {
+  const { getCollections, loading, error } = useProducts();
+  const [collections, setCollections] = useState<Collection[]>([]);
+
+  useEffect(() => {
+    const loadCollections = async () => {
+      const response = await getCollections();
+      if (response) {
+        console.log(response);
+        setCollections(response);
+      }
+    };
+    loadCollections();
+  }, [getCollections]);
+
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+
+  if (error) {
+    return <div>Error loading collections</div>;
+  }
 
   return (
     <section className="py-16">
@@ -26,17 +37,15 @@ export default function CollectionsSection({
         </p>
       </div>
 
-      {/* Scrollable container */}
       <div className="relative">
         <div className="flex overflow-x-auto gap-6 px-4 pb-4 snap-x snap-mandatory scrollbar-hide">
           {collections.map((collection) => (
             <Link
               key={collection.name}
-              to={`/products/category/${collection.slug}`}
+              to={`/products/tag/${collection.slug}`}
               className="group flex-none w-[280px] snap-start"
             >
               <div className="relative rounded-2xl overflow-hidden bg-gray-100">
-                {/* Fixed aspect ratio container */}
                 <div className="h-[320px] w-[280px]">
                   <img
                     src={collection.thumbnail}
@@ -45,7 +54,6 @@ export default function CollectionsSection({
                   />
                 </div>
 
-                {/* Overlay */}
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent">
                   <div className="absolute bottom-0 left-0 right-0 p-6 text-white">
                     <h3 className="text-xl font-bold mb-1">
