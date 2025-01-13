@@ -5,10 +5,11 @@ import { useAuth } from "../../context/AuthContext";
 import { CreatePaymentModal } from "./payment-form-modal";
 import { AddressesListModal } from "./address-list-modal";
 import axios from "axios";
+import api from "../../lib/axios";
 
 export interface Address{
   id: string;
-  user: User;
+  recipientName: string;
   addressLine1: string;
   addressLine2: string;
   city: string;
@@ -80,14 +81,15 @@ export default function CheckoutPage() {
     //   navigate('/login');
     // }
     const fetchAddresses = async ()=>{
-    const addresses = await axios.get(`http://3.144.215.146:8081/api/v1/users/${user?.id}/addresses`, {headers: {Authorization: `Bearer ${token}`}});
+    const addresses = await api.get(`/customers/users/my-info/addresses`);
+    console.log(addresses)
     setAddresses(addresses.data);
     setSelectAddress(addresses.data[0])
-    const payments = await axios.get(`http://3.144.215.146:8081/api/v1/users/${user?.id}/payment-methods`, {headers: {Authorization: `Bearer ${token}`}});
+    const payments = await api.get(`/customers/users/my-info/payment-methods`);
     setPaymentDetails(payments.data);
     setSelectPayment(payments.data.find((payment:Payment)=>payment.isDefault));
   }
-    // fetchAddresses();
+    fetchAddresses();
   },[]);
 
   const addAddress = ()=>{
@@ -116,17 +118,14 @@ export default function CheckoutPage() {
     // setPaymentDetail(undefined);
   }
   const placeOrder = async ()=>{
-
-    
     const resposne = await axios.post(`http://3.144.215.146:8081/api/public/orders/customer/order/create`, {headers  : {Authorization: `Bearer ${token}`}});
-    
   }
 
   // if(!user){
   //   return null;
   // }
 
-  return <div className="flex w-[95vw] justify-between">
+  return <div className="flex w-full justify-between">
     <div className="w-[75%] mr-[15px]">
       <div className=" p-2 m-2">
         {!addressSecion &&
@@ -149,12 +148,13 @@ export default function CheckoutPage() {
           <div className="ml-7 mt-2 border border-white rounded-md">
             <div className="text-lg font-medium py-2 border-b border-white mx-3">Your addresses</div>
             {addresses.map((address)=>(
-              <div key={address.id} className="flex my-2 mx-3">
+              <div key={address.id} className="flex items-center my-2 mx-3">
                 <input type="radio" name="address" onChange={()=>setSelectAddress(address)} checked={address.id===selectAddress?.id} id={address.id} value={address.id} />
                 <div>
-                <label htmlFor={address.id} className="font-medium text-[15px] pl-2">{address.user.firstName} {address.user.lastName}</label>
-                <label htmlFor={address.id} className="block pl-2">{address.addressLine1} {address.addressLine2}, {address.city}, {address.state}, {address.zipCode}, {address.country}</label>
-                <label htmlFor={address.id} className="pl-2">{address.user.phoneNumber}</label></div>
+                  <label htmlFor={address.id} className="font-medium text-[15px] pl-2">{address.recipientName?.split(' ')[0]} {address.recipientName?.split(' ')[1]}</label>
+                  <label htmlFor={address.id} className="block pl-2">{address.addressLine1} {address.addressLine2}, {address.city}, {address.state}, {address.zipCode}, {address.country}</label>
+                  {/* <label htmlFor={address.id} className="pl-2">{address.user.phoneNumber}</label> */}
+                </div>
               </div>
             ))}
             <div className="my-2 mx-3">
@@ -252,7 +252,7 @@ export default function CheckoutPage() {
     </div>
     
     <checkoutContext.Provider value={{setAddressModal, setPaymentModal, paymentDetail, setPaymentDetail, address, billingAddress, setBillingAddress, billingAddressModal, setBillingAddressModal}}>
-      {paymentModal && <CreatePaymentModal onClose={()=>setPaymentModal(false)} setSelectPayment={(payment:Payment)=>setSelectPayment(payment)}  setBillingAddress={()=>setBillingAddress(undefined)} setPaymentDetail={()=>setPaymentDetail(undefined)} />}
+      {paymentModal && <CreatePaymentModal addresses={addresses} onClose={()=>setPaymentModal(false)} setSelectPayment={(payment:Payment)=>setSelectPayment(payment)}  setBillingAddress={()=>setBillingAddress(undefined)} setPaymentDetail={()=>setPaymentDetail(undefined)} />}
       {billingAddressModal && <AddressesListModal addresses={addresses} onClose={()=>setBillingAddressModal(false)} setBillingAddress={()=>setBillingAddress(undefined)} setPaymentDetail={()=>setPaymentDetail(undefined)} />}
     </checkoutContext.Provider>
    
