@@ -1,12 +1,5 @@
 import { LoginSchema, RegisterSchema } from "../lib/zod";
-
-interface User {
-  id: string;
-  username: string;
-  firstname: string;
-  lastname: string;
-  role: "ADMIN" | "STORE_OWNER" | "CUSTOMER";
-}
+import { User } from "./users";
 
 export interface AuthState {
   user: User | null;
@@ -27,5 +20,5 @@ export interface RegisterData {
   email: string;
   password: string;
   phoneNumber: string;
-  role: "ADMIN" | "STORE_OWNER" | "CUSTOMER";
+  role: User["role"];
 }

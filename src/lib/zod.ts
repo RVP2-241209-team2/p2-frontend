@@ -1,5 +1,4 @@
 import * as z from "zod";
-import { CATEGORIES } from "./constants";
 
 export const loginSchema = z.object({
   username: z.string().min(1, { message: "Username is required" }),
@@ -32,7 +31,11 @@ export const registerSchema = z
       .string()
       .min(10, { message: "Phone number must be at least 10 digits" })
       .regex(/^\d+$/, { message: "Phone number must contain only digits" }),
-    role: z.enum(["ADMIN", "STORE_OWNER", "CUSTOMER"]),
+    role: z.union([
+      z.literal("ADMIN"),
+      z.literal("STORE_OWNER"),
+      z.literal("CUSTOMER"),
+    ]),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match",
@@ -47,16 +50,19 @@ export const newProductSchema = z.object({
     .string()
     .min(4, { message: "Name must be at least 4 characters" })
     .max(20, { message: "Name must be less than 20 characters" }),
-  price: z.number().min(0, { message: "Price must be greater than 0" }),
+  price: z.number().min(1, { message: "Price must be greater than 0" }),
   description: z
     .string()
     .min(1, { message: "Description is required" })
     .max(250, { message: "Description must be less than 250 characters" }),
-  category: z.enum(CATEGORIES.map((c) => c.slug) as [string, ...string[]], {
-    required_error: "Category is required",
-    invalid_type_error: "Please select a valid category",
-  }),
-  image: z.string().min(1, { message: "Image is required" }),
+  // category: z.enum(CATEGORIES.map((c) => c.slug) as [string, ...string[]], {
+  //   required_error: "Category is required",
+  //   invalid_type_error: "Please select a valid category",
+  // }),
+  images: z
+    .array(z.string())
+    .min(1, { message: "At least one image is required" }),
+  quantity: z.number().min(1, { message: "Quantity must be greater than 0" }),
 });
 
 export type NewProduct = z.infer<typeof newProductSchema>;
@@ -86,11 +92,9 @@ export const paymentSchema = z.object({
   cardHolderName: z
     .string()
     .min(1, { message: "Card holder name is required" }),
-  expireDate: z
-    .string()
-    .regex(/^(0[1-9]|1[0-2])\/([0-9]{2})$/, {
-      message: "Expiry date must be in MM/YY format",
-    }),
+  expireDate: z.string().regex(/^(0[1-9]|1[0-2])\/([0-9]{2})$/, {
+    message: "Expiry date must be in MM/YY format",
+  }),
   addressId: z.string().uuid({ message: "Invalid address ID" }),
   isDefault: z.boolean().default(false),
 });

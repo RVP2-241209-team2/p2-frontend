@@ -1,6 +1,5 @@
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { CATEGORIES } from "../../lib/constants";
 import { useEffect, useState } from "react";
 import { useRef } from "react";
 import { Loader2, X } from "lucide-react";
@@ -27,8 +26,8 @@ const NewProductForm = () => {
           name: "",
           price: 0,
           description: "",
-          category: "",
-          image: "" as string,
+          images: [],
+          quantity: 0,
         })
     ),
   });
@@ -60,7 +59,7 @@ const NewProductForm = () => {
       await uploadToS3(presignedData.presignedUrl, file);
 
       // Only set the form value if we have a valid URL
-      form.setValue("image", presignedData.finalImageUrl, {
+      form.setValue("images", [presignedData.finalImageUrl], {
         shouldValidate: true,
         shouldDirty: true,
         shouldTouch: true,
@@ -85,17 +84,27 @@ const NewProductForm = () => {
     console.log("Current form values:", form.getValues()); // Debug log
     console.log("Current uploadedFile:", uploadedFile); // Debug log
     try {
-      if (!form.getValues("image")) {
+      if (!form.getValues("images")) {
         toast.error("Please upload an image first!");
         return;
       }
 
       const productData = {
-        ...data,
-        imageUrl: form.getValues("image"),
+        name: data.name,
+        description: data.description,
+        price: data.price,
+        quantity: data.quantity,
+        images: form.getValues("images"),
       };
 
+
       const response = await api.post("/public/v1/products", productData);
+
+      console.log("Response:", {
+        status: response.status,
+        data: response.data,
+        headers: response.headers,
+      });
 
       if (response.status === 201) {
         toast.success("Product created successfully!");
@@ -145,14 +154,25 @@ const NewProductForm = () => {
             className="w-full rounded-md border border-gray-300 p-2"
           />
         </div>
+        <div className="flex-1">
+          <p className="text-sm font-medium tracking-wide text-center">
+            Quantity
+          </p>
+          <input
+            type="number"
+            min="1"
+            {...form.register("quantity", { valueAsNumber: true })}
+            className="w-full rounded-md border border-gray-300 p-2"
+          />
+        </div>
       </div>
       <div className="flex gap-2 justify-between">
-        <div className="flex flex-col gap-2">
+        {/* <div className="flex flex-col gap-2">
           <p className="text-sm font-medium tracking-wide text-center">
-            Category
+            Tags
           </p>
           <select
-            {...form.register("category")}
+            {...form.register("tags")}
             className="w-full rounded-md border border-gray-300 p-2"
           >
             {CATEGORIES.map((c) => (
@@ -161,7 +181,7 @@ const NewProductForm = () => {
               </option>
             ))}
           </select>
-        </div>
+        </div> */}
         <div className="relative flex flex-col gap-2">
           <p className="text-sm font-medium tracking-wide text-center">
             Image Upload
@@ -179,9 +199,9 @@ const NewProductForm = () => {
           {isUploading && (
             <p className="text-sm text-gray-500">Uploading image...</p>
           )}
-          {form.watch("image") && (
+          {form.watch("images") && (
             <p className="text-sm text-green-600">
-              Image uploaded successfully! URL: {form.watch("image")}
+              Image uploaded successfully! URL: {form.watch("images")}
             </p>
           )}
           {uploadedFile && (
@@ -194,7 +214,7 @@ const NewProductForm = () => {
               <div
                 onClick={() => {
                   setUploadedFile(null);
-                  form.setValue("image", "", {
+                  form.setValue("images", [], {
                     shouldValidate: true,
                     shouldDirty: true,
                     shouldTouch: true,

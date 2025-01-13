@@ -2,10 +2,8 @@ import { useEffect, useState } from "react";
 import { UserTable } from "../../components/admin/user-table";
 import { User } from "../../types/users";
 import { AlertCircle } from "lucide-react";
-import { UserRole } from "../../types/users";
 import { usersApi } from "../../service/users";
 import { toast } from "sonner";
-
 
 export default function ManageUsersPage() {
   const [users, setUsers] = useState<User[]>([]);
@@ -25,10 +23,7 @@ export default function ManageUsersPage() {
 
   const handlePromoteUser = async (userId: string) => {
     try {
-      const updatedUser = await usersApi.updateUserRole(
-        userId,
-        UserRole.STORE_OWNER
-      );
+      const updatedUser = await usersApi.updateUserRole(userId, "STORE_OWNER");
       setUsers(users.map((user) => (user.id === userId ? updatedUser : user)));
       toast.success("User promoted successfully");
     } catch (err) {
@@ -40,6 +35,13 @@ export default function ManageUsersPage() {
   useEffect(() => {
     const loadUsers = async () => {
       try {
+        const storedUser = localStorage.getItem("user");
+        console.log("Stored user:", JSON.parse(storedUser || "{}"));
+        console.log("Current auth state:", {
+          user: JSON.parse(localStorage.getItem("user") || "{}"),
+          token: localStorage.getItem("token"),
+        });
+
         setLoading(true);
         const data = await usersApi.getUsers();
         setUsers(data);
