@@ -9,7 +9,7 @@ import api from "../../lib/axios";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import axios from "axios";
-import { newProductSchema } from "../../lib/zod";
+import { editProductSchema } from "../../lib/zod";
 
 export default function EditProductPage() {
   const { id } = useParams();
@@ -18,7 +18,7 @@ export default function EditProductPage() {
   const [saving, setSaving] = useState(false);
 
   const form = useForm<Product>({
-    resolver: zodResolver(newProductSchema),
+    resolver: zodResolver(editProductSchema),
   });
 
   useEffect(() => {
@@ -45,11 +45,11 @@ export default function EditProductPage() {
 
       // Prepare the product data
       const productData = {
-        id: data.id,
+        // id: data.id,
         name: data.name,
         description: data.description,
         price: data.price,
-        quantity: data.quantity,
+        // quantity: data.quantity,
         images: data.images,
         // todo: put tags in backend api and use those
         // tags: data.tags || [],
@@ -66,7 +66,7 @@ export default function EditProductPage() {
         // Reset form state
         form.reset(response.data);
         // Optionally redirect to products page
-        navigate("/store-owner/products");
+        navigate("/store-owner/products", { replace: true });
       }
     } catch (error) {
       console.error("Product update failed:", error);
