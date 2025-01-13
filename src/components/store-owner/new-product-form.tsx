@@ -2,16 +2,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useRef } from "react";
-import { Loader2, X } from "lucide-react";
 import { toast } from "sonner";
 import { NewProduct, newProductSchema } from "../../lib/zod";
 import axios from "axios";
 import api from "../../lib/axios";
-import { useNavigate } from "react-router-dom";
 import { ImageUpload } from "./image-upload";
 
 const NewProductForm = () => {
-  const navigate = useNavigate();
   const [uploadedFile, setUploadedFile] = useState<{
     url: string;
     key: string;
