@@ -8,9 +8,10 @@ interface PaymentProps {
     onClose: () => void;
     setPaymentDetail: () => void;
     setBillingAddress: () => void;
+    setSelectPayment: (payment: Payment) => void;
 }
 
-export const PaymentForm: React.FC<PaymentProps> = ({onClose, setBillingAddress, setPaymentDetail}) => {
+export const PaymentForm: React.FC<PaymentProps> = ({setSelectPayment, onClose, setBillingAddress, setPaymentDetail}) => {
 
     const {user, token} = useAuth();
     const paymentContext = useContext(checkoutContext);
@@ -60,6 +61,7 @@ export const PaymentForm: React.FC<PaymentProps> = ({onClose, setBillingAddress,
         const response = await axios.post(`http://3.144.215.146:8081/api/vi/users/${user?.id}/payment-methods`, payment, {headers: {Authorization: `Bearer ${token}`}});
         if(response.status === 200){
             setPaymenDetails([...paymentDetails, response.data]);
+            setSelectPayment(response.data);
             onClose();
         }
         console.log(payment);
