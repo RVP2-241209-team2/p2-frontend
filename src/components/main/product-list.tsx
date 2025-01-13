@@ -71,14 +71,14 @@ export default function ProductList({ products }: ProductListProps) {
               <div className="bg-white rounded-lg shadow-sm overflow-hidden h-full border border-gray-100 hover:border-gray-200 transition-colors">
                 <div className="aspect-square overflow-hidden bg-gray-50">
                   <img
-                    src={product.thumbnail}
-                    alt={product.title}
+                    src={product.images[0]}
+                    alt={product.name}
                     className="w-full h-full object-contain transition duration-300 group-hover:scale-105"
                   />
                 </div>
 
                 <div className="p-4">
-                  <h3 className="font-medium line-clamp-1">{product.title}</h3>
+                  <h3 className="font-medium line-clamp-1">{product.name}</h3>
 
                   {activeTab === "trending" ? (
                     <p className="text-gray-600 mt-2 line-clamp-2">
@@ -89,11 +89,6 @@ export default function ProductList({ products }: ProductListProps) {
                       <p className="text-gray-900 font-medium">
                         ${product.price.toFixed(2)}
                       </p>
-                      {product.discountPercentage > 0 && (
-                        <span className="text-sm text-green-600">
-                          -{Math.round(product.discountPercentage)}%
-                        </span>
-                      )}
                     </div>
                   )}
 
@@ -101,12 +96,13 @@ export default function ProductList({ products }: ProductListProps) {
                     <div className="flex items-center gap-1">
                       <Star className="w-4 h-4 fill-yellow-400 text-yellow-400" />
                       <span className="text-sm text-gray-600">
-                        {product.rating.toFixed(1)}
+                        {/** todo: reviews */}
+                        {/* {product.reviews.length} */}
                       </span>
                     </div>
                     {activeTab === "suggested" && (
                       <span className="text-sm text-gray-500">
-                        {product.stock} left
+                        {product.quantity} left
                       </span>
                     )}
                   </div>

@@ -11,18 +11,18 @@ const ProductTableRow = ({ product }: ProductTableRowProps) => {
       <td className="px-6 py-4">
         <div className="flex items-center gap-3">
           <img
-            src={product.thumbnail}
-            alt={product.title}
+            src={product.images[0]}
+            alt={product.name}
             className="w-10 h-10 rounded-lg object-cover"
           />
           <span className="font-sm">
-            {product.title.length > 12
-              ? product.title.slice(0, 12) + "..."
-              : product.title}
+            {product.name.length > 12
+              ? product.name.slice(0, 12) + "..."
+              : product.name}
           </span>
         </div>
       </td>
-      <td className="px-6 py-4 text-gray-600">{product.category}</td>
+      <td className="px-6 py-4 text-gray-600">{product.tags}</td>
       <td className="px-6 py-4 text-gray-600">${product.price.toFixed(2)}</td>
       <td className="px-6 py-4 text-right">
         <Link

@@ -15,8 +15,8 @@ export default function HomePage() {
     const loadProducts = async () => {
       const response = await fetchProducts();
       if (response) {
-        console.log(response.products);
-        setProducts(response.products);
+        console.log(response);
+        setProducts(response);
       }
     };
     loadProducts();
@@ -35,7 +35,7 @@ export default function HomePage() {
   return (
     <div className="bg-white p-4">
       <HeroSection />
-      <CollectionsSection products={products} />
+      <CollectionsSection />
       <ProductList products={products} />
     </div>
   );

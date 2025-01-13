@@ -14,8 +14,8 @@ export default function ProductsPage() {
     const loadProducts = async () => {
       const response = await fetchProducts();
       if (response) {
-        console.log(response.products);
-        setProducts(response.products);
+        console.log(response);
+        setProducts(response);
       }
     };
     loadProducts();
@@ -53,11 +53,8 @@ export default function ProductsPage() {
             backgroundImage: `url(${BACKGROUND_IMAGES[currentImageIndex]})`,
           }}
         />
-        <div className="absolute inset-0 bg-black/60" />{" "}
-        {/* adjust opacity as needed with /60 */}
+        <div className="absolute inset-0 bg-black/60" />
         <div className="relative z-10 text-center p-20">
-          {" "}
-          {/* increased padding for better appearance */}
           <h1 className="font-bold text-6xl mb-4 text-white">Products</h1>
           <p className="text-gray-200 text-xl">
             Browse our wide range of products, from electronics to home decor.
@@ -77,25 +74,18 @@ export default function ProductsPage() {
           >
             <div className="flex flex-col items-center justify-center">
               <img
-                src={product.thumbnail}
-                alt={product.title}
+                src={product.images[0]}
+                alt={product.name}
                 className="h-80 w-72 object-cover rounded-t-xl"
               />
               <div className="px-4 py-3 w-72">
                 <span className="text-gray-400 mr-3 uppercase text-xs">
-                  {product.category}
+                  {product.tags[0]}
                 </span>
                 <p className="text-lg font-bold text-black truncate block capitalize">
-                  {product.title}
+                  {product.name}
                 </p>
                 <div className="flex items-center">
-                  <p className="text-lg font-semibold text-black cursor-auto my-3">
-                    $
-                    {(
-                      product.price *
-                      (1 - product.discountPercentage / 100)
-                    ).toFixed(2)}
-                  </p>
                   <del>
                     <p className="text-sm text-gray-600 cursor-auto ml-2">
                       ${product.price}

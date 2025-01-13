@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useProducts } from "../../hooks/useProducts";
 import ProductTableRow from "./product-table-row";
 import { AlertCircle, ChevronLeft, ChevronRight } from "lucide-react";
-import { ProductsResponse } from "../../types/product";
+import { Product } from "../../types/product";
 
 const ITEMS_PER_PAGE = 5;
 
@@ -12,20 +12,25 @@ const PaginatedProducts = ({
   itemsPerPage?: number;
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [products, setProducts] = useState<ProductsResponse | null>(null);
+  const [products, setProducts] = useState<Product[]>([]);
   const { loading, error, fetchProducts } = useProducts();
 
   useEffect(() => {
     const loadProducts = async () => {
-      const skip = (currentPage - 1) * itemsPerPage;
-      const data = await fetchProducts(skip, itemsPerPage);
-      setProducts(data);
+      const data = await fetchProducts();
+      if (data) {
+        setProducts(data);
+      }
     };
-
     loadProducts();
-  }, [currentPage, itemsPerPage, fetchProducts]);
+  }, [fetchProducts]);
 
-  const totalPages = products ? Math.ceil(products.total / itemsPerPage) : 0;
+  // Client-side pagination calculations
+  const totalItems = products.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentProducts = products.slice(startIndex, endIndex);
 
   const handlePrevPage = () => {
     if (currentPage > 1) {
@@ -42,9 +47,10 @@ const PaginatedProducts = ({
   if (loading) {
     return <ProductsSkeleton />;
   }
+
   if (error) {
     return (
-      <div className="flex justify-center items-center">
+      <div className="flex justify-center items-center gap-2">
         <AlertCircle className="w-5 h-5" />
         {error.message}
       </div>
@@ -65,7 +71,7 @@ const PaginatedProducts = ({
             </tr>
           </thead>
           <tbody>
-            {products?.products.map((product) => (
+            {currentProducts.map((product) => (
               <ProductTableRow key={product.id} product={product} />
             ))}
           </tbody>
@@ -75,9 +81,8 @@ const PaginatedProducts = ({
       {/* Pagination Controls */}
       <div className="flex items-center justify-between mt-4 pt-4 border-t">
         <p className="text-sm text-gray-600">
-          Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
-          {Math.min(currentPage * itemsPerPage, products?.total ?? 0)} of{" "}
-          {products?.total ?? 0} products
+          Showing {startIndex + 1} to {Math.min(endIndex, totalItems)} of{" "}
+          {totalItems} products
         </p>
         <div className="flex gap-2">
           <button

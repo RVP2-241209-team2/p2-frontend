@@ -3,21 +3,27 @@ import { useProducts } from "../../hooks/useProducts";
 import { Product } from "../../types/product";
 import { useState } from "react";
 import { useEffect } from "react";
+import { useParams } from "react-router-dom";
 
 export default function ProductDetailPage() {
   const { loading, error, fetchProductById } = useProducts();
   const [product, setProduct] = useState<Product | null>(null);
 
+  const { id } = useParams();
+
   useEffect(() => {
     const loadProduct = async () => {
-      const response = await fetchProductById(1);
+      if (!id) {
+        return;
+      }
+      const response = await fetchProductById(id);
       if (response) {
         console.log(response);
         setProduct(response);
       }
     };
     loadProduct();
-  }, [fetchProductById]);
+  }, [fetchProductById, id]);
 
   if (loading) {
     return (
@@ -41,8 +47,8 @@ export default function ProductDetailPage() {
         <div className="space-y-4">
           <div className="aspect-square rounded-lg overflow-hidden bg-gray-100">
             <img
-              src={product.thumbnail}
-              alt={product.title}
+              src={product.images[0]}
+              alt={product.name}
               className="w-full h-full object-cover"
             />
           </div>
@@ -55,7 +61,7 @@ export default function ProductDetailPage() {
               >
                 <img
                   src={image}
-                  alt={`${product.title} view ${index + 1}`}
+                  alt={`${product.name} view ${index + 1}`}
                   className="w-full h-full object-cover hover:opacity-75 transition"
                 />
               </button>
@@ -67,18 +73,19 @@ export default function ProductDetailPage() {
         <div className="space-y-8">
           <div>
             <h1 className="text-3xl font-bold text-gray-900">
-              {product.title}
+              {product.name}
             </h1>
             <div className="mt-4 flex items-center gap-4">
               <div className="flex items-center">
                 <Star className="w-5 h-5 text-yellow-400 fill-yellow-400" />
                 <span className="ml-1 text-sm text-gray-600">
-                  {product.rating.toFixed(1)}
+                  {/* TODO: get from api */}
+                  {/* {product.rating.toFixed(1)} */}
                 </span>
               </div>
               <span className="text-sm text-gray-500">•</span>
               <span className="text-sm text-gray-600">
-                {product.stock > 0 ? (
+                {product.quantity > 0 ? (
                   <span className="text-green-600">In Stock</span>
                 ) : (
                   <span className="text-red-600">Out of Stock</span>
@@ -92,11 +99,6 @@ export default function ProductDetailPage() {
               <span className="text-3xl font-bold text-gray-900">
                 ${product.price.toFixed(2)}
               </span>
-              {product.discountPercentage > 0 && (
-                <span className="text-sm text-green-600 font-medium">
-                  Save {Math.round(product.discountPercentage)}%
-                </span>
-              )}
             </div>
 
             <div className="space-y-4">
