@@ -33,6 +33,8 @@ export default function EditProductPage() {
     loadProduct();
   }, [id, fetchProductById, form.reset]);
 
+  // todo handleDeleteProduct
+
   async function handleSubmit(data: Product) {
     console.log("Submitting edit with data:", data);
     setSaving(true);
