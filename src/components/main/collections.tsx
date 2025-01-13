@@ -39,6 +39,7 @@ export default function CollectionsSection() {
 
       <div className="relative">
         <div className="flex overflow-x-auto gap-6 px-4 pb-4 snap-x snap-mandatory scrollbar-hide">
+          {/** TODO: replace with actual tags options */}
           {collections.map((collection) => (
             <Link
               key={collection.name}
