@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-const SearchBar = () => {
+const SearchInput = () => {
   const [selectedCategory, setSelectedCategory] = useState("all");
   const [searchQuery, setSearchQuery] = useState("");
 
@@ -58,4 +58,4 @@ const SearchBar = () => {
   );
 };
 
-export default SearchBar;
+export default SearchInput;
