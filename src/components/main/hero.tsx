@@ -1,4 +1,8 @@
+import { Link } from "react-router-dom";
+
 export default function HeroSection() {
+  
+  
   return (
     <section className="relative h-[60vh] -mt-8 flex items-center justify-center rounded-lg overflow-hidden">
       <div
@@ -19,9 +23,11 @@ export default function HeroSection() {
         <p className="text-xl md:text-2xl mb-8">
           Curated collections for the modern lifestyle
         </p>
+        <Link to="/products">
         <button className="bg-white text-black px-8 py-3 rounded-full font-semibold hover:bg-gray-100 transition">
           Shop Now
         </button>
+        </Link>
       </div>
     </section>
   );
