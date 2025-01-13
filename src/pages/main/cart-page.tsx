@@ -80,6 +80,10 @@ export default function CartPage() {
     }else if(e.currentTarget.textContent === "Previous"){
       setCurrentPage(currentPage-1);
     }
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
   }
   const onCheck = (e:React.ChangeEvent<HTMLInputElement>)=>{
     console.log(e.target.checked);

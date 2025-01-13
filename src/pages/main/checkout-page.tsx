@@ -52,9 +52,13 @@ interface CheckoutContextType {
 export const checkoutContext = createContext<CheckoutContextType | undefined>(undefined);
 
 export default function CheckoutPage() {
+
 // check if user is signed in.
   const navigate = useNavigate();
   const {user, token} = useAuth();
+
+  const [selectAddress, setSelectAddress] = useState<Address>();
+  const [selectPayment, setSelectPayment] = useState<Payment>();
   const [addressModal, setAddressModal] = useState<boolean>(false);
   const [paymentModal, setPaymentModal] = useState<boolean>(false);
   const [addressSecion, setaddressSecion] = useState(true);
@@ -75,8 +79,12 @@ export default function CheckoutPage() {
     // }
     const fetchAddresses = async ()=>{
     const addresses = await axios.get(`http://3.144.215.146:8081/api/v1/users/${user?.id}/addresses`, {headers: {Authorization: `Bearer ${token}`}});
-            setAddresses(addresses.data);
-    }
+    setAddresses(addresses.data);
+    setAddress(addresses.data[0])
+    const payments = await axios.get(`http://3.144.215.146:8081/api/v1/users/${user?.id}/payment-methods`, {headers: {Authorization: `Bearer ${token}`}});
+    setPaymentDetails(payments.data);
+    setPaymentDetail(payments.data.find((payment:Payment)=>payment.isDefault));
+  }
     // fetchAddresses();
   },[]);
 
@@ -131,7 +139,7 @@ export default function CheckoutPage() {
             <div className="text-lg font-medium py-2 border-b border-white mx-3">Your addresses</div>
             {addresses.map((address)=>(
               <div key={address.id} className="flex my-2 mx-3">
-                <input type="radio" name="address" id={address.id} value={address.id} />
+                <input type="radio" name="address" onChange={()=>setSelectAddress(address)} checked={address.id===selectAddress?.id} id={address.id} value={address.id} />
                 <div>
                 <label htmlFor={address.id} className="font-medium text-[15px] pl-2">{address.user.firstName} {address.user.lastName}</label>
                 <label htmlFor={address.id} className="block pl-2">{address.addressLine1} {address.addressLine2}, {address.city}, {address.state}, {address.zipCode}, {address.country}</label>
@@ -164,14 +172,14 @@ export default function CheckoutPage() {
             {paymentDetails.map((payment)=>(
               <div key={payment.id} className="flex justify-between my-2 mx-3">
                 <div>
-                  <input type="radio" name="payment" id={payment.id} value={payment.id} />
+                  <input type="radio" name="payment" onChange={()=>setSelectPayment(payment)} checked={selectPayment?.id===payment.id} id={payment.id} value={payment.id} />
                   <label htmlFor={payment.id} className="font-medium text-[15px] pl-2">Card ending in {payment.cardNumber.slice(-4)}</label>
                 </div>
                 <label htmlFor={payment.id} className="block pl-2">{payment.cardHolderName}</label>
                 <label htmlFor={payment.id} className="pl-2">{payment.expireDate}</label> 
               </div>
             ))}
-            <div key={1} className="flex justify-between my-2 mx-3 bg-[#eca8313f] py-2.5 pl-3 pr-5 rounded-lg">
+            <div key={1} className="flex justify-between my-2 mx-3 bg-[#f3be624b] py-2.5 pl-3 pr-5 rounded-lg">
               <div>
                 <input type="radio" name="payment" checked={true} id={"1"} value={"1"} />
                   <label htmlFor={"1"} className="font-medium text-[15px] pl-3">Card ending in 1026</label>
@@ -234,7 +242,7 @@ export default function CheckoutPage() {
     
     <checkoutContext.Provider value={{setAddressModal, setPaymentModal, paymentDetail, setPaymentDetail, address, billingAddress, setBillingAddress, billingAddressModal, setBillingAddressModal}}>
       {paymentModal && <CreatePaymentModal onClose={()=>setPaymentModal(false)} setBillingAddress={()=>setBillingAddress(undefined)} setPaymentDetail={()=>setPaymentDetail(undefined)} />}
-      {billingAddressModal && <AddressesListModal onClose={()=>setBillingAddressModal(false)} setBillingAddress={()=>setBillingAddress(undefined)} setPaymentDetail={()=>setPaymentDetail(undefined)} />}
+      {billingAddressModal && <AddressesListModal addresses={addresses} onClose={()=>setBillingAddressModal(false)} setBillingAddress={()=>setBillingAddress(undefined)} setPaymentDetail={()=>setPaymentDetail(undefined)} />}
     </checkoutContext.Provider>
    
       
