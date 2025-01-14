@@ -105,19 +105,21 @@ export default function CartPage() {
     });
   }
   const onCheck = (e:React.ChangeEvent<HTMLInputElement>)=>{
-    console.log(e.target.checked);
-    const [price, id] = e.target.id.split("-");
+    console.log(cartItems, e.target.id);
+    const itemId = e.currentTarget.id;
     const isChecked = e.target.checked;
-    console.log(price, id, checkedItems, checkedItems[id])
-    if(!isChecked){
-      checkedItems[id] = false;
-      setCheckedItems({...checkedItems});
-      setTotal(total-Number(price))
+    console.log(checkedItems[itemId],itemId, isChecked, checkedItems)
+    setCheckedItems(prevState => ({
+      ...prevState,
+      [itemId]: isChecked
+    }));
+    const item = cartItems.find(item => item.id === itemId);
+    if(isChecked){
+      setTotal(total + Number(item?.product.price));
+        cartItemsContext?.setTotal(total + Number(item?.product.price));
     }else{
-      checkedItems[id] = true
-      console.log(checkedItems)
-      setCheckedItems({...checkedItems});
-      setTotal(total+Number(price))
+      setTotal(total - Number(item?.product.price));
+        cartItemsContext?.setTotal(total - Number(item?.product.price));
 
     }
   }
@@ -160,14 +162,17 @@ export default function CartPage() {
   return <>
     <div className="cart-Container ">
       <div className="cart-Items">
-        <h2 className="cart-Header">Shopping Cart</h2>
+        <div className="cart-Header">
+          <h2 >Shopping Cart</h2>
+          <div className="text-[grey] text-[15px] text-end">Price</div>
+        </div>
         <div>
           {cartItems.map((item, index) => {
             if(index<4*(currentPage-1) || index>=4*currentPage) return null;
             return (
             <div className="item-Container" key={index}>
               <div className="w-[300px]">
-              <input className="mx-2" id={`${item.product.price}-${item.id}`} name="cart" onChange={onCheck} type="checkbox" checked={checkedItems[`${item.id}`]}></input>
+              <input className="mx-2" id={`${item.id}`} name="cart" onChange={onCheck} type="checkbox" checked={checkedItems[`${item.id}`]}></input>
               <img className="img" src={item.product.images[0]} alt={item.product.name} /></div>
               <div className="item-Details">
                 <h3>{item.product.name}</h3>
@@ -182,7 +187,7 @@ export default function CartPage() {
                   <button onClick={()=>deleteItem(item.id)} className="px-2.5 ml-2.5 border-l-2 border-white h-fit hover:underline">delete</button>
                 </div>
               </div>
-              <div style={{fontWeight: "700"}}>${item.total}</div>
+              <div style={{fontWeight: "700"}}>${item.product.price}</div>
             </div>);
           })}
         </div>
