@@ -2,8 +2,9 @@ import { useEffect, useState } from "react";
 import { useProducts } from "../../hooks/useProducts";
 import { Product } from "../../types/product";
 import { ProductCard } from "../../components/store-owner/product-card";
-import { Filter, Loader2 } from "lucide-react";
+import { ArrowLeft, Filter, Loader2 } from "lucide-react";
 import { SearchBar } from "../../components/shared/search-bar";
+import { useNavigate } from "react-router-dom";
 
 export default function StoreOwnerProductsPage() {
   const [products, setProducts] = useState<Product[]>([]);
@@ -11,6 +12,7 @@ export default function StoreOwnerProductsPage() {
   // const [selectedTag, setSelectedTag] = useState<string>("");
   // const [tags, setTags] = useState<string[]>([]);
   const { loading, error, fetchProducts, searchProducts } = useProducts();
+  const navigate = useNavigate();
 
   useEffect(() => {
     loadProducts();
@@ -79,8 +81,17 @@ export default function StoreOwnerProductsPage() {
 
         <div className="mb-6">
           <div className="flex items-center gap-2 mb-2">
-            <Filter className="w-5 h-5 text-gray-500" />
-            <span className="font-medium text-gray-700">Filter by tag:</span>
+            {/* <Filter className="w-5 h-5 text-gray-500" /> */}
+            <span className="font-medium text-gray-700">
+              {/* Filter by tag: */}
+              <button
+            onClick={() => navigate(-1)}
+            className="flex items-center text-gray-600 hover:text-gray-900"
+          >
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            Back to Dashboard
+          </button>
+              </span>
           </div>
           <div className="flex flex-wrap gap-2">
             {/* {tags.map((tag) => (
