@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import api from "../lib/axios";
 
 // Types
@@ -43,50 +43,53 @@ export const useReviews = (): UseReviewsReturn => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const createReview = async (reviewData: ReviewDTO): Promise<void> => {
-    try {
-      setLoading(true);
-      setError(null);
-      const url = `${BASE_ENDPOINT}/create`;
-      console.log({ message: "Attempting createReview from:", url });
-      console.log({ message: "createReview", reviewData });
-      const response = await api.post<Review>(
-        `${BASE_ENDPOINT}/create`,
-        reviewData
-      );
-      setReviews((prev) => [...prev, response.data]);
-      setMyReviews((prev) => [...prev, response.data]);
-    } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "An error occurred while creating the review"
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+  const createReview = useCallback(
+    async (reviewData: ReviewDTO): Promise<void> => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await api.post<Review>(
+          `${BASE_ENDPOINT}/create`,
+          reviewData
+        );
+        setReviews((prev) => [...prev, response.data]);
+        setMyReviews((prev) => [...prev, response.data]);
+      } catch (err) {
+        setError(
+          err instanceof Error
+            ? err.message
+            : "An error occurred while creating the review"
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
 
-  const getReviewsByProduct = async (productId: string): Promise<void> => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await api.get<Review[]>(
-        `${BASE_ENDPOINT}/product/${productId}`
-      );
-      setReviews(response.data);
-    } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "An error occurred while fetching reviews"
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+  const getReviewsByProduct = useCallback(
+    async (productId: string): Promise<void> => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await api.get<Review[]>(
+          `${BASE_ENDPOINT}/product/${productId}`
+        );
+        setReviews(response.data);
+      } catch (err) {
+        setError(
+          err instanceof Error
+            ? err.message
+            : "An error occurred while fetching reviews"
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
 
-  const getMyReviews = async (): Promise<void> => {
+  const getMyReviews = useCallback(async (): Promise<void> => {
     try {
       setLoading(true);
       setError(null);
@@ -103,9 +106,9 @@ export const useReviews = (): UseReviewsReturn => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const getAllReviews = async (): Promise<void> => {
+  const getAllReviews = useCallback(async (): Promise<void> => {
     try {
       setLoading(true);
       setError(null);
@@ -120,9 +123,9 @@ export const useReviews = (): UseReviewsReturn => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const deleteReview = async (reviewId: string): Promise<void> => {
+  const deleteReview = useCallback(async (reviewId: string): Promise<void> => {
     try {
       setLoading(true);
       setError(null);
@@ -138,54 +141,61 @@ export const useReviews = (): UseReviewsReturn => {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const deleteCustomerReview = async (reviewId: string): Promise<void> => {
-    try {
-      setLoading(true);
-      setError(null);
-      await api.delete(`${BASE_ENDPOINT}/customer/delete/${reviewId}`);
-      setReviews((prev) => prev.filter((review) => review.id !== reviewId));
-      setMyReviews((prev) => prev.filter((review) => review.id !== reviewId));
-    } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "An error occurred while deleting your review"
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+  const deleteCustomerReview = useCallback(
+    async (reviewId: string): Promise<void> => {
+      try {
+        setLoading(true);
+        setError(null);
+        await api.delete(`${BASE_ENDPOINT}/customer/delete/${reviewId}`);
+        setReviews((prev) => prev.filter((review) => review.id !== reviewId));
+        setMyReviews((prev) => prev.filter((review) => review.id !== reviewId));
+      } catch (err) {
+        setError(
+          err instanceof Error
+            ? err.message
+            : "An error occurred while deleting your review"
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
 
-  const updateReview = async (
-    reviewId: string,
-    reviewData: ReviewDTO
-  ): Promise<void> => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await api.patch<Review>(
-        `${BASE_ENDPOINT}/update/${reviewId}`,
-        reviewData
-      );
-      const updatedReview = response.data;
-      setReviews((prev) =>
-        prev.map((review) => (review.id === reviewId ? updatedReview : review))
-      );
-      setMyReviews((prev) =>
-        prev.map((review) => (review.id === reviewId ? updatedReview : review))
-      );
-    } catch (err) {
-      setError(
-        err instanceof Error
-          ? err.message
-          : "An error occurred while updating the review"
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
+  const updateReview = useCallback(
+    async (reviewId: string, reviewData: ReviewDTO): Promise<void> => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await api.patch<Review>(
+          `${BASE_ENDPOINT}/update/${reviewId}`,
+          reviewData
+        );
+        const updatedReview = response.data;
+        setReviews((prev) =>
+          prev.map((review) =>
+            review.id === reviewId ? updatedReview : review
+          )
+        );
+        setMyReviews((prev) =>
+          prev.map((review) =>
+            review.id === reviewId ? updatedReview : review
+          )
+        );
+      } catch (err) {
+        setError(
+          err instanceof Error
+            ? err.message
+            : "An error occurred while updating the review"
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+    []
+  );
 
   return {
     reviews,

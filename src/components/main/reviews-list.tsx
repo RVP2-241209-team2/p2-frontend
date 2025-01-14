@@ -13,6 +13,7 @@ export default function ReviewsList({ productId }: ReviewsListProps) {
     getReviewsByProduct(productId);
   }, [productId, getReviewsByProduct]);
 
+  
   if (loading) return <div>Loading reviews...</div>;
   if (error) return <div className="text-red-500">{error}</div>;
   if (!reviews || reviews.length === 0) return null;
