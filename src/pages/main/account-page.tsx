@@ -54,7 +54,7 @@ export default function AccountPage() {
   // fetch all addresses
   const fetchAddresses = async () => {
     try {
-      const response = await axios.get(`${baseUrl}customers/users/my-info/addresses`, {
+      const response = await axios.get(`${baseUrl}/customers/users/my-info/addresses`, {
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
@@ -75,7 +75,7 @@ export default function AccountPage() {
   //fetch all payment methods
   const fetchPayMethods = async () => {
     try {
-      const response = await axios.get(`${baseUrl}customers/users/my-info/payment-methods`, {
+      const response = await axios.get(`${baseUrl}/customers/users/my-info/payment-methods`, {
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${token}`,
@@ -108,7 +108,7 @@ export default function AccountPage() {
   const handlePaymentSubmit = async (data: PaymentFormData) => {
     console.log("Payment form submitted:", data);
     try {
-      const response = await axios.post(`${baseUrl}customers/users/my-info/payment-methods`,
+      const response = await axios.post(`${baseUrl}/customers/users/my-info/payment-methods`,
         data,
         {
           headers: {
@@ -129,7 +129,7 @@ export default function AccountPage() {
    // Remove Payment Methods
    const removePaymentMethods = async (id: string) => {
     try {
-      const response = await axios.delete(`${baseUrl}customers/users/my-info/payment-methods/${id}`,
+      const response = await axios.delete(`${baseUrl}/customers/users/my-info/payment-methods/${id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
@@ -149,7 +149,7 @@ export default function AccountPage() {
     console.log("Address form submitted:", data);
 
     try {
-      const response = await axios.post(`${baseUrl}customers/users/my-info/addresses`,
+      const response = await axios.post(`${baseUrl}/customers/users/my-info/addresses`,
         data,
         {
           headers: {
@@ -169,7 +169,7 @@ export default function AccountPage() {
   // Remove Address
   const removeAddress = async (id: string) => {
     try {
-      const response = await axios.delete(`${baseUrl}customers/users/my-info/addresses/${id}`,
+      const response = await axios.delete(`${baseUrl}/customers/users/my-info/addresses/${id}`,
       {
         headers: {
           Authorization: `Bearer ${token}`,
