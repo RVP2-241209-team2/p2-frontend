@@ -1,9 +1,9 @@
-import { Heart, ShoppingCart, Star } from "lucide-react";
+import { ArrowLeft, Heart, ShoppingCart, Star } from "lucide-react";
 import { useProducts } from "../../hooks/useProducts";
 import { Product } from "../../types/product";
 import { useState } from "react";
 import { useEffect } from "react";
-import { Link, useParams } from "react-router-dom";
+import { Link, useNavigate, useParams } from "react-router-dom";
 import api from "../../lib/axios";
 import { toast } from "sonner";
 import ProductReviewForm from "../../components/main/forms/product-review-form";
@@ -11,7 +11,7 @@ import ReviewsList from "../../components/main/reviews-list";
 
 export default function ProductDetailPage() {
   const { loading, error, fetchProductById } = useProducts();
-
+  const navigate = useNavigate();
   const [product, setProduct] = useState<Product | null>(null);
   const [refreshReviews, setRefreshReviews] = useState(0);
   const { id } = useParams();
@@ -66,7 +66,17 @@ export default function ProductDetailPage() {
   }
 
   return (
+    
     <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-12">
+      <div className="flex items-center justify-between mb-8">
+          <button
+            onClick={() => navigate(-1)}
+            className="flex items-center text-gray-600 hover:text-gray-900"
+          >
+            <ArrowLeft className="w-5 h-5 mr-2" />
+            Back to Products
+          </button>
+        </div>
       {/* Hero Section with Two Columns */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-12 mb-16">
         {/* Left Column - Product Image */}
