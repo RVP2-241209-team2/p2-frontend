@@ -9,11 +9,11 @@ interface PaymentProps {
     onClose: () => void;
     setPaymentDetail: () => void;
     setBillingAddress: () => void;
-    setSelectPayment: (payment: Payment) => void;
+    addNewPayment: (payment: Payment) => void;
     addresses: Address[];
 }
 
-export const PaymentForm: React.FC<PaymentProps> = ({addresses, setSelectPayment, onClose, setBillingAddress, setPaymentDetail}) => {
+export const PaymentForm: React.FC<PaymentProps> = ({addresses, addNewPayment, onClose, setBillingAddress, setPaymentDetail}) => {
 
     // const {user, token} = useAuth();
     const paymentContext = useContext(checkoutContext);
@@ -63,7 +63,7 @@ export const PaymentForm: React.FC<PaymentProps> = ({addresses, setSelectPayment
         const response = await api.post(`/customers/users/my-info/payment-methods`, payment);
         if(response.status === 200){
             setPaymenDetails([...paymentDetails, response.data]);
-            setSelectPayment(response.data);
+            addNewPayment(response.data);
             onClose();
         }
         console.log(payment);
@@ -143,17 +143,12 @@ export const PaymentForm: React.FC<PaymentProps> = ({addresses, setSelectPayment
                 <div className="mt-5">
                     <label className="font-medium text-lg" htmlFor="address">Billing address</label>
                     {
-                    <div className="text-[14px] ">                    
+                    <div className="text-[14px] mt-2">                    
                         <div className="font-medium">{defaultBillingAddress?.recipientName?.split(' ')[0]} {defaultBillingAddress?.recipientName?.split(' ')[1]}</div>
                         <div>{defaultBillingAddress?.addressLine1}</div>
                         <div>{defaultBillingAddress?.city}, {defaultBillingAddress?.state} {defaultBillingAddress?.zipCode}</div>
                         <div>{defaultBillingAddress?.country}</div>
-                        {/* <div>Phone: {defaultBillingAddress?.user.phoneNumber}</div> */}
-                        <div className="font-medium mt-3 ">John Doe</div>
-                        <div>1234 Main Street, Building 42</div>
-                        <div>Seattle, WA 98104</div>
-                        <div>United States</div>
-                        <div>Phone: 206-266-1000</div>                    
+                        {/* <div>Phone: {defaultBillingAddress?.user.phoneNumber}</div> */}                  
                         <div onClick={onBillsAddressChange} className="cursor-pointer my-2 text-[#1e80ff] hover:underline">Change</div>
                     </div>}
 
