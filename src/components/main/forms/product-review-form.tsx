@@ -16,17 +16,22 @@ export default function ProductReviewForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await createReview({
-      productId,
-      rating,
-      title,
-      description,
-    });
-
-    // Clear form
-    setRating(5);
-    setTitle("");
-    setDescription("");
+    try {
+      await createReview({
+        productId,
+        rating,
+        title,
+        description,
+      });
+  
+      // Only clear form if submission was successful
+      setRating(5);
+      setTitle("");
+      setDescription("");
+    } catch (err) {
+      // Error is handled by useReviews hook
+      console.error("Failed to submit review:", err);
+    }
   };
 
   return (

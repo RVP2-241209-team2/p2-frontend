@@ -35,6 +35,8 @@ interface UseReviewsReturn {
   updateReview: (reviewId: string, review: ReviewDTO) => Promise<void>;
 }
 
+// Don't include /api in the base endpoint - it's already in VITE_API_URL environment variable
+// VITE_API_URL=http://localhost:8081/api
 const BASE_ENDPOINT = "/public/reviews";
 
 export const useReviews = (): UseReviewsReturn => {
@@ -42,30 +44,6 @@ export const useReviews = (): UseReviewsReturn => {
   const [myReviews, setMyReviews] = useState<Review[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
-
-  const createReview = useCallback(
-    async (reviewData: ReviewDTO): Promise<void> => {
-      try {
-        setLoading(true);
-        setError(null);
-        const response = await api.post<Review>(
-          `${BASE_ENDPOINT}/create`,
-          reviewData
-        );
-        setReviews((prev) => [...prev, response.data]);
-        setMyReviews((prev) => [...prev, response.data]);
-      } catch (err) {
-        setError(
-          err instanceof Error
-            ? err.message
-            : "An error occurred while creating the review"
-        );
-      } finally {
-        setLoading(false);
-      }
-    },
-    []
-  );
 
   const getReviewsByProduct = useCallback(
     async (productId: string): Promise<void> => {
@@ -87,6 +65,35 @@ export const useReviews = (): UseReviewsReturn => {
       }
     },
     []
+  );
+
+  const createReview = useCallback(
+    async (reviewData: ReviewDTO): Promise<void> => {
+      try {
+        setLoading(true);
+        setError(null);
+        console.log("Creating review:", reviewData);
+        const response = await api.post<Review>(
+          `${BASE_ENDPOINT}/create`,
+          reviewData
+        );
+        // After successful creation, refresh the reviews list
+        await getReviewsByProduct(reviewData.productId);
+      } catch (err: any) {
+        console.error(
+          "Review creation error:",
+          err.response?.data || err.message
+        );
+        setError(
+          err.response?.data?.message ||
+            err.message ||
+            "An error occurred while creating the review"
+        );
+      } finally {
+        setLoading(false);
+      }
+    },
+    [getReviewsByProduct]
   );
 
   const getMyReviews = useCallback(async (): Promise<void> => {
