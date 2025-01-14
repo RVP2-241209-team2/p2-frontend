@@ -9,10 +9,8 @@ import { getPresignedUrl } from "../../utils/s3";
 import { uploadToS3 } from "../../utils/s3";
 import axios from "axios";
 import api from "../../lib/axios";
-import { useNavigate } from "react-router-dom";
 
 const NewProductForm = () => {
-  const navigate = useNavigate();
   const [uploadedFile, setUploadedFile] = useState<{
     url: string;
     key: string;
@@ -107,21 +105,24 @@ const NewProductForm = () => {
         headers: response.headers,
       });
 
-      if (response.status === 201) {
+      if (response.status === 200) {
         toast.success("Product created successfully!");
         form.reset();
         setUploadedFile(null);
         if (fileInputRef.current) {
           fileInputRef.current.value = "";
         }
-        navigate(`/store-owner/products/${response.data.id}`);
+        // navigate(`/store-owner/products/${response.data.id}`);
       }
     } catch (error) {
       console.error("Product creation failed:", error); // Detailed error logging
 
       if (axios.isAxiosError(error)) {
+        console.log(error);
+        
         const errorMessage =
-          error.response?.data?.message ||
+          error.response?.data ||
+          error.response?.data?.message||
           error.response?.data?.error ||
           error.message ||
           "Failed to create product";
