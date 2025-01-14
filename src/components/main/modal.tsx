@@ -1,7 +1,7 @@
 import { X } from "lucide-react";
 import { ReactNode } from "react";
 
-interface ModalProps {
+interface ConfirmationModalProps {
   isOpen: boolean;
   onClose: () => void;
   title: string;
@@ -18,7 +18,7 @@ interface ModalProps {
   };
 }
 
-export function Modal({
+export function ConfirmationModal({
   isOpen,
   onClose,
   title,
@@ -26,7 +26,7 @@ export function Modal({
   children,
   primaryAction,
   secondaryAction,
-}: ModalProps) {
+}: ConfirmationModalProps) {
   if (!isOpen) return null;
 
   const getActionClassName = (

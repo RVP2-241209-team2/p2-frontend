@@ -1,4 +1,4 @@
-import axios from "axios";
+
 import { useContext, useEffect, useState } from "react";
 import "./cart-page.css";
 import { Link, useNavigate } from "react-router-dom";
@@ -6,20 +6,9 @@ import api from "../../lib/axios";
 import { CartItemsContext } from "./CartItemsProvider";
 import { useAuth } from "../../context/AuthContext";
 import { toast } from "sonner";
-import { Modal } from "../../components/main/modal";
+import { ConfirmationModal } from "../../components/main/modal";
 
-interface FakeItem {
-  id: number;
-  title: string;
-  price: number;
-  category: string;
-  description: string;
-  rating: {
-    rate: number;
-    count: number;
-  };
-  image: string;
-}
+
 export interface Cart {
   id: string;
   cartItems: CartItem[];
