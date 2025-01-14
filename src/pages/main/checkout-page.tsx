@@ -1,4 +1,4 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { CreateAddressModal } from "./address-form-modal";
 import { useAuth } from "../../context/AuthContext";
@@ -6,6 +6,8 @@ import { CreatePaymentModal } from "./payment-form-modal";
 import { AddressesListModal } from "./address-list-modal";
 import axios from "axios";
 import api from "../../lib/axios";
+import { CartItem } from "./cart-page";
+import { CartItemsContext } from "./CartItemsProvider";
 
 export interface Address{
   id: string;
@@ -52,11 +54,13 @@ interface CheckoutContextType {
 
 export const checkoutContext = createContext<CheckoutContextType | undefined>(undefined);
 
+
 export default function CheckoutPage() {
 
 // check if user is signed in.
   const navigate = useNavigate();
   const {user, token} = useAuth();
+  const cartItemsContext = useContext(CartItemsContext);
 
   // selected address and payment
   const [selectAddress, setSelectAddress] = useState<Address>();
@@ -123,13 +127,14 @@ export default function CheckoutPage() {
     setSelectPayment(paymentDetail);
   }
   const placeOrder = async ()=>{
+    const obj:{ [key: string]: number } = {};
+    cartItemsContext?.cartItems.forEach((item:CartItem)=>{obj[item.product.id] = item.quantity});
+    // make object of key value pair of product id and quantity
+    console.log(obj);
     const order = {
       addressId: selectAddress?.id,
       paymentId: selectPayment?.id,
-      orderItems: {
-        "7f9ff114-4c4e-45ea-9bd3-f444d75ec1f3": 1,
-        "e1e66c6d-54e3-4dd9-88fa-41e0202f248a": 2
-      }
+      orderItems: obj
     }
     console.log(order);
     const resposne = await api.post(`/public/orders/customer/order/create`, order);
@@ -221,14 +226,6 @@ export default function CheckoutPage() {
                 <label htmlFor={payment.id} className="pl-2">{payment.expireDate}</label> 
               </div>
             ))}
-            {/* <div key={1} className="flex justify-between my-2 mx-3 bg-[#f3be624b] py-2.5 pl-3 pr-5 rounded-lg">
-              <div>
-                <input type="radio" name="payment" checked={true} id={"1"} value={"1"} />
-                <label htmlFor={"1"} className="font-medium text-[15px] pl-3">Card ending in 1026</label>
-              </div>
-                  <label htmlFor={"1"} className="block pl-2">Jon Doe</label>
-                  <label htmlFor={"1"} className="pl-2">01/22</label>
-            </div> */}
               
             <div className="my-2 mx-3">
               <span className="text-[lightgrey] cursor-pointer "><i className="fa-solid fa-plus"></i></span>
@@ -255,7 +252,20 @@ export default function CheckoutPage() {
         <div className="text-lg font-medium"><span className="mr-3">3</span> Items and shipping</div>
       </div>}
       {orderSection && <div className="p-2 m-2">
-        <div className="text-lg font-medium"><span className="mr-3"></span> Review items and shipping</div>
+        <div className="text-lg font-medium mb-4"><span className=""></span> Review items and shipping</div>
+        {cartItemsContext?.cartItems.map((item: CartItem) => (
+          <div className="mx-2 my-3">
+              <div key={item.id} className="flex justify-between items-center">
+                <img src={item.product.images[0]} alt={item.product.name} className="w-[130px] object-cover" />
+                <div className="flex-1 ml-4">
+                  <div className="font-medium">{item.product.name}</div>
+                  <div className="font-bold">${item.quantity * item.product.price}</div>
+                </div>
+                {/* <div className="font-bold">{item.quantity} x ${item.product.price}</div> */}
+              </div>
+              <div ><span className="font-bold">Quantity</span>: {item.quantity}</div>
+            </div>
+          ))}
       </div>}
     </div>
     <div className="text-[14px] w-[25%] ml-[15px] h-fit p-3 bg-white rounded-md">
@@ -270,19 +280,19 @@ export default function CheckoutPage() {
 
         <div className="flex justify-between">
           <div>Items:</div>
-          <div>$0.00</div>
+          <div>${cartItemsContext?.total}</div>
         </div>
         <div className="flex justify-between">
           <div>Shipping & handling:</div>
-          <div>$0.00</div>
+          <div>$6.99</div>
         </div>
         <div className="flex justify-between">
           <div>Estimated tax to be collected: *</div>
-          <div>$0.00</div>
+          <div>${cartItemsContext?.total}</div>
         </div>
         <div className="font-medium text-xl flex justify-between">
           <div>Order total:</div>
-          <div>$0.00</div>
+          <div>${cartItemsContext?.total}</div>
         </div>
     </div>
     
