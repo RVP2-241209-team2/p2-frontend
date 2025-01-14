@@ -4,27 +4,65 @@ import { CreditCard } from "lucide-react";
 
 import { Order } from "../../types/order";
 
-import { useState } from "react";
+import { Key, useEffect, useState } from "react";
 import { TabType } from "../../types/order";
 import { Package } from "lucide-react";
 import { AddressFormData, PaymentFormData } from "../../lib/zod";
 import PaymentMethodForm from "../../components/main/forms/payment-details-form";
 import AddressForm from "../../components/main/forms/address-form";
+import api from "../../lib/axios";
 
 export default function AccountPage() {
   const [activeTab, setActiveTab] = useState<TabType>("orders");
-  const [orders] = useState<Order[]>([
-    {
-      id: "ORD-123",
-      date: "2024-03-15",
-      total: 129.99,
-      status: "delivered",
-      items: [
-        { name: "Product 1", quantity: 2, price: 49.99 },
-        { name: "Product 2", quantity: 1, price: 30.01 },
-      ],
-    },
-  ]);
+  const [orders, setOrders] = useState<Order[]>([])
+  const [addresses, setAddresses] = useState<AddressFormData[]>([])
+  const [paymentMethods, setPaymentMethods] = useState<PaymentFormData[]>([])
+  const [showOrderDetails, setShowOrderDetails] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchOrders = async () => {
+      try{
+        const response = await api.get("/public/orders/customer/orders", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          }
+        });
+        setOrders(response.data);
+      } catch (error) {
+        console.error("Failed to fetch orders", error);
+      }
+    }
+
+    const fetchAddresses = async () => {
+      try{
+        const response = await api.get("/customers/users/my-info/addresses", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          }
+        });
+        setAddresses(response.data);
+      } catch (error) {
+        console.error("Failed to fetch addresses", error);
+      }
+    }
+
+    const fetchPaymentMethods = async () => {
+      try{
+        const response = await api.get("/customers/users/my-info/payment-methods", {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          }
+        });
+        setPaymentMethods(response.data);
+      } catch (error) {
+        console.error("Failed to fetch payment methods", error);
+      }
+    }
+
+    fetchOrders();
+    fetchAddresses();
+    fetchPaymentMethods();
+  }, []);
 
   const tabs = [
     { id: "orders", label: "Past Orders", icon: Package },
@@ -41,6 +79,10 @@ export default function AccountPage() {
     console.log("Address form submitted:", data);
     // Handle address addition
   };
+
+  const toggleOrderDetails = (orderId: string) => {
+    setShowOrderDetails((prev) => (prev === orderId ? null : orderId))
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -79,42 +121,37 @@ export default function AccountPage() {
                 <div className="divide-y">
                   {orders.map((order) => (
                     <div key={order.id} className="p-6">
-                      <div className="flex items-center justify-between mb-4">
+                      <div className="flex justify-between items-center">
+                        <p className="text-lg font-semibold">Order #{order.id}</p>
+                        <p className="text-sm text-gray-600">
+                          {new Date(order.date).toLocaleDateString()}
+                        </p>
+                      </div>
+                      <div className="flex justify-between items-center mt-4">
                         <div>
-                          <p className="font-medium">{order.id}</p>
-                          <p className="text-sm text-gray-500">
-                            {new Date(order.date).toLocaleDateString()}
-                          </p>
+                          <p className="text-sm text-gray-600">Status: {order.status}</p>
+                          <p className="text-sm text-gray-600">Total: ${order.total.toFixed(2)}</p>
                         </div>
-                        <div className="text-right">
-                          <p className="font-medium">
-                            ${order.total.toFixed(2)}
-                          </p>
-                          <p
-                            className={`text-sm ${
-                              order.status === "delivered"
-                                ? "text-green-600"
-                                : "text-blue-600"
-                            }`}
-                          >
-                            {order.status.charAt(0).toUpperCase() +
-                              order.status.slice(1)}
-                          </p>
+                        <button className="text-sm text-blue-600 hover:text-blue-700" onClick={() => toggleOrderDetails(order.id)}>
+                          View Details
+                        </button>
+                      </div>
+                      {showOrderDetails === order.id && (
+                        <div className="mt-4">
+                          <h3 className="text-lg font-semibold">Items</h3>
+                          <ul className="divide-y">
+                            {order.orderItems?.map((orderItem) => (
+                              <li key={orderItem.id} className="flex justify-between items-center py-2">
+                                <div>
+                                  <p className="font-semibold">{orderItem.product.name}</p>
+                                  <p className="text-sm text-gray-600">Quantity: {orderItem.quantity}</p>
+                                </div>
+                                <p className="font-semibold">${orderItem.product.price.toFixed(2)}</p>
+                              </li>
+                            ))}
+                          </ul>
                         </div>
-                      </div>
-                      <div className="space-y-2">
-                        {order.items.map((item, index) => (
-                          <div
-                            key={index}
-                            className="flex items-center justify-between text-sm text-gray-600"
-                          >
-                            <span>
-                              {item.quantity}x {item.name}
-                            </span>
-                            <span>${item.price.toFixed(2)}</span>
-                          </div>
-                        ))}
-                      </div>
+                      )}
                     </div>
                   ))}
                 </div>
@@ -133,10 +170,13 @@ export default function AccountPage() {
                     <div className="flex items-center justify-between p-4 border rounded-lg">
                       <div className="flex items-center gap-4">
                         <div className="w-12 h-8 bg-gray-100 rounded" />
-                        <div>
-                          <p className="font-medium">•••• •••• •••• 4242</p>
-                          <p className="text-sm text-gray-500">Expires 12/24</p>
-                        </div>
+                        {paymentMethods.map((paymentMethod) => (
+                          <div key={paymentMethod.cardNumber}>
+                            <p className="font-medium">Card Number: {paymentMethod.cardNumber}</p>
+                            <p className="text-sm text-gray-600">Cardholder: {paymentMethod.cardHolderName}</p>
+                            <p className="text-sm text-gray-600">Expires: {paymentMethod.expireDate}</p>
+                          </div>    
+                        ))}
                       </div>
                       <button className="text-sm text-red-600 hover:text-red-700">
                         Remove
@@ -161,13 +201,13 @@ export default function AccountPage() {
                   <div className="space-y-4 mb-8">
                     <div className="flex items-center justify-between p-4 border rounded-lg">
                       <div>
-                        <p className="font-medium">Home</p>
-                        <p className="text-sm text-gray-600">
-                          123 Main St, Apt 4B
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          New York, NY 10001
-                        </p>
+                      {addresses.map((address) => (
+                        <div key={address.addressLine1}>
+                          <p className="font-medium">{address.addressLine1}</p>
+                          <p className="text-sm text-gray-600">{address.city}, {address.state} {address.zipCode}</p>
+                          <p className="text-sm text-gray-600">{address.country}</p>
+                        </div>
+                      ))}
                       </div>
                       <div className="flex items-center gap-4">
                         <button className="text-sm text-blue-600 hover:text-blue-700">

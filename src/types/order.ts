@@ -1,3 +1,5 @@
+import { Key } from "react";
+
 export type TabType = "orders" | "payment" | "address";
 
 export interface Order {
@@ -5,5 +7,8 @@ export interface Order {
   date: string;
   total: number;
   status: "delivered" | "processing" | "shipped";
-  items: { name: string; quantity: number; price: number }[];
+  orderItems: {
+    id: Key | null | undefined;
+    product: any; name: string; quantity: number; price: number 
+}[];
 }
