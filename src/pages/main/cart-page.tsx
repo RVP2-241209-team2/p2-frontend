@@ -1,4 +1,3 @@
-
 import { useContext, useEffect, useState } from "react";
 import "./cart-page.css";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,7 +6,6 @@ import { CartItemsContext } from "./CartItemsProvider";
 import { useAuth } from "../../context/AuthContext";
 import { toast } from "sonner";
 import { ConfirmationModal } from "../../components/main/modal";
-
 
 export interface Cart {
   id: string;
@@ -113,24 +111,25 @@ export default function CartPage() {
       top: 0,
       behavior: "smooth",
     });
+  }
+  const onCheck = (e:React.ChangeEvent<HTMLInputElement>)=>{
+    console.log(cartItems, e.target.id);
+    const itemId = e.currentTarget.id;
+    const isChecked = e.target.checked;
+    console.log(checkedItems[itemId],itemId, isChecked, checkedItems)
+    setCheckedItems(prevState => ({
+      ...prevState,
+      [itemId]: isChecked
+    }));
+    const item = cartItems.find(item => item.id === itemId);
+    if(isChecked){
+      setTotal(total + Number(item?.product.price));
+        cartItemsContext?.setTotal(total + Number(item?.product.price));
+    }else{
+      setTotal(total - Number(item?.product.price));
+        cartItemsContext?.setTotal(total - Number(item?.product.price));
   };
 
-  const onCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.checked);
-    const [price, id] = e.target.id.split("-");
-    const isChecked = e.target.checked;
-    console.log(price, id, checkedItems, checkedItems[id]);
-    if (!isChecked) {
-      checkedItems[id] = false;
-      setCheckedItems({ ...checkedItems });
-      setTotal(total - Number(price));
-    } else {
-      checkedItems[id] = true;
-      console.log(checkedItems);
-      setCheckedItems({ ...checkedItems });
-      setTotal(total + Number(price));
-    }
-  };
 
   const handleClearCart = async () => {
     try {
@@ -161,7 +160,7 @@ export default function CartPage() {
       toast.error("Failed to clear cart");
       console.error("Clear cart error:", error);
     }
-  };
+  }
 
   const deleteItem = async (id: string) => {
     // Optimistically update UI
@@ -283,7 +282,10 @@ export default function CartPage() {
     <>
       <div className="cart-Container ">
         <div className="cart-Items">
-          <h2 className="cart-Header">Shopping Cart</h2>
+          <div className="cart-Header">
+            <h2>Shopping Cart</h2>
+            <div className="text-[grey] text-[15px] text-end">Price</div>
+          </div>
           <div>
             {cartItems.map((item, index) => {
               if (index < 4 * (currentPage - 1) || index >= 4 * currentPage)
@@ -293,7 +295,7 @@ export default function CartPage() {
                   <div className="w-[300px]">
                     <input
                       className="mx-2"
-                      id={`${item.product.price}-${item.id}`}
+                      id={`${item.id}`}
                       name="cart"
                       onChange={onCheck}
                       type="checkbox"
