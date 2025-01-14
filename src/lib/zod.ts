@@ -76,6 +76,7 @@ export type EditProduct = z.infer<typeof editProductSchema>;
 
 // Updated address schema to match backend
 export const addressSchema = z.object({
+  recipientName:z.string().min(1, { message: "Recepient Name is required" }),
   addressLine1: z.string().min(1, { message: "Address line 1 is required" }),
   addressLine2: z.string().optional(),
   city: z.string().min(1, { message: "City is required" }),
