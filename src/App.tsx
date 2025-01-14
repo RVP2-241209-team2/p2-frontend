@@ -26,6 +26,7 @@ import ProductsPage from "./pages/main/products-page";
 import ProductDetailPage from "./pages/main/product-details-page";
 import CartPage from "./pages/main/cart-page";
 import CheckoutPage from "./pages/main/checkout-page";
+import CheckoutSuccess from "./pages/main/checkout-confirm-page";
 import FAQPage from "./pages/main/faq-page";
 import AccountPage from "./pages/main/account-page";
 import CategoryPage from "./pages/main/category-page";
@@ -69,6 +70,7 @@ function App() {
         <Route path="/products/:id" element={<ProductDetailPage />} />
         <Route path="/cart" element={<CartPage />} />
         <Route path="/checkout" element={<CheckoutPage />} />
+        <Route path="/success" element={<CheckoutSuccess />} />
         <Route path="/account" element={<AccountPage />} />
         <Route path="/faq" element={<FAQPage />} />
       </Route>
