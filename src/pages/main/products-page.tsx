@@ -7,14 +7,15 @@ import { Link, useSearchParams } from "react-router-dom";
 import { BACKGROUND_IMAGES } from "../../lib/constants";
 
 export default function ProductsPage() {
-  const { loading, error, searchProducts } = useProducts();
+  const { loading, error, searchProducts, fetchProducts } = useProducts();
   const [products, setProducts] = useState<Product[]>([]);
   const [searchParams] = useSearchParams();
 
 
   useEffect(() => {
     const loadProducts = async () => {
-      const response = await searchProducts(searchParams.get("name"));
+    
+      const response = (searchParams.size>0) ? await searchProducts(searchParams.get("name")) : await fetchProducts();
       if (response) {
         console.log(response);
         setProducts(response);

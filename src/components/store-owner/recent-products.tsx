@@ -18,7 +18,7 @@ const RecentProducts = () => (
             </div>
           </div>
           <Link
-            to={`/admin/products/${i}`}
+            to={`/store-owner/products/${i}`}
             className="text-amber-600 hover:text-amber-700 text-sm font-medium"
           >
             Edit

@@ -30,9 +30,11 @@ import FAQPage from "./pages/main/faq-page";
 import AccountPage from "./pages/main/account-page";
 import CategoryPage from "./pages/main/category-page";
 import ProtectedRoute from "./components/shared/protected-route";
+import { Toaster } from "sonner";
 
 function App() {
   return (
+    <>
     <Routes>
       {/* Auth routes */}
       <Route element={<AuthLayout />}>
@@ -71,6 +73,9 @@ function App() {
         <Route path="/faq" element={<FAQPage />} />
       </Route>
     </Routes>
+    <Toaster/>
+    </>
+    
   );
 }
 

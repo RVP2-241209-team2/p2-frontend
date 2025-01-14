@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { BarChart3, Package, DollarSign, Users } from "lucide-react";
 import NewProductForm from "../../components/store-owner/new-product-form";
 import StatCard from "../../components/store-owner/stat-card";
@@ -49,21 +48,6 @@ export default function DashboardPage() {
           <div className="space-y-3">
             {/* New Product Form and action */}
             <NewProductForm />
-          </div>
-          {/* Other actions */}
-          <div className="flex flex-col gap-2">
-            <Link
-              to="/admin/orders"
-              className="block w-full text-center bg-amber-600 text-white py-2 rounded-lg hover:bg-amber-700 transition-colors"
-            >
-              View All Orders
-            </Link>
-            <Link
-              to="/admin/users"
-              className="block w-full text-center bg-amber-600 text-white py-2 rounded-lg hover:bg-amber-700 transition-colors"
-            >
-              Manage Users
-            </Link>
           </div>
         </div>
       </div>

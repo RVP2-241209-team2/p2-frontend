@@ -68,6 +68,12 @@ export const newProductSchema = z.object({
 
 export type NewProduct = z.infer<typeof newProductSchema>;
 
+export const editProductSchema = newProductSchema.extend({
+  id: z.string().uuid(),
+});
+
+export type EditProduct = z.infer<typeof editProductSchema>;
+
 // Updated address schema to match backend
 export const addressSchema = z.object({
   recipientName:z.string().min(1, { message: "Recepient Name is required" }),

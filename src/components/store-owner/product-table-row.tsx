@@ -26,7 +26,7 @@ const ProductTableRow = ({ product }: ProductTableRowProps) => {
       <td className="px-6 py-4 text-gray-600">${product.price.toFixed(2)}</td>
       <td className="px-6 py-4 text-right">
         <Link
-          to={`/admin/products/${product.id}`}
+          to={`/store-owner/products/${product.id}`}
           className="text-amber-600 hover:text-amber-700 font-medium"
         >
           Edit
