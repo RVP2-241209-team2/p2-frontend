@@ -4,14 +4,20 @@ import { CreditCard } from "lucide-react";
 
 import { Order } from "../../types/order";
 
-import { useState } from "react";
+import axios from "axios"; 
+
+import { useEffect, useState } from "react";
 import { TabType } from "../../types/order";
 import { Package } from "lucide-react";
 import { AddressFormData, PaymentFormData } from "../../lib/zod";
 import PaymentMethodForm from "../../components/main/forms/payment-details-form";
 import AddressForm from "../../components/main/forms/address-form";
+import { User } from "../../types/users";
+import { Address } from "./checkout-page";
 
 export default function AccountPage() {
+  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<TabType>("orders");
   const [orders] = useState<Order[]>([
     {
@@ -26,21 +32,159 @@ export default function AccountPage() {
     },
   ]);
 
+  useEffect(() => {
+    const storedToken = localStorage.getItem("token");
+    const storedUser = localStorage.getItem("user");
+    if (storedToken && storedUser) {
+      setToken(storedToken);
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  const [addresses, setAddresses] = useState<Address[]>([]);
+  const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
+  const [payLoading, setPayLoading] = useState<boolean>(true);
+  const [addressLoading, setAddressLoading] = useState<boolean>(true);
+  const [error, setError] = useState<string | null>(null);
+
+  const userId = user?.id;
+  const baseUrl = import.meta.env.VITE_API_URL;
+
+
+  // fetch all addresses
+  const fetchAddresses = async () => {
+    try {
+      const response = await axios.get(`${baseUrl}/customers/users/my-info/addresses`, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+    });
+      setAddresses(response.data);
+      setError(null);
+    } catch (err: any) {
+      setError(err.message || "An error occurred while fetching addresses");
+    } finally {
+      setAddressLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchAddresses();
+  }, [userId]);
+
+  //fetch all payment methods
+  const fetchPayMethods = async () => {
+    try {
+      const response = await axios.get(`${baseUrl}/customers/users/my-info/payment-methods`, {
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${token}`,
+        },
+    });
+      setPaymentMethods(response.data);
+      setError(null);
+    } catch (err: any) {
+      setError(err.message || "An error occurred while fetching addresses");
+    } finally {
+      setPayLoading(false);
+    }
+  };
+  useEffect(() => {
+    fetchPayMethods();
+  }, [userId]);
+
+  // console.log(user)
+  // console.log(addresses);
+  // console.log(paymentMethods);
+
   const tabs = [
     { id: "orders", label: "Past Orders", icon: Package },
     { id: "payment", label: "Payment Methods", icon: CreditCard },
     { id: "address", label: "Addresses", icon: MapPin },
   ] as const;
 
-  const handlePaymentSubmit = (data: PaymentFormData) => {
+  
+  // Handle payment method addition
+  const handlePaymentSubmit = async (data: PaymentFormData) => {
     console.log("Payment form submitted:", data);
-    // Handle payment method addition
+    try {
+      const response = await axios.post(`${baseUrl}/customers/users/my-info/payment-methods`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      fetchPayMethods();
+    } catch (error) {
+      console.error("Failed to add payment method:", error);
+      throw error; // Re-throw the error to handle it in the calling function
+    }
+    
   };
 
-  const handleAddressSubmit = (data: AddressFormData) => {
+   // Remove Payment Methods
+   const removePaymentMethods = async (id: string) => {
+    try {
+      const response = await axios.delete(`${baseUrl}/customers/users/my-info/payment-methods/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+      );
+
+      fetchPayMethods();
+    } catch (error) {
+      console.error("Failed to add delete payment method:", error);
+      throw error; // Re-throw the error to handle it in the calling function
+    }
+  }
+
+  // Handle address addition
+  const handleAddressSubmit = async (data: AddressFormData) => {
     console.log("Address form submitted:", data);
-    // Handle address addition
+
+    try {
+      const response = await axios.post(`${baseUrl}/customers/users/my-info/addresses`,
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "application/json",
+          },
+        }
+      );
+  
+      fetchAddresses();
+    } catch (error) {
+      console.error("Failed to add address:", error);
+      throw error; // Re-throw the error to handle it in the calling function
+    }
   };
+
+  // Remove Address
+  const removeAddress = async (id: string) => {
+    try {
+      const response = await axios.delete(`${baseUrl}/customers/users/my-info/addresses/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+      );
+
+      console.log(response.data);
+  
+      fetchAddresses();
+    } catch (error) {
+      console.error("Failed to add delete address:", error);
+      throw error; // Re-throw the error to handle it in the calling function
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -124,28 +268,36 @@ export default function AccountPage() {
             {/* Payment Methods Tab */}
             {activeTab === "payment" && (
               <div className="bg-white rounded-lg shadow">
+                {payLoading && <h1 className="text-center">Loading...</h1>}
                 <div className="px-6 py-4 border-b">
                   <h2 className="text-xl font-semibold">Payment Methods</h2>
                 </div>
                 <div className="p-6">
                   {/* Existing Cards */}
-                  <div className="space-y-4 mb-8">
-                    <div className="flex items-center justify-between p-4 border rounded-lg">
-                      <div className="flex items-center gap-4">
-                        <div className="w-12 h-8 bg-gray-100 rounded" />
-                        <div>
-                          <p className="font-medium">•••• •••• •••• 4242</p>
-                          <p className="text-sm text-gray-500">Expires 12/24</p>
+                  {
+                    paymentMethods.map(paymentMethod => {
+                      return <div key={paymentMethod.id} className="space-y-4 mb-8">
+                        <div className="flex items-center justify-between p-4 border rounded-lg">
+                          <div className="flex items-center gap-4">
+                            <div className="w-12 h-8 bg-gray-100 rounded" />
+                            <div>
+                              <p className="font-medium">•••• •••• •••• {paymentMethod.cardNumber.slice(-4)}</p>
+                              <p className="font-medium">{paymentMethod.cardHolderName}</p>
+                              <p className="text-sm text-gray-500">Expire: {paymentMethod.expireDate}</p>
+                            </div>
+                          </div>
+                          <button onClick={() => removePaymentMethods(paymentMethod.id)} className="text-sm text-red-600 hover:text-red-700">
+                            Remove
+                          </button>
                         </div>
                       </div>
-                      <button className="text-sm text-red-600 hover:text-red-700">
-                        Remove
-                      </button>
-                    </div>
-                  </div>
+                    })
+                  }
+                  
+                    
 
                   {/* Add New Card Form */}
-                  <PaymentMethodForm onSubmit={handlePaymentSubmit} />
+                  <PaymentMethodForm addresses={addresses} onSubmit={handlePaymentSubmit} />
                 </div>
               </div>
             )}
@@ -153,31 +305,49 @@ export default function AccountPage() {
             {/* Addresses Tab */}
             {activeTab === "address" && (
               <div className="bg-white rounded-lg shadow">
+                {addressLoading && <h1 className="text-center">Loading...</h1>}
                 <div className="px-6 py-4 border-b">
                   <h2 className="text-xl font-semibold">Addresses</h2>
                 </div>
                 <div className="p-6">
                   {/* Existing Addresses */}
                   <div className="space-y-4 mb-8">
-                    <div className="flex items-center justify-between p-4 border rounded-lg">
-                      <div>
-                        <p className="font-medium">Home</p>
-                        <p className="text-sm text-gray-600">
-                          123 Main St, Apt 4B
-                        </p>
-                        <p className="text-sm text-gray-600">
-                          New York, NY 10001
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-4">
-                        <button className="text-sm text-blue-600 hover:text-blue-700">
-                          Edit
-                        </button>
-                        <button className="text-sm text-red-600 hover:text-red-700">
-                          Remove
-                        </button>
-                      </div>
-                    </div>
+                    {
+                      addresses.map((address) => {
+                        return <div key={address.id} className="flex items-center justify-between p-4 border rounded-lg text-capitalize">
+                          <div>
+                            <p className="font-medium">{address?.recipientName}</p>
+                            <p className="text-sm text-gray-600">
+                              {address.addressLine1}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              {address.addressLine2}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              {address.city}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              {address.state}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              {address.zipCode}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              {address.country}
+                            </p>
+                          </div>
+                          <div className="flex items-center gap-4">
+                            <button className="text-sm text-blue-600 hover:text-blue-700">
+                              Edit
+                            </button>
+                            <button onClick={(() => removeAddress(address.id))} className="text-sm text-red-600 hover:text-red-700">
+                              Remove
+                            </button>
+                          </div>
+                        </div>
+                      })
+                    }
+                    
                   </div>
 
                   {/* Add New Address Form */}

@@ -1,4 +1,3 @@
-
 import { useContext, useEffect, useState } from "react";
 import "./cart-page.css";
 import { Link, useNavigate } from "react-router-dom";
@@ -7,7 +6,6 @@ import { CartItemsContext } from "./CartItemsProvider";
 import { useAuth } from "../../context/AuthContext";
 import { toast } from "sonner";
 import { ConfirmationModal } from "../../components/main/modal";
-
 
 export interface Cart {
   id: string;
@@ -50,7 +48,7 @@ export default function CartPage() {
   );
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [total, setTotal] = useState<number>(() => {
-    return cartItems.reduce((acc, item) => acc + item.product.price, 0);
+    return cartItems.reduce((acc, item) => acc + item.product.price*item.quantity, 0);
   });
   const [pages, setPages] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -66,18 +64,16 @@ export default function CartPage() {
       console.log(response.data);
       setCartItems(response.data);
       cartItemsContext?.setTotal(
-        response.data.reduce(
-          (acc: number, item: CartItem) => acc + item.product.price,
-          0
-        )
+        response.data[0].cart.total
       );
       cartItemsContext?.setCartItems(response.data);
-      setTotal(
-        response.data.reduce(
-          (acc: number, item: CartItem) => acc + item.product.price,
-          0
-        )
-      );
+      // setTotal(
+      //   response.data.reduce(
+      //     (acc: number, item: CartItem) => acc + item.product.price,
+      //     0
+      //   )
+      // );
+      setTotal(response.data[0].cart.total)
       const checkedItems: { [key: string]: boolean } = {};
       response.data.forEach((item: CartItem) => {
         checkedItems[`${item.id}`] = true;
@@ -113,24 +109,26 @@ export default function CartPage() {
       top: 0,
       behavior: "smooth",
     });
-  };
-
-  const onCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
-    console.log(e.target.checked);
-    const [price, id] = e.target.id.split("-");
+  }
+  const onCheck = (e:React.ChangeEvent<HTMLInputElement>)=>{
+    console.log(cartItems, e.target.id);
+    const itemId = e.currentTarget.id;
     const isChecked = e.target.checked;
-    console.log(price, id, checkedItems, checkedItems[id]);
-    if (!isChecked) {
-      checkedItems[id] = false;
-      setCheckedItems({ ...checkedItems });
-      setTotal(total - Number(price));
-    } else {
-      checkedItems[id] = true;
-      console.log(checkedItems);
-      setCheckedItems({ ...checkedItems });
-      setTotal(total + Number(price));
+    console.log(checkedItems[itemId],itemId, isChecked, checkedItems)
+    setCheckedItems(prevState => ({
+      ...prevState,
+      [itemId]: isChecked
+    }));
+    const item = cartItems.find(item => item.id === itemId);
+    if(isChecked){
+      setTotal(total + Number(item?.product.price));
+        cartItemsContext?.setTotal(total + Number(item?.product.price));
+    }else{
+      setTotal(total - Number(item?.product.price));
+        cartItemsContext?.setTotal(total - Number(item?.product.price));
+      }
     }
-  };
+
 
   const handleClearCart = async () => {
     try {
@@ -161,16 +159,17 @@ export default function CartPage() {
       toast.error("Failed to clear cart");
       console.error("Clear cart error:", error);
     }
-  };
+  }
 
   const deleteItem = async (id: string) => {
     // Optimistically update UI
     const previousItems = [...cartItems];
-    const newItems = cartItems.filter((item) => item.id !== id);
+    const newItems: CartItem[] = cartItems.filter((item) => item.id !== id);
     const newTotal = newItems.reduce(
-      (acc, item) => acc + item.product.price,
+      (acc, item) => acc + item.product.price * item.quantity,
       0
     );
+    // console.log(newItems[0].cart.total);
 
     // Update UI immediately
     setCartItems(newItems);
@@ -211,11 +210,11 @@ export default function CartPage() {
       // Revert changes on error
       setCartItems(previousItems);
       setTotal(
-        previousItems.reduce((acc, item) => acc + item.product.price, 0)
+        previousItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
       );
       cartItemsContext?.setCartItems(previousItems);
       cartItemsContext?.setTotal(
-        previousItems.reduce((acc, item) => acc + item.product.price, 0)
+        previousItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
       );
 
       toast.error(
@@ -283,7 +282,10 @@ export default function CartPage() {
     <>
       <div className="cart-Container ">
         <div className="cart-Items">
-          <h2 className="cart-Header">Shopping Cart</h2>
+          <div className="cart-Header">
+            <h2>Shopping Cart</h2>
+            <div className="text-[grey] text-[15px] text-end">Price</div>
+          </div>
           <div>
             {cartItems.map((item, index) => {
               if (index < 4 * (currentPage - 1) || index >= 4 * currentPage)
@@ -293,7 +295,7 @@ export default function CartPage() {
                   <div className="w-[300px]">
                     <input
                       className="mx-2"
-                      id={`${item.product.price}-${item.id}`}
+                      id={`${item.id}`}
                       name="cart"
                       onChange={onCheck}
                       type="checkbox"
@@ -336,7 +338,7 @@ export default function CartPage() {
                       </button>
                     </div>
                   </div>
-                  <div style={{ fontWeight: "700" }}>${item.total}</div>
+                  <div style={{ fontWeight: "700" }}>${item.product.price.toFixed(2)}</div>
                 </div>
               );
             })}
@@ -376,7 +378,7 @@ export default function CartPage() {
         </div>
         <div className="cart-Checkout">
           <div>
-            Subtotal ({cartItems.length} items): <span>${total}</span>
+            Subtotal ({cartItems.length} items): <span>${total.toFixed(2)}</span>
           </div>
           <button
             className="hover:bg-[#ffc505]"

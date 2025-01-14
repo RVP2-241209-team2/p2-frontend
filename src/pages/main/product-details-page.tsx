@@ -6,6 +6,8 @@ import { useEffect } from "react";
 import { Link, useParams } from "react-router-dom";
 import api from "../../lib/axios";
 import { toast } from "sonner";
+import ProductReviewForm from "../../components/main/forms/product-review-form";
+import ReviewsList from "../../components/main/reviews-list";
 
 export default function ProductDetailPage() {
   const { loading, error, fetchProductById } = useProducts();
@@ -182,47 +184,10 @@ export default function ProductDetailPage() {
       {/* Reviews Section */}
 
       {/**review form */}
+      <ProductReviewForm productId={product.id} />
 
       {/**review list */}
-      <div className="border-t pt-12">
-        <h2 className="text-2xl font-bold mb-8">Customer Reviews</h2>
-        <div className="space-y-8">
-          {[1, 2, 3].map((review) => (
-            <div key={review} className="border-b pb-8">
-              <div className="flex items-start gap-4">
-                <div className="flex-shrink-0">
-                  <div className="w-12 h-12 rounded-full bg-gray-200" />
-                </div>
-                <div className="flex-1">
-                  <div className="flex items-center gap-2 mb-1">
-                    <h4 className="font-medium">reviewer</h4>
-                    <span className="text-sm text-gray-500">•</span>
-                    <span className="text-sm text-gray-500">2 days ago</span>
-                  </div>
-                  <div className="flex items-center mb-2">
-                    {[...Array(5)].map((_, i) => (
-                      <Star
-                        key={i}
-                        className={`w-4 h-4 ${
-                          i < 4
-                            ? "text-yellow-400 fill-yellow-400"
-                            : "text-gray-300"
-                        }`}
-                      />
-                    ))}
-                  </div>
-                  <p className="text-gray-600">
-                    {/**get from api */}
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed
-                    do eiusmod tempor incididunt ut labore et dolore magna
-                    aliqua.
-                  </p>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
+      <ReviewsList productId={product.id} />
     </div>
   );
 }
