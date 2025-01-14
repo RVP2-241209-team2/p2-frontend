@@ -1,10 +1,11 @@
 import axios from "axios";
 import { useContext, useEffect, useState } from "react";
 import "./cart-page.css";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import api from "../../lib/axios";
 import { CartItemsContext } from "./CartItemsProvider";
 import { useAuth } from "../../context/AuthContext";
+import { toast } from "sonner";
 
 interface FakeItem {
   id: number;
@@ -139,27 +140,72 @@ export default function CartPage() {
     }
   };
   const deleteItem = async (id: string) => {
-    console.log(id);
-    const response = await api.delete(`/customers/cart/remove/${id}`);
-    console.log(response);
-    if (response.status === 200) {
-      const newItems = cartItems.filter((item) => item.id !== id);
-      setCartItems(newItems);
-      cartItemsContext?.setCartItems(newItems);
-      const total = newItems.reduce(
-        (acc: number, item: CartItem) => acc + item.product.price,
-        0
+    // Optimistically update UI
+    const previousItems = [...cartItems];
+    const newItems = cartItems.filter((item) => item.id !== id);
+    const newTotal = newItems.reduce(
+      (acc, item) => acc + item.product.price,
+      0
+    );
+
+    // Update UI immediately
+    setCartItems(newItems);
+    setTotal(newTotal);
+    cartItemsContext?.setCartItems(newItems);
+    cartItemsContext?.setTotal(newTotal);
+
+    try {
+      const response = await api.delete(`/customers/cart/remove/${id}`);
+
+      if (response.status === 200) {
+        toast.success(
+          <div className="flex flex-col gap-2">
+            <p>Item removed from cart</p>
+            <Link
+              to="/products"
+              className="text-sm text-blue-500 hover:text-blue-600"
+            >
+              Continue shopping
+            </Link>
+          </div>
+        );
+
+        // Update pagination
+        setPages(
+          Array.from(
+            { length: Math.ceil(newItems.length / 4) },
+            (_, i) => i + 1
+          )
+        );
+
+        // Update checked items
+        const updatedCheckedItems = { ...checkedItems };
+        delete updatedCheckedItems[id];
+        setCheckedItems(updatedCheckedItems);
+      }
+    } catch (error) {
+      // Revert changes on error
+      setCartItems(previousItems);
+      setTotal(
+        previousItems.reduce((acc, item) => acc + item.product.price, 0)
       );
-      setTotal(total);
-      cartItemsContext?.setTotal(total);
-      const checkedItems: { [key: string]: boolean } = {};
-      newItems.forEach((item: CartItem) => {
-        checkedItems[`${item.id}`] = true;
+      cartItemsContext?.setCartItems(previousItems);
+      cartItemsContext?.setTotal(
+        previousItems.reduce((acc, item) => acc + item.product.price, 0)
+      );
+
+      toast.error(
+        <div className="flex flex-col gap-2">
+          <p>Failed to remove item from cart</p>
+          <p className="text-sm text-gray-500">Please try again</p>
+        </div>
+      );
+
+      console.error("Cart delete error:", {
+        error,
+        itemId: id,
+        status: (error as any).response?.status,
       });
-      setCheckedItems(checkedItems);
-      setPages(
-        Array.from({ length: Math.ceil(newItems.length / 4) }, (_, i) => i + 1)
-      );
     }
   };
   const reduceItem = async (item: CartItem) => {
