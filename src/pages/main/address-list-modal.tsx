@@ -4,6 +4,7 @@ import axios from 'axios';
 import { useAuth } from '../../context/AuthContext';
 import { checkoutContext } from './checkout-page';
 import { Address } from './checkout-page';
+import api from '../../lib/axios';
 
 interface DummyAddress {
     id: number;
@@ -21,6 +22,7 @@ interface AddressesFormProps {
     setPaymentDetail: () => void;
     setBillingAddress: () => void;
     addresses: Address[];
+    setAddresses: (address: Address) => void;
 }
 
 const dummyAddresses: DummyAddress[] = [
@@ -42,13 +44,15 @@ const dummyAddresses: DummyAddress[] = [
     },
 ];
 
-export const AddressesListModal: React.FC<AddressesFormProps> = ({addresses, setPaymentDetail, setBillingAddress, onClose}) => {
+export const AddressesListModal: React.FC<AddressesFormProps> = ({setAddresses, addresses, setPaymentDetail, setBillingAddress, onClose}) => {
     
-    const {user, token} = useAuth();
     const paymentContext = useContext(checkoutContext);
 
-    const [selectedAddress, setSelectedAddress] = React.useState<number | null>(1);
+    const [selectedAddress, setSelectedAddress] = React.useState<string | null>(()=>{
+        return paymentContext?.billingAddress?.id || addresses[0].id || null;
+    });
 
+    const [fullName, setFullName] = React.useState<string>('');
     const [addressLine1, setAddressLine1] = React.useState<string>('');
     const [addressLine2, setAddressLine2] = React.useState<string>('');
     const [city, setCity] = React.useState<string>('');
@@ -64,7 +68,7 @@ export const AddressesListModal: React.FC<AddressesFormProps> = ({addresses, set
 
     const addressChange = () => {
         // paymentContext?.setPaymentDetail({...paymentContext.paymentDetail!, address: addresses.find((address) => address.id === selectedAddress)!});
-        // paymentContext?.setBillingAddress(addresses.find((address) => address.id === selectedAddress)!);
+        paymentContext?.setBillingAddress(addresses.find((address) => address.id === selectedAddress)!);
         paymentContext?.setPaymentModal(true);
         onClose();
     }
@@ -72,21 +76,26 @@ export const AddressesListModal: React.FC<AddressesFormProps> = ({addresses, set
         setNewAddress(true);
     }
 
-    const onSubmit = async (e:React.FormEvent<HTMLFormElement>)=>{
-    }
+    // const onSubmit = async (e:React.FormEvent<HTMLFormElement>)=>{
+    // }
 
     const addAddress = async () => {
         const address = {
+            recipientName: fullName,
             addressLine1,
             addressLine2,
             city,
             state,
             zipCode,
-            country
+            country,
+            type: "BILLING"
         }
-        const response = await axios.post(`http://3.144.215.146:8081/api/v1/users/${user?.id}/addresses`, address, {headers : {Authorization: `Bearer ${token}`}});
+        const response = await api.post(`/customers/users/my-info/addresses`, address);
         if(response.status === 200){
             setNewAddress(false);
+            paymentContext?.setBillingAddress(response.data);
+            setAddresses(response.data);
+            setSelectedAddress(response.data.id);
             // setAddresses([...addresses, response.data]);
         }
     }
@@ -104,8 +113,8 @@ export const AddressesListModal: React.FC<AddressesFormProps> = ({addresses, set
                     <i onClick={onAddressClose} className='fa-solid fa-x cursor-pointer'></i>
                 </div>
                 {!newAddress && <div className='p-3 mx-4 my-3 border border-[#e5e5e9] rounded-xl'>
-                    {dummyAddresses.map((address) => (
-                        <div className={selectedAddress === address.id? 'bg-[#f5ead7] py-2.5 pl-3 pr-5 rounded-lg': ' px-3 py-2.5 rounded-lg'}  key={address.id}>
+                    {addresses.map((address) => (
+                        <div className={selectedAddress === address.id? 'bg-[#f5ead7] px-3 py-2.5 rounded-lg': ' px-3 py-2.5 rounded-lg'}  key={address.id}>
                             <input
                                 type="radio"
                                 id={`address-${address.id}`}
@@ -115,7 +124,7 @@ export const AddressesListModal: React.FC<AddressesFormProps> = ({addresses, set
                                 onChange={() => setSelectedAddress(address.id)}
                             />
                             <label className='ml-3' htmlFor={`address-${address.id}`}>
-                                {address.name}, {address.address}, {address.city}, {address.state}, {address.zip}
+                                <span className='font-medium pr-1'>{address.recipientName}</span>  {address.addressLine1} {address.addressLine2}, {address.city}, {address.state}, {address.zipCode}, {address.country}
                             </label>
                         </div>
                     ))}
@@ -125,9 +134,9 @@ export const AddressesListModal: React.FC<AddressesFormProps> = ({addresses, set
                     </div>
                 </div>}
                 {newAddress && <div className='p-3 mx-4 my-3 border w-[380px] border-[#e5e5e9] rounded-xl'>
-                    <form className="ml-2 font-medium" onSubmit={onSubmit}>
+                    <form className="ml-2 font-medium">
                         <label htmlFor="fullname">Full name</label>
-                        <input className="block rounded-md border-1 border-[#b3b2b2] w-full font-normal pl-1 py-0.5" type="text" id="fullname" placeholder="" name="fullname" required/>
+                        <input className="block rounded-md border-1 border-[#b3b2b2] w-full font-normal pl-1 py-0.5" type="text" value={fullName} id="fullname" placeholder="" onChange={(e)=>setFullName(e.target.value)} name="fullname" required/>
                         <label className="mt-1" htmlFor="addressLine1">Address Line 1</label>
                         <input className="block rounded-md border-1 border-[#b3b2b2] w-full font-normal pl-1 py-0.5" type="text" id="addressLine1" placeholder="Street address or P.O.Box" value={addressLine1} onChange={(e)=>setAddressLine1(e.target.value)} name="addressLine1" required/>
                         <label className="mt-1" htmlFor="addressLine2">Address Line 2</label>
@@ -140,8 +149,8 @@ export const AddressesListModal: React.FC<AddressesFormProps> = ({addresses, set
                         <input className="block rounded-md border-1 border-[#b3b2b2] w-full" type="text" id="zipCode" value={zipCode} onChange={(e)=>setZipCode(e.target.value)} name="zipCode" required/>
                         <label className="mt-1" htmlFor="country">Country/Region</label>
                         <input className="block rounded-md border-1 border-[#b3b2b2] w-full" type="text" id="country" value={country} onChange={(e)=>setCountry(e.target.value)} name="country" required/>
-                        <label className="mt-1" htmlFor="phoneNumber">Phone number</label>
-                        <input className="block rounded-md border-1 border-[#b3b2b2] w-full font-normal pl-1 py-0.5" type="text" id="phoneNumber" placeholder="" name="phoneNumber" required/>
+                        {/* <label className="mt-1" htmlFor="phoneNumber">Phone number</label>
+                        <input className="block rounded-md border-1 border-[#b3b2b2] w-full font-normal pl-1 py-0.5" type="text" id="phoneNumber" placeholder="" name="phoneNumber" required/> */}
                         <div className='text-end'>
                         <button onClick={()=>setNewAddress(!newAddress)} className='py-1 px-3 rounded-2xl border-[#a3a3a3] border-[1px] hover:bg-[#faf8f8] bg-[#fdfdfd]'>Back</button>
                         <button onClick={addAddress} className="mt-4 ml-2 px-4 py-1 font-normal bg-[#ffda05] rounded-2xl hover:bg-[#ffc505]" type="submit">Use this address</button>

@@ -1,11 +1,20 @@
 import axios from "axios";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { Address, checkoutContext } from "./checkout-page";
+import api from "../../lib/axios";
 
-
-export const AddressForm:React.FC<{onClose: () =>void}> = ({onClose}) => {
+interface ToggletProps {
+    onClose: () => void;
+    setSelectAddress: (address:Address) => void;
+    setAddresses: (address:Address) => void;
+}
+export const AddressForm:React.FC<ToggletProps> = ({setAddresses, setSelectAddress, onClose}) => {
 
     const auth = useAuth();
+    const paymentContext = useContext(checkoutContext);
+
+    const [fullName, setFullName] = useState<string>('');
     const [addressLine1, setAddressLine1] = useState<string>('');
     const [addressLine2, setAddressLine2] = useState<string>('');
     const [city, setCity] = useState<string>('');
@@ -18,18 +27,24 @@ export const AddressForm:React.FC<{onClose: () =>void}> = ({onClose}) => {
         e.preventDefault();
         console.log({addressLine1, addressLine2, city, state, zipCode, country});
         const address = {
+            recipientName:fullName,
             addressLine1,
             addressLine2,
             city,
             state,
             zipCode,
-            country
+            country,
+            type:"SHIPPING"
         }
-        const response = await axios.post(`http://3.144.215.146:8081/api/v1/users/${auth.user?.id}/addresses`, 
-                                            address,
-                                            {headers: {Authorization: `Bearer ${auth.token}`}});
+        // const response = await axios.post(`http://3.144.215.146:8081/api/v1/users/${auth.user?.id}/addresses`, 
+        //                                     address,
+        //                                     {headers: {Authorization: `Bearer ${auth.token}`}});
+        const response = await api.post(`/customers/users/my-info/addresses`, address);
+        console.log(response);
         if(response.status === 200){
             onClose();
+            setSelectAddress(response.data);
+            setAddresses(response.data);
         }
     }
 
@@ -41,7 +56,7 @@ export const AddressForm:React.FC<{onClose: () =>void}> = ({onClose}) => {
         <h3 className="py-4 px-5 font-[650]">Enter a new shipping address</h3>
         <form className="ml-2 px-5 pb-5 font-medium" onSubmit={onSubmit}>
             <label htmlFor="fullname">Full name (First and Last name)</label>
-            <input className="block border-1 border-[grey] w-full font-normal pl-1 py-0.5" type="text" id="fullname" placeholder="" name="fullname" required/>
+            <input className="block border-1 border-[grey] w-full font-normal pl-1 py-0.5" value={fullName} onChange={(e)=>setFullName(e.target.value)} type="text" id="fullname" placeholder="" name="fullname" required/>
             <label className="mt-2" htmlFor="phoneNumber">Phone number</label>
             <input className="block border-1 border-[grey] w-full font-normal pl-1 py-0.5" type="text" id="phoneNumber" placeholder="" name="phoneNumber" required/>
             <label className="mt-2" htmlFor="addressLine1">Address</label>
