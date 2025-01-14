@@ -58,73 +58,73 @@ export const checkoutContext = createContext<CheckoutContextType | undefined>(un
 export default function CheckoutPage() {
 
 // check if user is signed in.
-  const navigate = useNavigate();
-  const {user, token} = useAuth();
-  const cartItemsContext = useContext(CartItemsContext);
+  const navigate = useNavigate()
+  const {user, token} = useAuth()
+  const cartItemsContext = useContext(CartItemsContext)
 
   // selected address and payment
-  const [selectAddress, setSelectAddress] = useState<Address>();
-  const [selectPayment, setSelectPayment] = useState<Payment>();
+  const [selectAddress, setSelectAddress] = useState<Address>()
+  const [selectPayment, setSelectPayment] = useState<Payment>()
 
-  const [addressModal, setAddressModal] = useState<boolean>(false);
-  const [paymentModal, setPaymentModal] = useState<boolean>(false);
-  const [addressSecion, setAddressSection] = useState(true);
-  const [paymentSection, setPaymentSection] = useState(false);
+  const [addressModal, setAddressModal] = useState<boolean>(false)
+  const [paymentModal, setPaymentModal] = useState<boolean>(false)
+  const [addressSecion, setAddressSection] = useState(true)
+  const [paymentSection, setPaymentSection] = useState(false)
   const [orderSection, setOrderSection] = useState(false)
-  const [addresses, setAddresses] = useState<Address[]>([]);
-  const [paymentDetails, setPaymentDetails] = useState<Payment[]>([]);
+  const [addresses, setAddresses] = useState<Address[]>([])
+  const [paymentDetails, setPaymentDetails] = useState<Payment[]>([])
 
   // for context API
-  const [billingAddressModal, setBillingAddressModal] = useState<boolean>(false);
-  const [paymentDetail, setPaymentDetail] = useState<Payment>();
-  const [address, setAddress] = useState<Address>();
-  const [billingAddress, setBillingAddress] = useState<Address>();
-
+  const [billingAddressModal, setBillingAddressModal] = useState<boolean>(false)
+  const [paymentDetail, setPaymentDetail] = useState<Payment>()
+  const [address, setAddress] = useState<Address>()
+  const [billingAddress, setBillingAddress] = useState<Address>()
+  
   useEffect(()=>{
     if(!user){
-      navigate('/login');
+      navigate('/login')
     }
     const fetchAddresses = async ()=>{
-    const addresses = await api.get(`/customers/users/my-info/addresses`);
+    const addresses = await api.get(`/customers/users/my-info/addresses`)
     console.log(addresses)
-    setAddresses(addresses.data);
+    setAddresses(addresses.data)
     setSelectAddress(addresses.data[0])
-    const payments = await api.get(`/customers/users/my-info/payment-methods`);
-    setPaymentDetails(payments.data);
-    setSelectPayment(payments.data.find((payment:Payment)=>payment.isDefault));
+    const payments = await api.get(`/customers/users/my-info/payment-methods`)
+    setPaymentDetails(payments.data)
+    setSelectPayment(payments.data.find((payment:Payment)=>payment.isDefault))
   }
     fetchAddresses();
   },[]);
 
   const addAddress = ()=>{
-    setAddressModal(true);
+    setAddressModal(true)
   }
 
   const onAddress = ()=>{
-    setAddressSection(true);
+    setAddressSection(true)
     setPaymentSection(false)
     setOrderSection(false)
   }
 
   const onPayment = ()=>{
     setPaymentSection(true)
-    setAddressSection(false);
+    setAddressSection(false)
     setOrderSection(false)
   }
 
   const onOrder =()=>{
-    setOrderSection(true);
-    setPaymentSection(false);
-    setAddressSection(false);
+    setOrderSection(true)
+    setPaymentSection(false)
+    setAddressSection(false)
   }
   const onAddressClose = ()=>{
-    setPaymentModal(false);
-    // setPaymentDetail(undefined);
+    setPaymentModal(false)
+    // setPaymentDetail(undefined)
   }
 
   const onAddNewPayment = (paymentDetail:Payment)=>{
-    setPaymentDetails([...paymentDetails, paymentDetail!]);
-    setSelectPayment(paymentDetail);
+    setPaymentDetails([...paymentDetails, paymentDetail!])
+    setSelectPayment(paymentDetail)
   }
   const placeOrder = async ()=>{
     const obj:{ [key: string]: number } = {};
@@ -138,11 +138,12 @@ export default function CheckoutPage() {
     }
     console.log(order);
     try {
-      const {data} = await api.post(`/public/orders/customer/order/create`, order);
-      console.log(data);
+      const {data} = await api.post(`/public/orders/customer/order/create`, order)
+      console.log(data)
+      navigate("/success")
     } catch (error) {
-      console.log("Order placement failed!", error);
-      toast.error("Order placement failed!");
+      console.log("Order placement failed!", error)
+      toast.error("Order placement failed!")
     }
   }
 
