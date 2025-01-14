@@ -147,19 +147,20 @@ export default function CheckoutPage() {
       console.log("Order placement failed!", error)
       toast.error("Order placement failed!")
     }
+  }
   const calculateTax = (total: number) => {
     return total * 0.11;
-  };
+  }
 
   const calculateTotal = (total: number) => {
     if(total === 0){
-      return 0;
+      return 0
     }
-    return total + 6.99 + calculateTax(total);
+    return total + 6.99 + calculateTax(total)
   }
 
   if(!user){
-    return null;
+    return null
   }
 
   return <div className="flex w-full justify-between">
