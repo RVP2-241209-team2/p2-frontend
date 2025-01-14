@@ -5,7 +5,8 @@
     margin: 0 0 15px 0;
 }
 .img{
-    max-width: 150px;
+    max-width: 250px;
+    display: inline-block;
 }
 .cart-Container{
     display: flex;
@@ -40,6 +41,7 @@
 }
 .item-Details{
     padding: 0 10px 0 18px;
+    width: 500px;
 }
 .item-Details h3{
     font-size: 20px;

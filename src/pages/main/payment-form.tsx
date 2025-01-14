@@ -3,16 +3,19 @@ import { Address, checkoutContext, Payment } from "./checkout-page";
 import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 import { AddressesListModal } from "./address-list-modal";
+import api from "../../lib/axios";
 
 interface PaymentProps {
     onClose: () => void;
     setPaymentDetail: () => void;
     setBillingAddress: () => void;
+    addNewPayment: (payment: Payment) => void;
+    addresses: Address[];
 }
 
-export const PaymentForm: React.FC<PaymentProps> = ({onClose, setBillingAddress, setPaymentDetail}) => {
+export const PaymentForm: React.FC<PaymentProps> = ({addresses, addNewPayment, onClose, setBillingAddress, setPaymentDetail}) => {
 
-    const {user, token} = useAuth();
+    // const {user, token} = useAuth();
     const paymentContext = useContext(checkoutContext);
 
     const [cardNumber, setCardNumber] = useState<string>(()=>{
@@ -28,10 +31,10 @@ export const PaymentForm: React.FC<PaymentProps> = ({onClose, setBillingAddress,
         return paymentContext?.paymentDetail?.expireDate.split('/')[1] || '';
     });
     const [isDefault, setIsDefault] = useState<boolean>(false);
-    const [defaultAddress, setDefaultAddress] = useState<Address | null>(()=>{
-        return paymentContext?.billingAddress || null;
+    const [defaultBillingAddress, setDefaultBillingAddress] = useState<Address | null>(()=>{
+        return paymentContext?.billingAddress || addresses[0] || null;
     });
-    const [addresses, setAddresses] = useState<Address[]>([]);
+    // const [addresses, setAddresses] = useState<Address[]>([]);
     const [defaultPayment, setDefaultPayment] = useState<Payment>();
     const [paymentDetails, setPaymenDetails] = useState<Payment[]>([]);
     // const [billAddrChange, setBillAddrChange] = useState<boolean>(false);
@@ -53,19 +56,20 @@ export const PaymentForm: React.FC<PaymentProps> = ({onClose, setBillingAddress,
             cardNumber,
             cardHolderName,
             expireDate: `${expireMonth}/${expireYear}`,
-            addressId: addresses[0].id,
+            addressId: defaultBillingAddress?.id,
             isDefault
         }
 
-        const response = await axios.post(`http://3.144.215.146:8081/api/vi/users/${user?.id}/payment-methods`, payment, {headers: {Authorization: `Bearer ${token}`}});
+        const response = await api.post(`/customers/users/my-info/payment-methods`, payment);
         if(response.status === 200){
             setPaymenDetails([...paymentDetails, response.data]);
+            addNewPayment(response.data);
             onClose();
         }
         console.log(payment);
     }
 
-    const onBillsChange = ()=>{
+    const onBillsAddressChange = ()=>{
         // setBillAddrChange(true);
         paymentContext?.setBillingAddressModal(true);
         const payment:Payment = {
@@ -139,18 +143,13 @@ export const PaymentForm: React.FC<PaymentProps> = ({onClose, setBillingAddress,
                 <div className="mt-5">
                     <label className="font-medium text-lg" htmlFor="address">Billing address</label>
                     {
-                    <div className="text-[14px] ">                    
-                        <div className="font-medium">{defaultAddress?.user.firstName} {defaultAddress?.user.lastName}</div>
-                        <div>{defaultAddress?.addressLine1}</div>
-                        <div>{defaultAddress?.city}, {defaultAddress?.state} {defaultAddress?.zipCode}</div>
-                        <div>{defaultAddress?.country}</div>
-                        <div>Phone: {defaultAddress?.user.phoneNumber}</div>
-                        <div className="font-medium mt-3 ">John Doe</div>
-                        <div>1234 Main Street, Building 42</div>
-                        <div>Seattle, WA 98104</div>
-                        <div>United States</div>
-                        <div>Phone: 206-266-1000</div>                    
-                        <div onClick={onBillsChange} className="cursor-pointer my-2 text-[#1e80ff] hover:underline">Change</div>
+                    <div className="text-[14px] mt-2">                    
+                        <div className="font-medium">{defaultBillingAddress?.recipientName?.split(' ')[0]} {defaultBillingAddress?.recipientName?.split(' ')[1]}</div>
+                        <div>{defaultBillingAddress?.addressLine1}</div>
+                        <div>{defaultBillingAddress?.city}, {defaultBillingAddress?.state} {defaultBillingAddress?.zipCode}</div>
+                        <div>{defaultBillingAddress?.country}</div>
+                        {/* <div>Phone: {defaultBillingAddress?.user.phoneNumber}</div> */}                  
+                        <div onClick={onBillsAddressChange} className="cursor-pointer my-2 text-[#1e80ff] hover:underline">Change</div>
                     </div>}
 
                     {/* {!defaultAddress && <div className="my-2">

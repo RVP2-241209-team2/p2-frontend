@@ -1,8 +1,7 @@
-import { Menu, User } from "lucide-react";
+import { ArrowRightFromLine, Menu, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   ADMIN_NAV_LINKS,
-  LOGGED_IN_NAV_LINKS,
   LOGGED_OUT_NAV_LINKS,
   NAV_LINKS,
   STORE_OWNER_NAV_LINKS,
@@ -40,6 +39,11 @@ export default function Navbar() {
             <Link to="/" className="flex items-center hover:cursor-pointer">
               <img src="/shoply-banner.png" alt="Shoply Logo" />
             </Link>
+          </div>
+
+          {/* Search Bar */}
+          <div className="flex-1">
+            <input type="text" placeholder="Search" className="w-full hidden md:block" />
           </div>
 
           {/* Categories */}
@@ -96,7 +100,7 @@ export default function Navbar() {
                     key={"Logout"}
                     className="flex items-center gap-x-2 p-3 text-gray-900 hover:text-sky-600"
                   >
-                    <User className="size-4" />
+                    <ArrowRightFromLine className="size-4" />
                     <span>Logout</span>
                   </button>
                 </>

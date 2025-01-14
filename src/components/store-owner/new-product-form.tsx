@@ -2,22 +2,18 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useRef } from "react";
-import { Loader2, X } from "lucide-react";
 import { toast } from "sonner";
 import { NewProduct, newProductSchema } from "../../lib/zod";
-import { getPresignedUrl } from "../../utils/s3";
-import { uploadToS3 } from "../../utils/s3";
 import axios from "axios";
 import api from "../../lib/axios";
-import { useNavigate } from "react-router-dom";
+import { ImageUpload } from "./image-upload";
+
 
 const NewProductForm = () => {
-  const navigate = useNavigate();
   const [uploadedFile, setUploadedFile] = useState<{
     url: string;
     key: string;
   } | null>(null);
-  const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const form = useForm<NewProduct>({
@@ -40,46 +36,6 @@ const NewProductForm = () => {
     });
     return () => subscription.unsubscribe();
   }, [form]);
-
-  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    try {
-      setIsUploading(true);
-
-      const presignedData = await getPresignedUrl(file.name, file.type);
-      console.log(
-        "Presigned data received:",
-        JSON.stringify(presignedData, null, 2)
-      );
-
-      if (!presignedData.finalImageUrl) {
-        throw new Error("No final image URL received");
-      }
-
-      await uploadToS3(presignedData.presignedUrl, file);
-
-      // Only set the form value if we have a valid URL
-      form.setValue("images", [presignedData.finalImageUrl], {
-        shouldValidate: true,
-        shouldDirty: true,
-        shouldTouch: true,
-      });
-
-      setUploadedFile({
-        url: presignedData.finalImageUrl,
-        key: presignedData.key,
-      });
-
-      toast.success("Image uploaded successfully!");
-    } catch (e) {
-      console.error("Upload failed:", e);
-      toast.error("Failed to upload image");
-    } finally {
-      setIsUploading(false);
-    }
-  };
 
   async function onSubmit(data: NewProduct) {
     console.log("Submit attempted with data:", data); // Debug log
@@ -107,21 +63,24 @@ const NewProductForm = () => {
         headers: response.headers,
       });
 
-      if (response.status === 201) {
+      if (response.status === 200) {
         toast.success("Product created successfully!");
         form.reset();
         setUploadedFile(null);
+        localStorage.removeItem("newProductForm");
         if (fileInputRef.current) {
           fileInputRef.current.value = "";
         }
-        navigate(`/store-owner/products/${response.data.id}`);
       }
     } catch (error) {
       console.error("Product creation failed:", error); // Detailed error logging
 
       if (axios.isAxiosError(error)) {
+        console.log(error);
+        
         const errorMessage =
-          error.response?.data?.message ||
+          error.response?.data ||
+          error.response?.data?.message||
           error.response?.data?.error ||
           error.message ||
           "Failed to create product";
@@ -184,50 +143,21 @@ const NewProductForm = () => {
             ))}
           </select>
         </div> */}
-        <div className="relative flex flex-col gap-2">
+        <div className="flex flex-col gap-2">
           <p className="text-sm font-medium tracking-wide text-center">
-            Image Upload
+            Images
           </p>
-          {!uploadedFile && (
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              disabled={isUploading}
-              className="w-full rounded-md border border-gray-300 p-2"
-            />
-          )}
-          {isUploading && (
-            <p className="text-sm text-gray-500">Uploading image...</p>
-          )}
-          {form.watch("images") && (
-            <p className="text-sm text-green-600">
-              Image uploaded successfully! URL: {form.watch("images")}
-            </p>
-          )}
-          {uploadedFile && (
-            <div className="relative">
-              <img
-                src={uploadedFile.url}
-                alt="Preview"
-                className="w-32 h-32 object-cover rounded-md"
-              />
-              <div
-                onClick={() => {
-                  setUploadedFile(null);
-                  form.setValue("images", [], {
-                    shouldValidate: true,
-                    shouldDirty: true,
-                    shouldTouch: true,
-                  });
-                }}
-                className="absolute top-0 right-0 cursor-pointer"
-              >
-                <X className="w-5 h-5 text-red-500" />
-              </div>
-            </div>
-          )}
+          <ImageUpload
+            images={form.watch("images") || []}
+            onChange={(images) => {
+              form.setValue("images", images, {
+                shouldValidate: true,
+                shouldDirty: true,
+                shouldTouch: true,
+              });
+            }}
+            maxImages={5}
+          />
         </div>
       </div>
       <div className="flex flex-col gap-2">
@@ -255,17 +185,9 @@ const NewProductForm = () => {
       )}
       <button
         type="submit"
-        disabled={isUploading}
         className="w-full rounded-md bg-blue-600 p-2 text-white hover:bg-blue-700"
       >
-        {isUploading ? (
-          <div className="flex items-center justify-center">
-            <Loader2 className="w-4 h-4 animate-spin mr-2" />
-            <span>Uploading...</span>
-          </div>
-        ) : (
-          "Submit New Product"
-        )}
+        Submit New Product
       </button>
     </form>
   );
