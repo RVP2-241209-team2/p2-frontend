@@ -1,4 +1,4 @@
-import { ArrowRightFromLine, Home, Package, ShoppingCart, User } from "lucide-react";
+import { Home, Package, ShoppingCart, User } from "lucide-react";
 
 export const API_URL = import.meta.env.VITE_API_URL;
 
@@ -19,19 +19,6 @@ export const NAV_LINKS = [
     icon: ShoppingCart,
   },
 ];
-
-export const LOGGED_IN_NAV_LINKS = [
-  {
-    label: "Account",
-    href: "/account",
-    icon: User,
-  },
-  {
-    label: "Logout",
-    href: "/",
-    icon: ArrowRightFromLine,
-  },
-]
 
 export const LOGGED_OUT_NAV_LINKS = [
   {
