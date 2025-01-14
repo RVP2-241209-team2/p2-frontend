@@ -4,10 +4,10 @@ import { CreateAddressModal } from "./address-form-modal";
 import { useAuth } from "../../context/AuthContext";
 import { CreatePaymentModal } from "./payment-form-modal";
 import { AddressesListModal } from "./address-list-modal";
-import axios from "axios";
 import api from "../../lib/axios";
 import { CartItem } from "./cart-page";
 import { CartItemsContext } from "./CartItemsProvider";
+import { toast } from "sonner";
 
 export interface Address{
   id: string;
@@ -68,7 +68,7 @@ export default function CheckoutPage() {
 
   const [addressModal, setAddressModal] = useState<boolean>(false);
   const [paymentModal, setPaymentModal] = useState<boolean>(false);
-  const [addressSecion, setaddressSecion] = useState(true);
+  const [addressSecion, setAddressSection] = useState(true);
   const [paymentSection, setPaymentSection] = useState(false);
   const [orderSection, setOrderSection] = useState(false)
   const [addresses, setAddresses] = useState<Address[]>([]);
@@ -101,21 +101,21 @@ export default function CheckoutPage() {
   }
 
   const onAddress = ()=>{
-    setaddressSecion(true);
+    setAddressSection(true);
     setPaymentSection(false)
     setOrderSection(false)
   }
 
   const onPayment = ()=>{
     setPaymentSection(true)
-    setaddressSecion(false);
+    setAddressSection(false);
     setOrderSection(false)
   }
 
   const onOrder =()=>{
     setOrderSection(true);
     setPaymentSection(false);
-    setaddressSecion(false);
+    setAddressSection(false);
   }
   const onAddressClose = ()=>{
     setPaymentModal(false);
@@ -137,8 +137,13 @@ export default function CheckoutPage() {
       orderItems: obj
     }
     console.log(order);
-    const resposne = await api.post(`/public/orders/customer/order/create`, order);
-    console.log(resposne);
+    try {
+      const {data} = await api.post(`/public/orders/customer/order/create`, order);
+      console.log(data);
+    } catch (error) {
+      console.log("Order placement failed!", error);
+      toast.error("Order placement failed!");
+    }
   }
 
   if(!user){
@@ -275,7 +280,7 @@ export default function CheckoutPage() {
         {paymentSection && <div onClick={onOrder} className="text-center cursor-pointer mx-auto py-1 px-4 mb-2 rounded-3xl bg-[#ffd105] hover:bg-[#ffc505]">Use this payment method</div>}
         {orderSection && <div>
         <div onClick={placeOrder} className="text-center cursor-pointer mx-auto py-1 px-4 mb-2 rounded-3xl bg-[#ffd105] hover:bg-[#ffc505]">Place your order</div>
-        <p className="pb-3 border-b border-[lightgrey]">By placing your order, you agree to Amazon's <span className="text-[dodgerblue] cursor-pointer underline hover:text-[dimgrey]">privacy notice</span> and <span className="text-[dodgerblue] cursor-pointer underline hover:text-[dimgrey]">conditions of use</span>.</p>
+        <p className="pb-3 border-b border-[lightgrey]">By placing your order, you agree to Shoply's <span className="text-[dodgerblue] cursor-pointer underline hover:text-[dimgrey]">privacy notice</span> and <span className="text-[dodgerblue] cursor-pointer underline hover:text-[dimgrey]">conditions of use</span>.</p>
         </div>}
 
         <div className="flex justify-between">
@@ -288,11 +293,11 @@ export default function CheckoutPage() {
         </div>
         <div className="flex justify-between">
           <div>Estimated tax to be collected: *</div>
-          <div>${cartItemsContext?.total}</div>
+          <div>${(cartItemsContext?.total ?? 0) + 6.99}</div>
         </div>
         <div className="font-medium text-xl flex justify-between">
           <div>Order total:</div>
-          <div>${cartItemsContext?.total}</div>
+          <div>${(cartItemsContext?.total ?? 0) + 6.99}</div>
         </div>
     </div>
     
