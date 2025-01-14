@@ -9,6 +9,7 @@ import axios from "axios";
 export interface Address{
   id: string;
   user: User;
+  recipientName: String
   addressLine1: string;
   addressLine2: string;
   city: string;
