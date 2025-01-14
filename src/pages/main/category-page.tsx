@@ -6,20 +6,20 @@ import { ShoppingCart } from "lucide-react";
 
 export default function CategoryPage() {
   const { slug } = useParams();
-  const { loading, error, fetchProductsByCategory } = useProducts();
+  const { loading, error, getProductsByTag } = useProducts();
   const [products, setProducts] = useState<Product[]>([]);
 
   useEffect(() => {
     const loadProducts = async () => {
       if (slug) {
-        const response = await fetchProductsByCategory(slug);
+        const response = await getProductsByTag(slug);
         if (response) {
-          setProducts(response.products);
+          setProducts(response);
         }
       }
     };
     loadProducts();
-  }, [slug, fetchProductsByCategory]);
+  }, [slug, getProductsByTag]);
 
   const categoryName = slug
     ? slug
@@ -38,7 +38,7 @@ export default function CategoryPage() {
     return <div className="text-red-500 text-center">{error.message}</div>;
   }
 
-  const backgroundImage = products.length > 0 ? products[0].thumbnail : "";
+  const backgroundImage = products.length > 0 ? products[0].images[0] : "";
 
   return (
     <>
@@ -66,31 +66,25 @@ export default function CategoryPage() {
             className="w-72 bg-white shadow-md rounded-xl duration-500 hover:scale-105 hover:shadow-xl"
           >
             <div className="flex flex-col items-center justify-center">
-              <img
-                src={product.thumbnail}
-                alt={product.title}
-                className="h-80 w-72 object-cover rounded-t-xl"
-              />
+              {product.images.length > 0 && (
+                <img
+                  src={product.images[0]}
+                  alt={product.name}
+                  className="h-80 w-72 object-cover rounded-t-xl"
+                />
+              )}
               <div className="px-4 py-3 w-72">
                 <span className="text-gray-400 mr-3 uppercase text-xs">
-                  {product.category}
+                  {product.tags[0]}
                 </span>
                 <p className="text-lg font-bold text-black truncate block capitalize">
-                  {product.title}
+                  {product.name}
                 </p>
                 <div className="flex items-center">
                   <p className="text-lg font-semibold text-black cursor-auto my-3">
                     $
-                    {(
-                      product.price *
-                      (1 - product.discountPercentage / 100)
-                    ).toFixed(2)}
+                    {product.price.toFixed(2)}
                   </p>
-                  <del>
-                    <p className="text-sm text-gray-600 cursor-auto ml-2">
-                      ${product.price}
-                    </p>
-                  </del>
                   <div className="ml-auto">
                     <ShoppingCart />
                   </div>
