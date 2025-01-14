@@ -107,12 +107,14 @@ export default function CheckoutPage() {
   }
 
   const onPayment = ()=>{
+    if(!selectAddress) return;
     setPaymentSection(true)
     setaddressSecion(false);
     setOrderSection(false)
   }
 
   const onOrder =()=>{
+    if(!selectPayment) return;
     setOrderSection(true);
     setPaymentSection(false);
     setaddressSecion(false);
@@ -139,6 +141,19 @@ export default function CheckoutPage() {
     console.log(order);
     const resposne = await api.post(`/public/orders/customer/order/create`, order);
     console.log(resposne);
+    if(resposne.status === 200){
+      navigate('/account');
+    }
+  }
+  const calculateTax = (total: number) => {
+    return total * 0.11;
+  };
+
+  const calculateTotal = (total: number) => {
+    if(total === 0){
+      return 0;
+    }
+    return total + 6.99 + calculateTax(total);
   }
 
   if(!user){
@@ -259,6 +274,7 @@ export default function CheckoutPage() {
                 <img src={item.product.images[0]} alt={item.product.name} className="w-[130px] object-cover" />
                 <div className="flex-1 ml-4">
                   <div className="font-medium">{item.product.name}</div>
+                  <div className="text-[#858282]">{item.product.description}</div>
                   <div className="font-bold">${item.quantity * item.product.price}</div>
                 </div>
                 {/* <div className="font-bold">{item.quantity} x ${item.product.price}</div> */}
@@ -280,19 +296,19 @@ export default function CheckoutPage() {
 
         <div className="flex justify-between">
           <div>Items:</div>
-          <div>${cartItemsContext?.total}</div>
+          <div>${cartItemsContext?.total.toFixed(2)}</div>
         </div>
         <div className="flex justify-between">
           <div>Shipping & handling:</div>
-          <div>$6.99</div>
+          <div>${cartItemsContext?.total===0? "0.00":"6.99"}</div>
         </div>
         <div className="flex justify-between">
           <div>Estimated tax to be collected: *</div>
-          <div>${cartItemsContext?.total}</div>
+          <div>${calculateTax(cartItemsContext?.total || 0).toFixed(2)}</div>
         </div>
         <div className="font-medium text-xl flex justify-between">
           <div>Order total:</div>
-          <div>${cartItemsContext?.total}</div>
+          <div>${calculateTotal(cartItemsContext?.total || 0).toFixed(2)}</div>
         </div>
     </div>
     

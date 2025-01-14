@@ -48,7 +48,7 @@ export default function CartPage() {
   );
   const [cartItems, setCartItems] = useState<CartItem[]>([]);
   const [total, setTotal] = useState<number>(() => {
-    return cartItems.reduce((acc, item) => acc + item.product.price, 0);
+    return cartItems.reduce((acc, item) => acc + item.product.price*item.quantity, 0);
   });
   const [pages, setPages] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
@@ -64,18 +64,16 @@ export default function CartPage() {
       console.log(response.data);
       setCartItems(response.data);
       cartItemsContext?.setTotal(
-        response.data.reduce(
-          (acc: number, item: CartItem) => acc + item.product.price,
-          0
-        )
+        response.data[0].cart.total
       );
       cartItemsContext?.setCartItems(response.data);
-      setTotal(
-        response.data.reduce(
-          (acc: number, item: CartItem) => acc + item.product.price,
-          0
-        )
-      );
+      // setTotal(
+      //   response.data.reduce(
+      //     (acc: number, item: CartItem) => acc + item.product.price,
+      //     0
+      //   )
+      // );
+      setTotal(response.data[0].cart.total)
       const checkedItems: { [key: string]: boolean } = {};
       response.data.forEach((item: CartItem) => {
         checkedItems[`${item.id}`] = true;
@@ -166,11 +164,12 @@ export default function CartPage() {
   const deleteItem = async (id: string) => {
     // Optimistically update UI
     const previousItems = [...cartItems];
-    const newItems = cartItems.filter((item) => item.id !== id);
+    const newItems: CartItem[] = cartItems.filter((item) => item.id !== id);
     const newTotal = newItems.reduce(
-      (acc, item) => acc + item.product.price,
+      (acc, item) => acc + item.product.price * item.quantity,
       0
     );
+    // console.log(newItems[0].cart.total);
 
     // Update UI immediately
     setCartItems(newItems);
@@ -211,11 +210,11 @@ export default function CartPage() {
       // Revert changes on error
       setCartItems(previousItems);
       setTotal(
-        previousItems.reduce((acc, item) => acc + item.product.price, 0)
+        previousItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
       );
       cartItemsContext?.setCartItems(previousItems);
       cartItemsContext?.setTotal(
-        previousItems.reduce((acc, item) => acc + item.product.price, 0)
+        previousItems.reduce((acc, item) => acc + item.product.price * item.quantity, 0)
       );
 
       toast.error(
@@ -339,7 +338,7 @@ export default function CartPage() {
                       </button>
                     </div>
                   </div>
-                  <div style={{ fontWeight: "700" }}>${item.total}</div>
+                  <div style={{ fontWeight: "700" }}>${item.product.price.toFixed(2)}</div>
                 </div>
               );
             })}
@@ -379,7 +378,7 @@ export default function CartPage() {
         </div>
         <div className="cart-Checkout">
           <div>
-            Subtotal ({cartItems.length} items): <span>${total}</span>
+            Subtotal ({cartItems.length} items): <span>${total.toFixed(2)}</span>
           </div>
           <button
             className="hover:bg-[#ffc505]"
