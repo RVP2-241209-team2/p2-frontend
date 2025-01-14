@@ -128,7 +128,8 @@ export default function CartPage() {
     }else{
       setTotal(total - Number(item?.product.price));
         cartItemsContext?.setTotal(total - Number(item?.product.price));
-  };
+      }
+    }
 
 
   const handleClearCart = async () => {
