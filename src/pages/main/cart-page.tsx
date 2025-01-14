@@ -64,16 +64,18 @@ export default function CartPage() {
       console.log(response.data);
       setCartItems(response.data);
       cartItemsContext?.setTotal(
-        response.data[0].cart.total
+        response.data.reduce(
+          (acc: number, item: CartItem) => acc + item.total,
+          0
+        )
       );
       cartItemsContext?.setCartItems(response.data);
-      // setTotal(
-      //   response.data.reduce(
-      //     (acc: number, item: CartItem) => acc + item.product.price,
-      //     0
-      //   )
-      // );
-      setTotal(response.data[0].cart.total)
+      setTotal(
+        response.data.reduce(
+          (acc: number, item: CartItem) => acc + item.total,
+          0
+        )
+      );
       const checkedItems: { [key: string]: boolean } = {};
       response.data.forEach((item: CartItem) => {
         checkedItems[`${item.id}`] = true;
@@ -121,11 +123,11 @@ export default function CartPage() {
     }));
     const item = cartItems.find(item => item.id === itemId);
     if(isChecked){
-      setTotal(total + Number(item?.product.price));
-        cartItemsContext?.setTotal(total + Number(item?.product.price));
+      setTotal(total + Number(item?.product.price)*Number(item?.quantity));
+        cartItemsContext?.setTotal(total + Number(item?.product.price)*Number(item?.quantity));
     }else{
-      setTotal(total - Number(item?.product.price));
-        cartItemsContext?.setTotal(total - Number(item?.product.price));
+      setTotal(total - Number(item?.product.price)*Number(item?.quantity));
+        cartItemsContext?.setTotal(total - Number(item?.product.price)*Number(item?.quantity));
       }
     }
 

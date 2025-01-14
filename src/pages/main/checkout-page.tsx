@@ -8,6 +8,7 @@ import api from "../../lib/axios";
 import { CartItem } from "./cart-page";
 import { CartItemsContext } from "./CartItemsProvider";
 import { toast } from "sonner";
+import { Divide } from "lucide-react";
 
 export interface Address{
   id: string;
@@ -114,6 +115,7 @@ export default function CheckoutPage() {
   }
 
   const onOrder =()=>{
+    if(!selectPayment) return;
     setOrderSection(true)
     setPaymentSection(false)
     setAddressSection(false)
@@ -142,6 +144,8 @@ export default function CheckoutPage() {
     try {
       const {data} = await api.post(`/public/orders/customer/order/create`, order)
       console.log(data)
+      cartItemsContext?.setCartItems([])
+      cartItemsContext?.setTotal(0)
       navigate("/success")
     } catch (error) {
       console.log("Order placement failed!", error)
@@ -157,6 +161,9 @@ export default function CheckoutPage() {
       return 0
     }
     return total + 6.99 + calculateTax(total)
+  }
+  const changeItems = ()=>{
+    navigate('/cart')
   }
 
   if(!user){
@@ -282,7 +289,10 @@ export default function CheckoutPage() {
                 </div>
                 {/* <div className="font-bold">{item.quantity} x ${item.product.price}</div> */}
               </div>
-              <div ><span className="font-bold">Quantity</span>: {item.quantity}</div>
+              <div className="flex">
+                <div ><span className="font-bold">Quantity</span>: {item.quantity}</div>
+                <div onClick={changeItems} className="cursor-pointer ml-1 text-[dodgerblue] hover:underline">change</div>
+              </div>
             </div>
           ))}
       </div>}
