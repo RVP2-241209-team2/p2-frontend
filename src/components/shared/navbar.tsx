@@ -1,7 +1,8 @@
-import { Menu, X } from "lucide-react";
+import { ArrowRightFromLine, Menu, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   ADMIN_NAV_LINKS,
+  LOGGED_OUT_NAV_LINKS,
   NAV_LINKS,
   STORE_OWNER_NAV_LINKS,
 } from "../../lib/constants";
@@ -39,49 +40,39 @@ export default function Navbar() {
               <img src="/shoply-banner.png" alt="Shoply Logo" />
             </Link>
           </div>
-          
+
           {/* Categories */}
           <div className="hidden md:flex md:justify-center">
             <SearchInput />
           </div>
 
-          {user ? (
-            <button onClick={logout}>Logout</button>
-          ) : (
-            <Link to="/login">Login</Link>
-          )}
           {/* Dropdown Menu Button */}
           <button
-            className="p-2 hover:bg-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-sky-600"
+            className="text-white hover:bg-blue-100 focus:ring-2 focus:outline-none focus:ring-blue-300 rounded-lg px-6 py-2 text-center inline-flex items-center"
+            type="button"
             onClick={onOpen}
           >
-            {isDropdownOpen ? (
-              <X className="size-6 text-gray-900" />
-            ) : (
-              <Menu className="size-6 text-gray-900" />
-            )}
+            <Menu className="size-6 text-gray-900" />
           </button>
         </div>
+
         {/* Dropdown Menu */}
         {isDropdownOpen && (
           <div
-            className={`absolute top-16 left-0 right-0 bg-zinc-50 border-t border-gray-200 shadow-lg transition-all duration-200 ${
+            className={`absolute top-16 left-auto right-0 bg-zinc-50 border-t border-gray-200 shadow-lg transition-all duration-200 ${
               isDropdownOpen
                 ? "opacity-100 translate-y-0"
                 : "opacity-0 -translate-y-2 pointer-events-none"
             }`}
           >
-            <div className="md:hidden px-4 py-2">
-              <SearchInput />
-            </div>
-            <div className="px-4 py-2 flex justify-around mx-auto">
+            <div className="flex flex-column z-10 divide-y divide-gray-200 rounded-lg shadow w-44">
               {NAV_LINKS.map((link) => {
                 const Icon = link.icon;
                 return (
                   <Link
                     to={link.href}
                     key={link.label}
-                    className="flex items-center gap-x-2 py-3 text-sm text-gray-900 hover:text-sky-600"
+                    className="flex items-center gap-x-2 p-3 text-gray-900 hover:text-sky-600"
                     onClick={() => setIsDropdownOpen(false)}
                   >
                     <Icon className="size-4" />
@@ -89,40 +80,69 @@ export default function Navbar() {
                   </Link>
                 );
               })}
-              {isStoreOwner && (
-                <div className="flex items-center gap-x-2 py-3 text-sm text-gray-900 hover:text-sky-600">
-                  {STORE_OWNER_NAV_LINKS.map((link) => {
-                    const Icon = link.icon;
-                    return (
-                      <Link
-                        to={link.href}
-                        key={link.label}
-                        className="flex items-center gap-x-2 py-3 text-sm text-gray-900 hover:text-sky-600"
-                      >
-                        <Icon className="size-4" />
-                        <span>{link.label}</span>
-                      </Link>
-                    );
-                  })}
-                </div>
+              {user ? (
+                <>
+                  <Link
+                    to={"/account"}
+                    key={"My Account"}
+                    className="flex items-center gap-x-2 p-3 text-gray-900 hover:text-sky-600"
+                  >
+                    <User className="size-4" />
+                    <span>My Account</span>
+                  </Link>
+                  <button
+                    onClick={logout}
+                    key={"Logout"}
+                    className="flex items-center gap-x-2 p-3 text-gray-900 hover:text-sky-600"
+                  >
+                    <ArrowRightFromLine className="size-4" />
+                    <span>Logout</span>
+                  </button>
+                </>
+              ) : (
+                LOGGED_OUT_NAV_LINKS.map((link) => {
+                  const Icon = link.icon;
+                  return (
+                    <Link
+                      to={link.href}
+                      key={link.label}
+                      onClick={logout}
+                      className="flex items-center gap-x-2 p-3 text-gray-900 hover:text-sky-600"
+                    >
+                      <Icon className="size-4" />
+                      <span>{link.label}</span>
+                    </Link>
+                  );
+                })
               )}
-              {isAdmin && (
-                <div className="flex items-center gap-x-2 py-3 text-sm text-gray-900 hover:text-sky-600">
-                  {ADMIN_NAV_LINKS.map((link) => {
-                    const Icon = link.icon;
-                    return (
-                      <Link
-                        to={link.href}
-                        key={link.label}
-                        className="flex items-center gap-x-2 py-3 text-sm text-gray-900 hover:text-sky-600"
-                      >
-                        <Icon className="size-4" />
-                        <span>{link.label}</span>
-                      </Link>
-                    );
-                  })}
-                </div>
-              )}
+              {isStoreOwner &&
+                STORE_OWNER_NAV_LINKS.map((link) => {
+                  const Icon = link.icon;
+                  return (
+                    <Link
+                      to={link.href}
+                      key={link.label}
+                      className="flex items-center gap-x-2 p-3 text-gray-900 hover:text-sky-600"
+                    >
+                      <Icon className="size-4" />
+                      <span>{link.label}</span>
+                    </Link>
+                  );
+                })}
+              {isAdmin &&
+                ADMIN_NAV_LINKS.map((link) => {
+                  const Icon = link.icon;
+                  return (
+                    <Link
+                      to={link.href}
+                      key={link.label}
+                      className="flex items-center gap-x-2 p-3 text-gray-900 hover:text-sky-600"
+                    >
+                      <Icon className="size-4" />
+                      <span>{link.label}</span>
+                    </Link>
+                  );
+                })}
             </div>
           </div>
         )}

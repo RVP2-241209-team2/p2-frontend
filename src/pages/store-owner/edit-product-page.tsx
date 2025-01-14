@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { ArrowLeft, Save, Loader2 } from "lucide-react";
+import { ArrowLeft, Save, Loader2, Trash2 } from "lucide-react";
 import { useProducts } from "../../hooks/useProducts";
 import { Product } from "../../types/product";
 import { ImageUpload } from "../../components/store-owner/image-upload";
@@ -33,7 +33,38 @@ export default function EditProductPage() {
     loadProduct();
   }, [id, fetchProductById, form.reset]);
 
-  // todo handleDeleteProduct
+  const handleDeleteProduct = async () => {
+    if (!id) return;
+
+    const confirmed = window.confirm(
+      "Are you sure you want to delete this product?"
+    );
+    if (!confirmed) return;
+
+    try {
+      setSaving(true);
+      const response = await api.delete(`/public/v1/products/${id}`);
+
+      // Handle both 200 (OK) and 204 (No Content) responses
+      if (response.status === 200 || response.status === 204) {
+        toast.success("Product deleted successfully!");
+        navigate("/store-owner/products", { replace: true });
+      } else {
+        console.warn("Unexpected success status:", response.status);
+        toast.success("Product may have been deleted. Redirecting...");
+        navigate("/store-owner/products", { replace: true });
+      }
+    } catch (error) {
+      console.error("Delete error:", {
+        url: `/public/v1/products/${id}`,
+        error,
+        status: (error as any).response?.status,
+      });
+      toast.error("Failed to delete product. Please try again.");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   async function handleSubmit(data: Product) {
     console.log("Submitting edit with data:", data);
@@ -230,7 +261,25 @@ export default function EditProductPage() {
           </div>
 
           {/* Submit Button */}
-          <div className="flex justify-end pt-4">
+          <div className="flex justify-end gap-4 pt-4">
+            <button
+              type="button"
+              onClick={handleDeleteProduct}
+              disabled={saving}
+              className="flex items-center px-6 py-3 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors disabled:bg-red-300"
+            >
+              {saving ? (
+                <>
+                  <Loader2 className="w-5 h-5 mr-2 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                <>
+                  <Trash2 className="w-5 h-5 mr-2" />
+                  Delete Product
+                </>
+              )}
+            </button>
             <button
               type="submit"
               disabled={saving || !form.formState.isDirty}

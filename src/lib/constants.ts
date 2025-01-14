@@ -18,12 +18,15 @@ export const NAV_LINKS = [
     href: "/cart",
     icon: ShoppingCart,
   },
+];
+
+export const LOGGED_OUT_NAV_LINKS = [
   {
-    label: "Account",
-    href: "/account",
+    label: "Login",
+    "href": "/login",
     icon: User,
   },
-];
+]
 
 export const STORE_OWNER_NAV_LINKS = [
   {

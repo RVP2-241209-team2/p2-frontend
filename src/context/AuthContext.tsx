@@ -14,6 +14,7 @@ import {
 } from "../lib/zod";
 import { useNavigate } from "react-router-dom";
 import { User } from "../types/users";
+import { toast } from "sonner";
 
 interface AuthContextType {
   user: User | null;
@@ -98,6 +99,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     setToken(null);
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    toast.success("Logged out successfully");
   };
 
   return (
