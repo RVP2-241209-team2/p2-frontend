@@ -1,5 +1,7 @@
 import { Home, Package, ShoppingCart, User } from "lucide-react";
 
+export const API_URL = import.meta.env.VITE_API_URL;
+
 export const NAV_LINKS = [
   {
     label: "Home",
@@ -16,37 +18,73 @@ export const NAV_LINKS = [
     href: "/cart",
     icon: ShoppingCart,
   },
+];
+
+export const LOGGED_OUT_NAV_LINKS = [
   {
-    label: "Account",
-    href: "/account",
+    label: "Login",
+    "href": "/login",
     icon: User,
+  },
+]
+
+export const STORE_OWNER_NAV_LINKS = [
+  {
+    label: "Dashboard",
+    href: "/store-owner",
+    icon: Home,
+  },
+  {
+    label: "Products",
+    href: "/store-owner/products",
+    icon: Package,
+  },
+];
+
+export const ADMIN_NAV_LINKS = [
+  {
+    label: "Manage Users",
+    href: "/admin/users",
+    icon: User,
+  },
+  {
+    label: "Orders",
+    href: "/admin/orders",
+    icon: Package,
   },
 ];
 
 export const CATEGORIES = [
   {
-    label: "category-1",
-    href: "/products/category/category-1",
-    slug: "category-1",
+    label: "Electronics",
+    href: "/products/category/electronics",
+    slug: "electronics",
   },
   {
-    label: "category-2",
-    href: "/products/category/category-2",
-    slug: "category-2",
+    label: "Clothing",
+    href: "/products/category/clothing",
+    slug: "clothing",
   },
   {
-    label: "category-3",
-    href: "/products/category/category-3",
-    slug: "category-3",
+    label: "Home & Office",
+    href: "/products/category/home-office",
+    slug: "home-office",
   },
   {
-    label: "category-4",
-    href: "/products/category/category-4",
-    slug: "category-4",
+    label: "Sports & Outdoors",
+    href: "/products/category/sports-outdoors",
+    slug: "sports-outdoors",
   },
   {
-    label: "category-5",
-    href: "/products/category/category-5",
-    slug: "category-5",
+    label: "Toys & Games",
+    href: "/products/category/toys-games",
+    slug: "toys-games",
   },
+];
+
+export const BACKGROUND_IMAGES = [
+  // TODO: Actual Images
+  "https://images.unsplash.com/photo-1441986300917-64674bd600d8",
+  "https://images.unsplash.com/photo-1472851294608-062f824d29cc",
+  "https://images.unsplash.com/photo-1441984904996-e0b6ba687e04",
 ];
