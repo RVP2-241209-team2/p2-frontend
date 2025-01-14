@@ -13,6 +13,7 @@ export default function ProductDetailPage() {
   const { loading, error, fetchProductById } = useProducts();
 
   const [product, setProduct] = useState<Product | null>(null);
+  const [refreshReviews, setRefreshReviews] = useState(0);
   const { id } = useParams();
 
   useEffect(() => {
@@ -183,11 +184,11 @@ export default function ProductDetailPage() {
 
       {/* Reviews Section */}
 
-      {/**review form */}
-      <ProductReviewForm productId={product.id} />
-
-      {/**review list */}
-      <ReviewsList productId={product.id} />
+      <ProductReviewForm
+        productId={product.id}
+        onSuccess={() => setRefreshReviews((prev) => prev + 1)}
+      />
+      <ReviewsList productId={product.id} refreshTrigger={refreshReviews} />
     </div>
   );
 }

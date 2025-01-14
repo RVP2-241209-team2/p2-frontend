@@ -2,12 +2,14 @@ import { useState } from "react";
 import { Star } from "lucide-react";
 import { useReviews } from "../../../hooks/useReviews";
 
-interface ProductReviewFormProps {
-  productId: string;
-}
+  interface ProductReviewFormProps {
+    productId: string;
+    onSuccess?: () => void;
+  }
 
 export default function ProductReviewForm({
   productId,
+  onSuccess,
 }: ProductReviewFormProps) {
   const { createReview, loading, error } = useReviews();
   const [rating, setRating] = useState(5);
@@ -28,6 +30,8 @@ export default function ProductReviewForm({
       setRating(5);
       setTitle("");
       setDescription("");
+
+      onSuccess?.();
     } catch (err) {
       // Error is handled by useReviews hook
       console.error("Failed to submit review:", err);

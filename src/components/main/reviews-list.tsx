@@ -4,16 +4,19 @@ import { useEffect } from "react";
 
 interface ReviewsListProps {
   productId: string;
+  refreshTrigger: number;
 }
 
-export default function ReviewsList({ productId }: ReviewsListProps) {
+export default function ReviewsList({
+  productId,
+  refreshTrigger,
+}: ReviewsListProps) {
   const { reviews, loading, error, getReviewsByProduct } = useReviews();
 
   useEffect(() => {
     getReviewsByProduct(productId);
-  }, [productId, getReviewsByProduct]);
+  }, [productId, getReviewsByProduct, refreshTrigger]);
 
-  
   if (loading) return <div>Loading reviews...</div>;
   if (error) return <div className="text-red-500">{error}</div>;
   if (!reviews || reviews.length === 0) return null;
