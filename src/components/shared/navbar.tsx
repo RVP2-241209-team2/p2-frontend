@@ -41,10 +41,6 @@ export default function Navbar() {
             </Link>
           </div>
 
-          {/* Search Bar */}
-          <div className="flex-1">
-            <input type="text" placeholder="Search" className="w-full hidden md:block" />
-          </div>
 
           {/* Categories */}
           <div className="hidden md:flex md:justify-center">
