@@ -43,7 +43,8 @@ export default function AccountPage() {
 
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [payLoading, setPayLoading] = useState<boolean>(true);
+  const [AddressLoading, setAddressLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   const userId = user?.id;
@@ -64,7 +65,7 @@ export default function AccountPage() {
     } catch (err: any) {
       setError(err.message || "An error occurred while fetching addresses");
     } finally {
-      setLoading(false);
+      setAddressLoading(false);
     }
   };
   useEffect(() => {
@@ -85,7 +86,7 @@ export default function AccountPage() {
     } catch (err: any) {
       setError(err.message || "An error occurred while fetching addresses");
     } finally {
-      setLoading(false);
+      setPayLoading(false);
     }
   };
   useEffect(() => {
@@ -125,6 +126,24 @@ export default function AccountPage() {
     
   };
 
+   // Remove Payment Methods
+   const removePaymentMethods = async (id: string) => {
+    try {
+      const response = await axios.delete(`${baseUrl}customers/users/my-info/payment-methods/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+      );
+
+      fetchPayMethods();
+    } catch (error) {
+      console.error("Failed to add delete payment method:", error);
+      throw error; // Re-throw the error to handle it in the calling function
+    }
+  }
+
   // Handle address addition
   const handleAddressSubmit = async (data: AddressFormData) => {
     console.log("Address form submitted:", data);
@@ -142,10 +161,30 @@ export default function AccountPage() {
   
       fetchAddresses();
     } catch (error) {
-      console.error("Failed to add payment method:", error);
+      console.error("Failed to add address:", error);
       throw error; // Re-throw the error to handle it in the calling function
     }
   };
+
+  // Remove Address
+  const removeAddress = async (id: string) => {
+    try {
+      const response = await axios.delete(`${baseUrl}customers/users/my-info/addresses/${id}`,
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      }
+      );
+
+      console.log(response.data);
+  
+      fetchAddresses();
+    } catch (error) {
+      console.error("Failed to add delete address:", error);
+      throw error; // Re-throw the error to handle it in the calling function
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -229,6 +268,7 @@ export default function AccountPage() {
             {/* Payment Methods Tab */}
             {activeTab === "payment" && (
               <div className="bg-white rounded-lg shadow">
+                {payLoading && <h1 className="text-center">Loading...</h1>}
                 <div className="px-6 py-4 border-b">
                   <h2 className="text-xl font-semibold">Payment Methods</h2>
                 </div>
@@ -246,7 +286,7 @@ export default function AccountPage() {
                               <p className="text-sm text-gray-500">Expire: {paymentMethod.expireDate}</p>
                             </div>
                           </div>
-                          <button className="text-sm text-red-600 hover:text-red-700">
+                          <button onClick={() => removePaymentMethods(paymentMethod.id)} className="text-sm text-red-600 hover:text-red-700">
                             Remove
                           </button>
                         </div>
@@ -254,7 +294,7 @@ export default function AccountPage() {
                     })
                   }
                   
-                    {loading && <p>Loading...</p>}
+                    
 
                   {/* Add New Card Form */}
                   <PaymentMethodForm addresses={addresses} onSubmit={handlePaymentSubmit} />
@@ -265,6 +305,7 @@ export default function AccountPage() {
             {/* Addresses Tab */}
             {activeTab === "address" && (
               <div className="bg-white rounded-lg shadow">
+                {AddressLoading && <h1 className="text-center">Loading...</h1>}
                 <div className="px-6 py-4 border-b">
                   <h2 className="text-xl font-semibold">Addresses</h2>
                 </div>
@@ -299,7 +340,7 @@ export default function AccountPage() {
                             <button className="text-sm text-blue-600 hover:text-blue-700">
                               Edit
                             </button>
-                            <button className="text-sm text-red-600 hover:text-red-700">
+                            <button onClick={(() => removeAddress(address.id))} className="text-sm text-red-600 hover:text-red-700">
                               Remove
                             </button>
                           </div>
