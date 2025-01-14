@@ -61,6 +61,8 @@ export default function CartPage() {
         console.log(pages)
     })
       .catch((err)=>console.log(err));
+
+      const response = await api.get<Cart>('/customers/cart/');
     }
     cartItems();
   }, [])

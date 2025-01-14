@@ -150,13 +150,22 @@ export default function CheckoutPage() {
             {addresses.map((address)=>(
               <div key={address.id} className="flex items-center my-2 mx-3">
                 <input type="radio" name="address" onChange={()=>setSelectAddress(address)} checked={address.id===selectAddress?.id} id={address.id} value={address.id} />
-                <div>
-                  <label htmlFor={address.id} className="font-medium text-[15px] pl-2">{address.recipientName?.split(' ')[0]} {address.recipientName?.split(' ')[1]}</label>
-                  <label htmlFor={address.id} className="block pl-2">{address.addressLine1} {address.addressLine2}, {address.city}, {address.state}, {address.zipCode}, {address.country}</label>
-                  {/* <label htmlFor={address.id} className="pl-2">{address.user.phoneNumber}</label> */}
-                </div>
+                <label htmlFor={address.id} className="block pl-2">{address.recipientName?.split(' ')[0]} {address.recipientName?.split(' ')[1]} {address.addressLine1} {address.addressLine2}, {address.city}, {address.state}, {address.zipCode}, {address.country}</label>
+                {/* <div className="self-center">
+                  <label htmlFor={address.id} className="font-medium text-[15px] pl-2"></label>
+                  
+                  <label htmlFor={address.id} className="pl-2">{address.user.phoneNumber}</label>
+                </div> */}
+              
+                
               </div>
             ))}
+
+            <div className="my-2 mx-3">
+            <input type="radio" name="address" id={"1"} />
+                <label htmlFor={"1"} className="pl-2">John Doe</label>
+                <label htmlFor={"1"} className="pl-2">134 State st, NY, NY, 02165</label>
+              </div>
             <div className="my-2 mx-3">
               <span className="text-[lightgrey] cursor-pointer "><i className="fa-solid fa-plus"></i></span>
               <span onClick={addAddress} className="text-[dodgerblue] cursor-pointer hover:underline pl-2"> Add a new address</span>
@@ -193,12 +202,20 @@ export default function CheckoutPage() {
             <div key={1} className="flex justify-between my-2 mx-3 bg-[#f3be624b] py-2.5 pl-3 pr-5 rounded-lg">
               <div>
                 <input type="radio" name="payment" checked={true} id={"1"} value={"1"} />
-                  <label htmlFor={"1"} className="font-medium text-[15px] pl-3">Card ending in 1026</label>
-                  </div>
+                <label htmlFor={"1"} className="font-medium text-[15px] pl-3">Card ending in 1026</label>
+              </div>
                   <label htmlFor={"1"} className="block pl-2">Jon Doe</label>
                   <label htmlFor={"1"} className="pl-2">01/22</label>
-                
+            </div>
+            <div key={1} className="flex justify-between my-2 mx-3 py-2.5 pl-3 pr-5 rounded-lg">
+              <div>
+                <input type="radio" name="payment" checked={true} id={"1"} value={"1"} />
+                <label htmlFor={"1"} className="font-medium text-[15px] pl-3">Card ending in 1026</label>
               </div>
+                  <label htmlFor={"1"} className="block pl-2">Jon Doe</label>
+                  <label htmlFor={"1"} className="pl-2">01/22</label>
+            </div>
+              
             <div className="my-2 mx-3">
               <span className="text-[lightgrey] cursor-pointer "><i className="fa-solid fa-plus"></i></span>
               <span onClick={()=>setPaymentModal(true)} className="text-[dodgerblue] cursor-pointer hover:underline pl-2"> Add a credit or debit card</span>
