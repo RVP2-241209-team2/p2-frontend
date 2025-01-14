@@ -67,6 +67,42 @@ export const useReviews = (): UseReviewsReturn => {
     []
   );
 
+  // const getReviewsByProduct = useCallback(
+  //   async (productId: string): Promise<void> => {
+  //     try {
+  //       setLoading(true);
+  //       setError(null);
+  //       console.log("Fetching reviews for product:", productId);
+
+  //       // Test with raw fetch and different UUID format
+  //       const response = await fetch(
+  //         `${
+  //           import.meta.env.VITE_API_URL
+  //         }/public/reviews/product/${productId.toLowerCase()}`,
+  //         {
+  //           headers: {
+  //             Accept: "application/json",
+  //           },
+  //         }
+  //       );
+
+  //       if (!response.ok) {
+  //         throw new Error(`HTTP error! status: ${response.status}`);
+  //       }
+
+  //       const data = await response.json();
+  //       console.log("Reviews response:", data);
+  //       setReviews(data);
+  //     } catch (err: any) {
+  //       console.error("Review fetch error:", err);
+  //       setError(err.message || "An error occurred while fetching reviews");
+  //     } finally {
+  //       setLoading(false);
+  //     }
+  //   },
+  //   []
+  // );
+
   const createReview = useCallback(
     async (reviewData: ReviewDTO): Promise<void> => {
       try {
