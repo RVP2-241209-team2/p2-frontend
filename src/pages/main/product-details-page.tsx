@@ -3,7 +3,9 @@ import { useProducts } from "../../hooks/useProducts";
 import { Product } from "../../types/product";
 import { useState } from "react";
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
+import api from "../../lib/axios";
+import { toast } from "sonner";
 
 export default function ProductDetailPage() {
   const { loading, error, fetchProductById } = useProducts();
@@ -24,6 +26,27 @@ export default function ProductDetailPage() {
     };
     loadProduct();
   }, [fetchProductById, id]);
+
+  const handleAddToCart = async () => {
+    console.log("add to cart");
+    const response = await api.post("/customers/cart/add", {
+      productId: product?.id,
+      quantity: 1,
+    });
+    if (response.status === 200) {
+      toast.success(
+        <div className="flex flex-col gap-2">
+          <p>Product added to cart</p>
+          <p>Total: ${product?.price.toFixed(2)}</p>
+          <Link to="/cart" className="text-blue-500 hover:text-blue-600">
+            View Cart
+          </Link>
+        </div>
+      );
+    } else {
+      toast.error("Failed to add product to cart");
+    }
+  };
 
   if (loading) {
     return (
@@ -100,7 +123,10 @@ export default function ProductDetailPage() {
 
             <div className="space-y-4">
               {/* todo: add to cart / wishlist */}
-              <button className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition flex items-center justify-center gap-2">
+              <button
+                onClick={handleAddToCart}
+                className="w-full bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition flex items-center justify-center gap-2"
+              >
                 <ShoppingCart className="w-5 h-5" />
                 Add to Cart
               </button>
