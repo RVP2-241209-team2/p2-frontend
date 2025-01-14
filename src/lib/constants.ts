@@ -1,6 +1,6 @@
 import { ArrowRightFromLine, Home, Package, ShoppingCart, User } from "lucide-react";
 
-export const API_URL = import.meta.env.VITE_API_URL;
+export const API_URL = "http://3.144.215.146:8081/api";
 
 export const NAV_LINKS = [
   {

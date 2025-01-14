@@ -2,7 +2,6 @@ import { Menu, User } from "lucide-react";
 import { Link } from "react-router-dom";
 import {
   ADMIN_NAV_LINKS,
-  LOGGED_IN_NAV_LINKS,
   LOGGED_OUT_NAV_LINKS,
   NAV_LINKS,
   STORE_OWNER_NAV_LINKS,

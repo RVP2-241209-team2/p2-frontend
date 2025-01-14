@@ -4,6 +4,7 @@ import { Product } from "../../types/product";
 import { useState } from "react";
 import { useEffect } from "react";
 import { useParams } from "react-router-dom";
+import ReviewForm from "../../components/main/forms/review-form";
 
 export default function ProductDetailPage() {
   const { loading, error, fetchProductById } = useProducts();
@@ -156,7 +157,7 @@ export default function ProductDetailPage() {
       {/* Reviews Section */}
 
       {/**review form */}
-
+      <ReviewForm productId={product.id} />
       {/**review list */}
       <div className="border-t pt-12">
         <h2 className="text-2xl font-bold mb-8">Customer Reviews</h2>
