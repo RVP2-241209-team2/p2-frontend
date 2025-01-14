@@ -44,7 +44,7 @@ export default function AccountPage() {
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [paymentMethods, setPaymentMethods] = useState<any[]>([]);
   const [payLoading, setPayLoading] = useState<boolean>(true);
-  const [AddressLoading, setAddressLoading] = useState<boolean>(true);
+  const [addressLoading, setAddressLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
   const userId = user?.id;
@@ -305,7 +305,7 @@ export default function AccountPage() {
             {/* Addresses Tab */}
             {activeTab === "address" && (
               <div className="bg-white rounded-lg shadow">
-                {AddressLoading && <h1 className="text-center">Loading...</h1>}
+                {addressLoading && <h1 className="text-center">Loading...</h1>}
                 <div className="px-6 py-4 border-b">
                   <h2 className="text-xl font-semibold">Addresses</h2>
                 </div>
