@@ -6,6 +6,7 @@ import api from "../../lib/axios";
 import { CartItemsContext } from "./CartItemsProvider";
 import { useAuth } from "../../context/AuthContext";
 import { toast } from "sonner";
+import { Modal } from "../../components/main/modal";
 
 interface FakeItem {
   id: number;
@@ -64,6 +65,7 @@ export default function CartPage() {
   });
   const [pages, setPages] = useState<number[]>([]);
   const [currentPage, setCurrentPage] = useState<number>(1);
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   useEffect(() => {
     if (!user) {
@@ -123,6 +125,7 @@ export default function CartPage() {
       behavior: "smooth",
     });
   };
+
   const onCheck = (e: React.ChangeEvent<HTMLInputElement>) => {
     console.log(e.target.checked);
     const [price, id] = e.target.id.split("-");
@@ -139,6 +142,38 @@ export default function CartPage() {
       setTotal(total + Number(price));
     }
   };
+
+  const handleClearCart = async () => {
+    try {
+      const response = await api.delete("/customers/cart/clear");
+
+      if (response.status === 200) {
+        setCartItems([]);
+        setTotal(0);
+        cartItemsContext?.setCartItems([]);
+        cartItemsContext?.setTotal(0);
+        setCheckedItems({});
+        setPages([1]);
+
+        toast.success(
+          <div className="flex flex-col gap-2">
+            <p>Cart cleared successfully</p>
+            <Link
+              to="/products"
+              className="text-sm text-blue-500 hover:text-blue-600"
+            >
+              Continue shopping
+            </Link>
+          </div>
+        );
+      }
+      setShowModal(false);
+    } catch (error) {
+      toast.error("Failed to clear cart");
+      console.error("Clear cart error:", error);
+    }
+  };
+
   const deleteItem = async (id: string) => {
     // Optimistically update UI
     const previousItems = [...cartItems];
@@ -208,6 +243,7 @@ export default function CartPage() {
       });
     }
   };
+
   const reduceItem = async (item: CartItem) => {
     const response = await api.patch(`/customers/cart/update/quantity`, {
       productId: item.product.id,
@@ -228,6 +264,7 @@ export default function CartPage() {
     );
     cartItemsContext?.setTotal(total - item.product.price);
   };
+
   const addItem = async (item: CartItem) => {
     console.log({ productId: item.product.id, quantity: item.quantity + 1 });
     const response = await api.patch(`/customers/cart/update/quantity`, {
@@ -358,8 +395,31 @@ export default function CartPage() {
           >
             Proceed to checkout
           </button>
+          {cartItems.length > 0 && (
+            <button
+              className="hover:bg-[#ffc505]"
+              onClick={() => setShowModal(true)}
+            >
+              Clear cart
+            </button>
+          )}
         </div>
       </div>
+      <Modal
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+        title="Clear Shopping Cart"
+        description="This will remove all items from your cart. This action cannot be undone."
+        primaryAction={{
+          label: "Clear Cart",
+          onClick: handleClearCart,
+          variant: "danger",
+        }}
+        secondaryAction={{
+          label: "Cancel",
+          onClick: () => setShowModal(false),
+        }}
+      />
     </>
   );
 }
