@@ -70,7 +70,7 @@ export function ImageUpload({
             <button
               type="button"
               onClick={() => removeImage(url)}
-              className="absolute top-2 right-2 p-1.5 bg-white rounded-full shadow-md opacity-0 group-hover:opacity-100 transition-opacity"
+              className="absolute top-2 right-2 p-1.5 bg-white rounded-full shadow-md transition-opacity"
             >
               <X className="w-4 h-4 text-gray-600" />
             </button>
