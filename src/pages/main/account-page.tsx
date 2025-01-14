@@ -314,7 +314,7 @@ export default function AccountPage() {
                   <div className="space-y-4 mb-8">
                     {
                       addresses.map((address) => {
-                        return <div key={address.id} className="flex items-center justify-between p-4 border rounded-lg">
+                        return <div key={address.id} className="flex items-center justify-between p-4 border rounded-lg text-capitalize">
                           <div>
                             <p className="font-medium">{address?.recipientName}</p>
                             <p className="text-sm text-gray-600">
