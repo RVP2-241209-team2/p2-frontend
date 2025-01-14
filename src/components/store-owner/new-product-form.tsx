@@ -8,6 +8,7 @@ import axios from "axios";
 import api from "../../lib/axios";
 import { ImageUpload } from "./image-upload";
 
+
 const NewProductForm = () => {
   const [uploadedFile, setUploadedFile] = useState<{
     url: string;
@@ -70,13 +71,17 @@ const NewProductForm = () => {
         if (fileInputRef.current) {
           fileInputRef.current.value = "";
         }
+
       }
     } catch (error) {
       console.error("Product creation failed:", error); // Detailed error logging
 
       if (axios.isAxiosError(error)) {
+        console.log(error);
+        
         const errorMessage =
-          error.response?.data?.message ||
+          error.response?.data ||
+          error.response?.data?.message||
           error.response?.data?.error ||
           error.message ||
           "Failed to create product";
