@@ -41,7 +41,6 @@ export default function Navbar() {
             </Link>
           </div>
 
-
           {/* Categories */}
           <div className="hidden md:flex md:justify-center">
             <SearchInput />
@@ -101,20 +100,15 @@ export default function Navbar() {
                   </button>
                 </>
               ) : (
-                LOGGED_OUT_NAV_LINKS.map((link) => {
-                  const Icon = link.icon;
-                  return (
-                    <Link
-                      to={link.href}
-                      key={link.label}
-                      onClick={logout}
-                      className="flex items-center gap-x-2 p-3 text-gray-900 hover:text-sky-600"
-                    >
-                      <Icon className="size-4" />
-                      <span>{link.label}</span>
-                    </Link>
-                  );
-                })
+                <Link
+                  to={"/login"}
+                  key={"Login"}
+                  onClick={logout}
+                  className="flex items-center gap-x-2 p-3 text-gray-900 hover:text-sky-600"
+                >
+                  <User className="size-4" />
+                  <span>Login</span>
+                </Link>
               )}
               {isStoreOwner &&
                 STORE_OWNER_NAV_LINKS.map((link) => {
