@@ -405,7 +405,7 @@ export default function CartPage() {
           )}
         </div>
       </div>
-      <Modal
+      <ConfirmationModal
         isOpen={showModal}
         onClose={() => setShowModal(false)}
         title="Clear Shopping Cart"
