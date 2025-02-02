@@ -1,19 +1,8 @@
 import React, { useContext, useEffect } from 'react';
 import { Modal } from '../../Modal/Modal';
-import axios from 'axios';
-import { useAuth } from '../../context/AuthContext';
 import { checkoutContext } from './checkout-page';
 import { Address } from './checkout-page';
 import api from '../../lib/axios';
-
-interface DummyAddress {
-    id: number;
-    name: string;
-    address: string;
-    city: string;
-    state: string;
-    zip: string;
-}
 
 interface AddressesFormProps {
     // addresses: Address[];
@@ -25,26 +14,7 @@ interface AddressesFormProps {
     setAddresses: (address: Address) => void;
 }
 
-const dummyAddresses: DummyAddress[] = [
-    {
-        id: 1,
-        name: 'John Doe',
-        address: '123 Main St',
-        city: 'Springfield',
-        state: 'IL',
-        zip: '62701',
-    },
-    {
-        id: 2,
-        name: 'Jane Smith',
-        address: '456 Elm St',
-        city: 'Springfield',
-        state: 'IL',
-        zip: '62702',
-    },
-];
-
-export const AddressesListModal: React.FC<AddressesFormProps> = ({setAddresses, addresses, setPaymentDetail, setBillingAddress, onClose}) => {
+export const AddressesListModal: React.FC<AddressesFormProps> = ({setAddresses, addresses, onClose}) => {
     
     const paymentContext = useContext(checkoutContext);
 
@@ -101,8 +71,8 @@ export const AddressesListModal: React.FC<AddressesFormProps> = ({setAddresses, 
     }
     const onAddressClose = ()=>{
         onClose();
-        setPaymentDetail();
-        setBillingAddress();
+        paymentContext?.setPaymentDetail(null);
+        paymentContext?.setBillingAddress(null);
       }
 
     return (
