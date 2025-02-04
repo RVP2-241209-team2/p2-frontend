@@ -8,7 +8,7 @@ import api from "../../lib/axios";
 import { CartItem } from "./cart-page";
 import { CartItemsContext } from "./CartItemsProvider";
 import { toast } from "sonner";
-import { Divide } from "lucide-react";
+// import { Divide } from "lucide-react";
 
 export interface Address{
   id: string;
@@ -42,13 +42,13 @@ export interface Payment{
   isDefault: boolean;
 }
 interface CheckoutContextType {
-  setAddressModal: (value: boolean) => void;
+  // setAddressModal: (value: boolean) => void;
   setPaymentModal: (value: boolean) => void;
-  paymentDetail: Payment | undefined;
-  setPaymentDetail: (value: Payment) => void;
-  address: Address | undefined;
-  billingAddress: Address | undefined;
-  setBillingAddress: (value: Address) => void;
+  paymentDetail: Payment | null;
+  setPaymentDetail: (value: Payment | null) => void;
+  // address: Address | undefined;
+  billingAddress: Address | null;
+  setBillingAddress: (value: Address | null) => void;
   billingAddressModal: boolean;
   setBillingAddressModal: (value: boolean) => void;
 }
@@ -60,7 +60,7 @@ export default function CheckoutPage() {
 
 // check if user is signed in.
   const navigate = useNavigate()
-  const {user, token} = useAuth()
+  const {user} = useAuth()
   const cartItemsContext = useContext(CartItemsContext)
 
   // selected address and payment
@@ -77,9 +77,9 @@ export default function CheckoutPage() {
 
   // for context API
   const [billingAddressModal, setBillingAddressModal] = useState<boolean>(false)
-  const [paymentDetail, setPaymentDetail] = useState<Payment>()
+  const [paymentDetail, setPaymentDetail] = useState<Payment | null>(null)
   const [address, setAddress] = useState<Address>()
-  const [billingAddress, setBillingAddress] = useState<Address>()
+  const [billingAddress, setBillingAddress] = useState<Address | null>(null)
   
   useEffect(()=>{
     if(!user){
@@ -120,10 +120,10 @@ export default function CheckoutPage() {
     setPaymentSection(false)
     setAddressSection(false)
   }
-  const onAddressClose = ()=>{
-    setPaymentModal(false)
-    // setPaymentDetail(undefined)
-  }
+  // const onAddressClose = ()=>{
+  //   setPaymentModal(false)
+  //   // setPaymentDetail(undefined)
+  // }
 
   const onAddNewPayment = (paymentDetail:Payment)=>{
     setPaymentDetails([...paymentDetails, paymentDetail!])
@@ -325,9 +325,9 @@ export default function CheckoutPage() {
         </div>
     </div>
     
-    <checkoutContext.Provider value={{setAddressModal, setPaymentModal, paymentDetail, setPaymentDetail, address, billingAddress, setBillingAddress, billingAddressModal, setBillingAddressModal}}>
-      {paymentModal && <CreatePaymentModal addresses={addresses} onClose={()=>setPaymentModal(false)} addNewPayment={(payment:Payment)=>onAddNewPayment(payment)}  setBillingAddress={()=>setBillingAddress(undefined)} setPaymentDetail={()=>setPaymentDetail(undefined)} />}
-      {billingAddressModal && <AddressesListModal setAddresses={(address: Address)=>setAddresses(()=>[...addresses, address])} addresses={addresses} onClose={()=>setBillingAddressModal(false)} setBillingAddress={()=>setBillingAddress(undefined)} setPaymentDetail={()=>setPaymentDetail(undefined)} />}
+    <checkoutContext.Provider value={{setPaymentModal, paymentDetail, setPaymentDetail, billingAddress, setBillingAddress, billingAddressModal, setBillingAddressModal}}>
+      {paymentModal && <CreatePaymentModal addresses={addresses} onClose={()=>setPaymentModal(false)} addNewPayment={(payment:Payment)=>onAddNewPayment(payment)}  setBillingAddress={()=>setBillingAddress(null)} setPaymentDetail={()=>setPaymentDetail(null)} />}
+      {billingAddressModal && <AddressesListModal setAddresses={(address: Address)=>setAddresses(()=>[...addresses, address])} addresses={addresses} onClose={()=>setBillingAddressModal(false)} setBillingAddress={()=>setBillingAddress(null)} setPaymentDetail={()=>setPaymentDetail(null)} />}
     </checkoutContext.Provider>
    
       

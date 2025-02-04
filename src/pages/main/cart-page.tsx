@@ -256,6 +256,7 @@ export default function CartPage() {
   };
 
   const addItem = async (item: CartItem) => {
+    if (item.product.quantity === item.quantity) return;
     console.log({ productId: item.product.id, quantity: item.quantity + 1 });
     const response = await api.patch(`/customers/cart/update/quantity`, {
       productId: item.product.id,
@@ -282,9 +283,9 @@ export default function CartPage() {
 
   return (
     <>
-      <div className="cart-Container ">
-        <div className="cart-Items">
-          <div className="cart-Header">
+      <div className="flex justify-between">
+        <div className="w-[75%] mr-[10px]">
+          <div className="text-[25px] pt-2 pb-1 pl-2 mb-[15px] border-solid border-b-[0.2px] border-b-[grey]">
             <h2>Shopping Cart</h2>
             <div className="text-[grey] text-[15px] text-end">Price</div>
           </div>
@@ -303,22 +304,26 @@ export default function CartPage() {
                       type="checkbox"
                       checked={checkedItems[`${item.id}`]}
                     ></input>
+                    <Link to={`/products/${item.product.id}`} key={index}>
                     <img
-                      className="img"
+                      className="max-w-[250px] inline-block"
                       src={item.product.images[0]}
                       alt={item.product.name}
-                    />
+                    /></Link>
                   </div>
                   <div className="item-Details">
-                    <h3>{item.product.name}</h3>
-                    <p>{item.product.description}</p>
+                    <Link to={`/products/${item.product.id}`} className="no-underline text-black" key={index}>
+                      <h3 className="hover:underline">{item.product.name}</h3>
+                      <p className="hover:underline">{item.product.description}</p>
+                    </Link>
                     <div className="flex items-center">
                       <div className="item-Quantity-Controller">
                         {item.quantity === 1 && (
+                          <span className="hover:text-[#dfdcdc]">
                           <i
                             onClick={() => deleteItem(item.id)}
                             className="fa-solid fa-trash cursor-pointer"
-                          ></i>
+                          ></i></span>
                         )}
                         {item.quantity >= 2 && (
                           <i
@@ -326,10 +331,10 @@ export default function CartPage() {
                             className="fa-solid fa-minus cursor-pointer"
                           ></i>
                         )}
-                        <span>{item.quantity}</span>
+                        <span className="mx-[20px]">{item.quantity}</span>
                         <i
                           onClick={() => addItem(item)}
-                          className="fa-solid fa-plus cursor-pointer"
+                          className={"fa-solid fa-plus " + (item.product.quantity === item.quantity ? "cursor-not-allowed" : "cursor-pointer")}
                         ></i>
                       </div>
                       <button
@@ -342,6 +347,7 @@ export default function CartPage() {
                   </div>
                   <div style={{ fontWeight: "700" }}>${item.product.price.toFixed(2)}</div>
                 </div>
+                
               );
             })}
           </div>

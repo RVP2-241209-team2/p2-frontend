@@ -13,7 +13,7 @@ const ModalContext = React.createContext<HTMLDivElement | null>(null);
 export function ModalProvider({ children }: { children: ReactNode }) {
   const [value, setValue] = useState<HTMLDivElement | null>(null);
   const modalRef = useRef<HTMLDivElement | null>(null);
-
+  
   useEffect(() => {
     setValue(modalRef.current);
   }, []);

@@ -13,7 +13,7 @@ interface PaymentProps {
     addresses: Address[];
 }
 
-export const PaymentForm: React.FC<PaymentProps> = ({addresses, addNewPayment, onClose, setBillingAddress, setPaymentDetail}) => {
+export const PaymentForm: React.FC<PaymentProps> = ({addresses, addNewPayment, onClose}) => {
 
     // const {user, token} = useAuth();
     const paymentContext = useContext(checkoutContext);
@@ -34,8 +34,6 @@ export const PaymentForm: React.FC<PaymentProps> = ({addresses, addNewPayment, o
     const [defaultBillingAddress, setDefaultBillingAddress] = useState<Address | null>(()=>{
         return paymentContext?.billingAddress || addresses[0] || null;
     });
-    // const [addresses, setAddresses] = useState<Address[]>([]);
-    const [defaultPayment, setDefaultPayment] = useState<Payment>();
     const [paymentDetails, setPaymenDetails] = useState<Payment[]>([]);
     // const [billAddrChange, setBillAddrChange] = useState<boolean>(false);
     
@@ -86,8 +84,8 @@ export const PaymentForm: React.FC<PaymentProps> = ({addresses, addNewPayment, o
 
     const onPaymentFormClose = ()=>{
         onClose();
-        setPaymentDetail();
-        setBillingAddress();
+        paymentContext?.setPaymentDetail(null);
+        paymentContext?.setBillingAddress(null);
     }
     return <div className="bg-white rounded-xl">
         <div>

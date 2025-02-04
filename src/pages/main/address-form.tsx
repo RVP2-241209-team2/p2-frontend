@@ -1,7 +1,5 @@
-import axios from "axios";
-import { useContext, useState } from "react";
-import { useAuth } from "../../context/AuthContext";
-import { Address, checkoutContext } from "./checkout-page";
+import { useState } from "react";
+import { Address } from "./checkout-page";
 import api from "../../lib/axios";
 
 interface ToggletProps {
@@ -11,8 +9,8 @@ interface ToggletProps {
 }
 export const AddressForm:React.FC<ToggletProps> = ({setAddresses, setSelectAddress, onClose}) => {
 
-    const auth = useAuth();
-    const paymentContext = useContext(checkoutContext);
+    // const auth = useAuth();
+    // const paymentContext = useContext(checkoutContext);
 
     const [fullName, setFullName] = useState<string>('');
     const [addressLine1, setAddressLine1] = useState<string>('');
